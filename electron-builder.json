@@ -1,6 +1,12 @@
 {
-    "appId" : "com.intercocina.production",
+    "appId" : "com.intercocina.hireic",
     "files" : ["react-dist", "src/electron"],
+    "productName": "HireIC",
+    "publish": {
+      "provider": "github",
+      "repo": "hireic",
+      "owner": "hagmir7"
+    },
     "icon": "./intercocina-logo.png",
     "win":{
         "target": ["portable", "msi"]
