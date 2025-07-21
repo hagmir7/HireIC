@@ -170,7 +170,9 @@ const InvitationCalendar = () => {
         </div>
 
         <Calendar
-        locale={locale}
+        // showWeek={true}
+        // mode={'year'}
+          locale={locale}
           onSelect={onSelect}
           dateCellRender={dateCellRender}
           style={{ 
