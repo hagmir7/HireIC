@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { api } from "../utils/api";
+import { message as antMessage} from 'antd'
 
 
 
@@ -15,7 +16,6 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(false);
 
   const navigate = useNavigate();
-
 
   useEffect(()=>{
     getUser()
@@ -48,6 +48,7 @@ export const AuthProvider = ({ children }) => {
       }
 
     } catch (error) {
+      antMessage.error(error.response.data.message)
       console.error('Login failed:', error.response ? error.response.data : error.message)
       setMessage("Nom d'utilisateur/e-mail ou mot de passe invalide.")
     } finally {

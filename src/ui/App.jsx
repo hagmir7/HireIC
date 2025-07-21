@@ -7,13 +7,25 @@ import ViewRole from './pages/ViewRole'
 import Login from './pages/Login'
 import Users from './pages/Users'
 import Home from './pages/Home'
-import Profile from './pages/profile'
+import Profile from './pages/profile';
+import { Resume } from './pages/Resume'
+import { Needs } from './pages/Needs'
+import { Invetation } from './pages/Invetation'
+import Interview from './pages/Interview'
+import { Onboarding } from './pages/Onboarding'
+
 
 
 
 const NotFound = () => {
-  return <>Page not found 404</>
-}
+  return (
+    <div className="py-10 flex flex-col items-center justify-center px-4">
+      <h1 className="text-lg font-bold text-gray-800">Page not ready</h1>
+      <p className="text-xl text-gray-600 mt-4">⛔</p>
+    </div>
+  );
+};
+
 
 function App() {
   return (
@@ -27,6 +39,11 @@ function App() {
           <Route path='/users' element={<Users />} />
           <Route path='/roles' element={<Roles />} />
           <Route path='/roles/:id' element={<ViewRole />} />
+          <Route path='/resume' element={<Resume />} />
+          <Route path='/needs' element={<Needs />} />
+          <Route path='/invetation' element={<Invetation />} />
+          <Route path='/onboarding' element={<Onboarding />} />
+          <Route path='/interview' element={<Interview />} />
           <Route path='*' element={<NotFound />} />
           <Route path='/layout/user/:id' element={<Profile />} />
         </Route>

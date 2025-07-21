@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import { Layout, Menu, theme, Drawer } from 'antd'
 import {
-  ArrowDownUp,
-  BaggageClaim,
-  ClipboardCheck,
-  Layers,
   Package,
   Shield,
-  ShoppingBag,
   UserCheck,
   Users,
   Menu as MenuIcon,
   X,
-  Warehouse,
-  Layers2,
-  FileDown,
-  Truck,
-  RefreshCcw,
-  CircleCheck,
-  AudioWaveform,
-  LayoutDashboard,
+  BriefcaseBusiness,
+  ContactRound,
+  LayoutGrid,
+  ClipboardList,
+  MessagesSquare,
+  MessageCircleWarning,
+  UserRoundPlus,
+  Component,
+  Building,
+  GraduationCap,
+  Building2,
+  FolderDot,
+  CheckCircle,
+  BookOpenText,
+  LandPlot,
 } from 'lucide-react'
 import { Link, Outlet } from 'react-router-dom'
 import DropMenu from '../components/DropMenu'
@@ -31,73 +33,94 @@ const sideMenu = () => {
 
   return [
     {
+      key: 'menu-01',
+      icon: <LayoutGrid size={20} />,
+      label: <Link to='/' className='text-base'>Accueil</Link>,
+
+    },
+    {
       key: 'menu-1',
-      icon: <ShoppingBag size={20} />,
-      label: <span className='text-base'>Commandes</span>,
+      icon: <BriefcaseBusiness size={20} />,
+      label: <span className='text-base'>Recrutement</span>,
       children: [
         {
           key: 'submenu-1',
-          icon: <LayoutDashboard size={19} />,
-          label: <Link to='/'>Accueil</Link>,
+          icon: <ContactRound size={19} />,
+          label: <Link to='resume'>Resume</Link>,
+        },
+
+        {
+          key: 'submenu-15',
+          icon: <MessageCircleWarning size={19} />,
+          label: <Link to='/needs'>Besoins</Link>,
+        },
+        {
+          key: 'submenu-21',
+          icon: <MessagesSquare size={19} />,
+          label: <Link to='/invetation'>Invitations</Link>,
         },
 
         {
           key: 'submenu-10',
-          disabled: !roles('controleur'),
-          icon: <CircleCheck size={19} />,
-          label: <Link to='/validation'>Validation</Link>,
+          icon: <ClipboardList size={19} />,
+          label: <Link to='/interview'>Entretiens</Link>,
         },
+
+
+
         {
-          key: 'submenu-21',
-          icon: <AudioWaveform size={19} />,
-          label: <Link to='/progress'>Progrès</Link>,
+          key: 'submenu-16',
+          icon: <UserRoundPlus size={19} />,
+          label: <Link to='/onboarding'>Embarquement</Link>,
         },
-        {
-          key: 'submenu-15',
-          icon: <Truck size={19} />,
-          label: <Link to='/shipping'>Expédition</Link>,
-        },
-        // {
-        //   key: 'submenu-13',
-        //   label: <Link to='/shargement'>Chargement</Link>,
-        // },
+
       ],
     },
     {
       key: 'menu-2',
       icon: <Package size={20} />,
-      label: <span className='text-base'>Stock</span>,
+      label: <span className='text-base'>Outils</span>,
 
       children: [
         {
           key: 'submenu-13',
-          icon: <ArrowDownUp size={19} />,
-          label: <Link to='/transfert'> Suivi </Link>,
+          icon: <Component size={19} />,
+          label: <Link to='/departement'> Départements </Link>,
         },
         {
-          
+
           key: 'submenu-2',
-          icon: <ClipboardCheck size={19} />,
-          label: <Link to='/inventories'>Inventaire</Link>,
+          icon: <Building size={19} />,
+          label: <Link to='/company'>Sociétés</Link>,
         },
         {
-          key: 'submenu-12',
-          icon: <Layers size={19} />,
-          label: <Link to='/articles'>Articles</Link>,
+          key: 'submenu-121',
+          icon: <GraduationCap size={19} />,
+          label: <Link to='/diplome'>Diplômes</Link>,
         },
         {
-          key: 'submenu-3',
-          icon: <Warehouse size={19} />,
-          label: <Link to='/depots'>Depotss</Link>,
+          key: 'submenu-131',
+          icon: <Building2 size={19} />,
+          label: <Link to='/city'>Villes</Link>,
+        },
+        {
+          key: 'submenu-141',
+          icon: <FolderDot size={19} />,
+          label: <Link to='/template'>Modèles d'entretien</Link>,
+        },
+        {
+          key: 'submenu-151',
+          icon: <CheckCircle size={19} />,
+          label: <Link to='/skill'>Compétences</Link>,
         },
       ],
     },
 
     {
       key: 'menu-6',
-      icon: <FileDown size={20} />,
+      icon: <BookOpenText size={20} />,
       disabled: true,
-      label: <span className='text-base'>Reception</span>,
+      label: <span className='text-base'>Formations</span>,
       children: [
         {
           key: 'submenu-6',
@@ -107,9 +130,9 @@ const sideMenu = () => {
     },
     {
       key: 'menu-7',
-      icon: <BaggageClaim size={20} />,
+      icon: <LandPlot size={20} />,
       disabled: true,
-      label: <span className='text-base'>Achat</span>,
+      label: <span className='text-base'>Congé</span>,
       children: [
         {
           key: 'submenu-7',
@@ -124,13 +147,11 @@ const sideMenu = () => {
       children: [
         {
           key: 'submenu-8-1',
-          // disabled: !permissions('view:users'),
           icon: <UserCheck size={20} />,
           label: <Link to='/users'>Utilisateurs</Link>,
         },
         {
           key: 'submenu-8-2',
-          // disabled: !permissions('view:roles'),
           icon: <Shield size={20} />,
           label: <Link to='/roles'>Roles</Link>,
         },
@@ -216,9 +237,9 @@ const MainLayout = () => {
           <div>
             <Link to={'/'}>
               <img
-                width={100}
-                src='https://intercocina.com/assets/imgs/intercocina-logo.png'
+                src={`/logo.png`}
                 alt='Intercocina logo'
+                className='max-h-full w-60'
               />
             </Link>
           </div>

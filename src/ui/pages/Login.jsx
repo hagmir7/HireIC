@@ -28,21 +28,22 @@ const Login = () => {
   const checkAuth = async () => {
     const access_token = localStorage.getItem('authToken') || false;
     if (access_token) {
-      const response = await api.get('user', {
-        headers: {
-          Authorization: `Bearer ${access_token}`,
-        },
-      });
+      try {
+        const response = await api.get('user', {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
 
-      // if (!response?.data?.access_token) {
-      //   localStorage.removeItem("authToken");
-      //   localStorage.removeItem("user");
-      // }
-
-      if (window.electron) {
-        await window.electron.user({ user: response.data, access_token });
-      } else {
-        return navigate('/');
+        if (window.electron) {
+          await window.electron.user({ user: response.data, access_token });
+        } else {
+          return navigate('/');
+        }
+      } catch (error) {
+        console.log(error);
+        
+        message.error(error.response.data.message);
       }
     }
   };

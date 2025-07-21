@@ -1,7 +1,10 @@
 import React from 'react'
+import InvetationCalendar from '../components/InvetationCalendar'
 
 export default function Home() {
   return (
-    <div>Home</div>
+    <div>
+      <InvetationCalendar />
+    </div>
   )
 }

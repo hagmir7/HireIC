@@ -4,12 +4,9 @@ import { isDev, getPreloadPath } from "./util.js";
 import createLoginWindow from "./windows/loginWindow.js";
 import { createShowWindow } from "./windows/showWindow.js";
 
-
-
 let showWindow;
 let mainWindow;
 let loginWindow;
-
 
 const createMainWindow = () => {
     const mainWindow = new BrowserWindow({
@@ -22,6 +19,8 @@ const createMainWindow = () => {
         },
     });
 
+
+    mainWindow.setMenu(null)
 
     if (isDev()) {
         mainWindow.loadURL('http://localhost:5123');

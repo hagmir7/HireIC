@@ -9,6 +9,9 @@ export default defineConfig({
   build:{
     outDir: "react-dist"
   },
+  define: {
+    'process.env.PUBLIC_URL': '"/"',
+  },
   server:{
     port: 5123,
     strictPort: true
