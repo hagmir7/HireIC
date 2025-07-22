@@ -13,6 +13,7 @@ import { Needs } from './pages/Needs'
 import { Invetation } from './pages/Invetation'
 import Interview from './pages/Interview'
 import { Onboarding } from './pages/Onboarding'
+import CreateResume from './components/resume/CreateResume'
 
 
 
@@ -34,9 +35,14 @@ function App() {
       <Routes>
         <Route path='/login' element={<Login />} />
         <Route path='/user/:id' element={<Profile />} />
+        <Route path='/resume/create' element={<CreateResume />} />
+         <Route path='/resume/create/:id' element={<CreateResume />} />
         <Route element={<MainLayout />}>
           <Route path='/' element={<Home />} />
           <Route path='/users' element={<Users />} />
+          <Route path='/layout/resume/create' element={<CreateResume />} />
+          <Route path='/layout/resume/create/:id' element={<CreateResume />} />
+
           <Route path='/roles' element={<Roles />} />
           <Route path='/roles/:id' element={<ViewRole />} />
           <Route path='/resume' element={<Resume />} />

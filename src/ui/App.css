@@ -39,3 +39,14 @@
 .scrollable::-webkit-scrollbar-thumb:hover {
   background-color: #818080;
 }
+
+.ant-form-item-row {
+  display: inline!important;
+}
+
+.ant-form-item-label {
+  text-align: left!important;
+}
+.ant-card-body{
+  padding: 10px 15px!important;
+}
