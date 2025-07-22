@@ -6,32 +6,32 @@ import { api } from '../../utils/api';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 
-export default function ResumeDiplome() {
+export default function ResumeExperience() {
   const { id } = useParams();
 
   const [formItems, setFormItems] = useState([]);
 
-  const getDeplomes = async () => {
+  const getExperiences = async () => {
     try {
-      const { data } = await api.get(`resumes/${id}/diplomes`);
+      const { data } = await api.get(`resumes/${id}/experiences`);
       const prepared = data.map(d => ({
         ...d,
         end_date: d.end_date ? dayjs(d.end_date) : null
       }));
       if(data?.length === 0){
-        setFormItems([{id: 2, level_id: '', name: '', end_date: null, resume_id: id }])
+        setFormItems([{id: 2, resume_id: id, company: '', start_date: null, end_date: null }])
       }else{
         setFormItems(prepared);
       }
       
     } catch (error) {
-      message.error(error.response?.data?.message || "Erreur lors du chargement des diplômes.");
+      message.error(error.response?.data?.message || "Erreur lors du chargement des expériences.");
     }
   };
 
   const addFormItem = () => {
     const newId = Math.max(0, ...formItems.map(item => item.id)) + 1;
-    setFormItems([...formItems, { id: newId, level_id: '', name: '', end_date: null, resume_id: id }]);
+    setFormItems([...formItems, { id: newId,  resume_id: id,  company: null, start_date: '', end_date: null }]);
   };
 
   const removeFormItem = (id) => {
@@ -46,40 +46,30 @@ export default function ResumeDiplome() {
     ));
   };
 
-  const [levels, setLevels] = useState([]);
 
-  const getLevels = async () => {
-    try {
-      const { data } = await api.get('levels');
-      setLevels(data.map(level => ({ label: level.name, value: level.id })));
-    } catch (error) {
-      console.error(error);
-      message.error(error.response?.data?.message || "Erreur lors du chargement des niveaux.");
-    }
-  };
 
   useEffect(() => {
-     getLevels();
-    getDeplomes();
-   
+    getExperiences();
+
   }, []);
 
-  const handleSubmit = async () => {
-    const formattedDiplomas = formItems.map(diploma => ({
-      level_id: diploma.level_id || null,
-      name: diploma.name,
-      end_date: diploma.end_date ? dayjs(diploma.end_date).format('YYYY-MM-DD') : null,
-      resume_id: parseInt(diploma.resume_id),
-    }));
+    const handleSubmit = async () => {
+        const formattedExperience = formItems.map(experience => ({
+            resume_id: parseInt(experience.resume_id),
+            company: experience.company || null,
+            start_date: experience.end_date ? dayjs(experience.end_date).format('YYYY-MM-DD') : null,
+            end_date: experience.end_date ? dayjs(experience.end_date).format('YYYY-MM-DD') : null,
 
-    try {
-      await api.post("diplomas", { diplomas: formattedDiplomas });
-      message.success("Diplômes enregistrés avec succès !");
-    } catch (error) {
-      console.error(error);
-      message.error(error.response?.data?.message || "Erreur lors de l'enregistrement.");
-    }
-  };
+        }));
+
+        try {
+            await api.post("experiences", { experience: formattedExperience });
+            message.success("Expériences enregistrés avec succès !");
+        } catch (error) {
+            console.error(error);
+            message.error(error.response?.data?.message || "Erreur lors de l'enregistrement.");
+        }
+    };
 
   return (
     <div className="max-w-4xl mx-auto p-4">
@@ -101,19 +91,18 @@ export default function ResumeDiplome() {
             )}
 
             <Row gutter={16}>
-              {/* Diplôme Field */}
+              {/* Expérience Field */}
               <Col xs={24} md={8}>
                 <Form.Item
-                  label="Diplôme"
+                  label="Expérience"
                   required
                   tooltip="Ce champ est requis"
                 >
                   <Select
-                    placeholder="Sélectionnez un diplôme"
+                    placeholder="Sélectionnez un expérienc"
                     value={item.level_id || undefined}
                     onChange={(value) => updateFormItem(item.id, 'level_id', value)}
                     className="w-full"
-                    options={levels}
                     showSearch
                     filterOption={(input, option) =>
                       option.label.toLowerCase().includes(input.toLowerCase())
@@ -165,7 +154,7 @@ export default function ResumeDiplome() {
             onClick={addFormItem}
             className="flex items-center border-dashed text-gray-600 hover:text-blue-500 overflow-hidden"
           >
-            Ajouter un diplôme
+            Ajouter un expérience
           </Button>
         </div>
 
