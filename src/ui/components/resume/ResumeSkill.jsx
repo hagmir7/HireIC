@@ -10,6 +10,7 @@ export default function ResumeExperience() {
   const { id } = useParams();
 
   const [formItems, setFormItems] = useState([]);
+  const [languages, setLanguages] = useState([]);
 
   const getExperiences = async () => {
     try {
@@ -95,65 +96,47 @@ export default function ResumeExperience() {
 
             <Row gutter={16}>
               {/* Expérience Field */}
-              <Col xs={24} md={8}>
+             <Col xs={24} md={8}>
                 <Form.Item
-                  label="Entreprise"
-                  required
-                  tooltip="Ce champ est requis"
+                    label="Langue"
+                    required
+                    tooltip="Ce champ est requis"
                 >
-                   <Input
-                    placeholder="Entrez entreprise"
-                    value={item.company}
-                    onChange={(e) => updateFormItem(item.id, 'company', e.target.value)}
-                  />
+                    <Select
+                    placeholder="Sélectionnez un Langue"
+                    value={item.language_id || undefined}
+                    onChange={(value) => updateFormItem(item.id, 'language_id', value)}
+                    className="w-full"
+                    options={languages}
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                    />
                 </Form.Item>
-              </Col>
+                </Col>
 
               {/* Filière Field */}
-              <Col xs={24} md={8}>
-                <Form.Item
-                  label="Post de travail"
-                  required
-                  tooltip="Ce champ est requis"
-                >
-                  <Input
-                    placeholder="Entrez Post de travail"
-                    value={item.work_post}
-                    onChange={(e) => updateFormItem(item.id, 'work_post', e.target.value)}
-                  />
-                </Form.Item>
-              </Col>
-
-              {/* Date d'obtention */}
-              <Col xs={24} md={8}>
-                <Form.Item
-                  label="Date d'Début"
-                  required
-                  tooltip="Ce champ est requis"
-                >
-                  <DatePicker
-                    className="w-full"
-                    placeholder="Sélectionnez une date début"
-                    value={item.end_start}
-                    locale={locale}
-                    onChange={(date) => updateFormItem(item.id, 'end_start', date)}
-                  />
-                </Form.Item>
-              </Col>
-
                <Col xs={24} md={8}>
                 <Form.Item
-                  label="Date Fin"
+                    label="Niveau"
+                    required
+                    tooltip="Ce champ est requis"
                 >
-                  <DatePicker
+                    <Select
+                    placeholder="Sélectionnez un Niveau"
+                    value={item.level || undefined}
+                    onChange={(value) => updateFormItem(item.id, 'level', value)}
                     className="w-full"
-                    placeholder="Sélectionnez une date Fin"
-                    value={item.end_date}
-                    locale={locale}
-                    onChange={(date) => updateFormItem(item.id, 'end_date', date)}
-                  />
+                    options={languages}
+                    showSearch
+                    filterOption={(input, option) =>
+                        option.label.toLowerCase().includes(input.toLowerCase())
+                    }
+                    />
                 </Form.Item>
-              </Col>
+                </Col>
+
             </Row>
           </Card>
         ))}

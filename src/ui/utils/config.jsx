@@ -87,3 +87,16 @@ export function uppercaseFirst(str) {
 }
 
 
+
+
+export function getResumeStatus(value) {
+  const statuses = {
+    1: { label: "Nouveau", color: "gray" },
+    2: { label: "Invitation", color: "blue" },
+    3: { label: "Évaluation", color: "orange" },
+    4: { label: "Accepté", color: "green" },
+    5: { label: "Engagé", color: "purple" }
+  };
+
+  return statuses[value] || { label: "Inconnu", color: "red" };
+}

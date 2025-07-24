@@ -3,6 +3,7 @@ import { Button, message, Steps, theme } from 'antd';
 import ResumeInfoForm from './ResumeInfoForm';
 import { ArrowLeftCircle, ArrowRightCircle, CheckCircle } from 'lucide-react';
 import ResumeDiplome from './ResumeDiplome';
+import ResumeExperience from './ResumeExperience';
 const steps = [
   {
     title: 'Person',
@@ -14,7 +15,7 @@ const steps = [
   },
   {
     title: 'Expérience',
-    content: 'Therd-content',
+    content: <ResumeExperience />,
   },
    {
     title: 'Compétences',
