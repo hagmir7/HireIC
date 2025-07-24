@@ -1,166 +1,225 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Input, Select, DatePicker, Button, Row, Col, Card, message } from 'antd';
+import { Form, Select, Button, Row, Col, Card, message } from 'antd';
 import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
-import { locale } from '../../utils/config';
 import { api } from '../../utils/api';
 import { useParams } from 'react-router-dom';
-import dayjs from 'dayjs';
 
-export default function ResumeExperience() {
-  const { id } = useParams();
+export default function ResumeSkill() {
+  const { id: resumeId } = useParams();
 
-  const [formItems, setFormItems] = useState([]);
-  const [languages, setLanguages] = useState([]);
+  const [skillType, setSkillType] = useState(null);
+  const [skillTypes, setSkillTypes] = useState([]);
+  const [skills, setSkills] = useState([]);
+  const [resumeSkills, setResumeSkills] = useState([]);
+  const [filteredSkills, setFilteredSkills] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const getExperiences = async () => {
+  useEffect(() => {
+    if (resumeId) {
+      getSkills();
+      getSkillTypes();
+      getResumeSkills();
+    }
+  }, [resumeId]);
+
+
+  useEffect(() => {
+    if (skillType && skills.length > 0) {
+    
+      const filtered = skills.filter(skill => skill.skill_type_id === skillType.value);
+      setFilteredSkills(filtered);
+    } else {
+      setFilteredSkills(skills);
+    }
+  }, [skillType, skills]);
+
+  const getSkillTypes = async () => {
     try {
-      const { data } = await api.get(`resumes/${id}/experiences`);
-      const prepared = data.map(d => ({
-        ...d,
-        end_date: d.end_date ? dayjs(d.end_date) : null
+      setLoading(true);
+      const { data } = await api.get('skills/type');
+      setSkillTypes(data.map(item => ({
+        label: item.name,
+        value: Number(item.id)
+      })));
+    } catch (error) {
+      console.error('Error loading skill types:', error);
+      message.error("Erreur lors du chargement des types de compétences.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getSkills = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get('skills');
+      const formattedSkills = data.map(item => ({
+        label: item.name,
+        value: Number(item.id),
+        skill_type_id: item.skill_type_id ? Number(item.skill_type_id) : null
       }));
-      if (data?.length === 0) {
-        setFormItems([{ id: 2, resume_id: id, company: '', start_date: null, end_date: null, work_post: '' }])
-      } else {
-        setFormItems(prepared);
-      }
+      setSkills(formattedSkills);
 
     } catch (error) {
-      message.error(error.response?.data?.message || "Erreur lors du chargement des expériences.");
+      console.error('Error loading skills:', error);
+      message.error("Erreur lors du chargement des compétences.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getResumeSkills = async () => {
+    try {
+      setLoading(true);
+      const { data } = await api.get(`resumes/${resumeId}/skills`);
+
+      const prepared = data.map((item, index) => ({
+        id: index + 1,
+        resume_id: Number(resumeId),
+        skill_id: item.id
+      }));  
+      if (prepared.length === 0) {
+        setResumeSkills([{ id: 1, resume_id: Number(resumeId), skill_id: null }]);
+      } else {
+        setResumeSkills(prepared);
+      }
+    } catch (error) {
+      console.error('Error loading resume skills:', error);
+      message.error("Erreur lors du chargement des compétences du CV.");
+    } finally {
+      setLoading(false);
     }
   };
 
   const addFormItem = () => {
-    const newId = Math.max(0, ...formItems.map(item => item.id)) + 1;
-    setFormItems([...formItems, { id: newId, resume_id: id, company: null, start_date: '', end_date: null, work_post: '' }]);
+    const newId = Math.max(0, ...resumeSkills.map(item => item.id || 0)) + 1;
+    setResumeSkills([...resumeSkills, { id: newId, resume_id: Number(resumeId), skill_id: null }]);
   };
 
-  const removeFormItem = (id) => {
-    if (formItems.length > 1) {
-      setFormItems(formItems.filter(item => item.id !== id));
+  const removeSkill = (skillId) => {
+    if (resumeSkills.length > 1) {
+      setResumeSkills(resumeSkills.filter(item => item.id !== skillId));
     }
   };
 
-  const updateFormItem = (id, field, value) => {
-    setFormItems(formItems.map(item =>
-      item.id === id ? { ...item, [field]: value } : item
+  const updateSkill = (skillId, field, value) => {
+    setResumeSkills(resumeSkills.map(item =>
+      item.id === skillId ? { ...item, [field]: value } : item
     ));
   };
 
-
-
-  useEffect(() => {
-    getExperiences();
-
-  }, []);
-
   const handleSubmit = async () => {
-    console.log(formItems);
+    const hasValidSkills = resumeSkills.some(skill => skill.skill_id !== null);
     
-    const formattedExperience = formItems.map(experience => ({
-      resume_id: parseInt(experience.resume_id),
-      company: experience.company || null,
-      work_post: experience.work_post,
-      start_date: experience.end_date ? dayjs(experience.end_date).format('YYYY-MM-DD') : null,
-      end_date: experience.end_date ? dayjs(experience.end_date).format('YYYY-MM-DD') : null,
+    if (!hasValidSkills) {
+      message.warning("Veuillez sélectionner au moins une compétence.");
+      return;
+    }
 
-    }));
+    const formatted = resumeSkills
+      .filter(skill => skill.skill_id !== null)
+      .map(skill => ({
+        resume_id: Number(skill.resume_id),
+        skill_id: Number(skill.skill_id),
+      }));
 
     try {
-      await api.post("experiences", { experiences: formattedExperience });
-      message.success("Expériences enregistrés avec succès !");
+      setLoading(true);
+      await api.post('skills/resume/store', { skills: formatted });
+      message.success("Compétences enregistrées avec succès !");
+      getResumeSkills(); 
     } catch (error) {
-      console.error(error);
+      console.error('Error saving skills:', error);
       message.error(error.response?.data?.message || "Erreur lors de l'enregistrement.");
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (!resumeId) {
+    return <div>ID de CV manquant</div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-4">
       <div className="space-y-6">
-        {formItems.map((item) => (
-          <Card
-            key={item.id}
-            style={{ marginBottom: '12px' }}
-            className="relative border border-gray-100 shadow-sm hover:shadow-md transition-shadow mb-2"
-          >
-            {formItems.length > 1 && (
-              <Button
-                type="text"
-                danger
-                icon={<DeleteOutlined />}
-                onClick={() => removeFormItem(item.id)}
-                className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
-              />
-            )}
+        <Form.Item label="Types de compétences">
+          <Select
+            placeholder="Sélectionnez un type"
+            value={skillType?.value}
+            onChange={(value) => {
+              const selectedType = skillTypes.find(item => item.value === value);
+              setSkillType(selectedType);
+            }}
+            className="w-full"
+            options={skillTypes}
+            showSearch
+            loading={loading}
+            allowClear
+            filterOption={(input, option) =>
+              option?.label?.toLowerCase().includes(input.toLowerCase())
+            }
+          />
+        </Form.Item>
 
-            <Row gutter={16}>
-              {/* Expérience Field */}
-             <Col xs={24} md={8}>
-                <Form.Item
-                    label="Langue"
-                    required
-                    tooltip="Ce champ est requis"
+        <Row gutter={[16, 16]}>
+          {resumeSkills.map((item) => (
+            <Col key={item.id} xs={24} md={8}>
+              <Card className="relative border border-gray-100 shadow-sm hover:shadow-md mb-2">
+                <Form.Item 
+                  label="Compétence" 
+                  required
                 >
+                  <div className="flex gap-2 items-center">
                     <Select
-                    placeholder="Sélectionnez un Langue"
-                    value={item.language_id || undefined}
-                    onChange={(value) => updateFormItem(item.id, 'language_id', value)}
-                    className="w-full"
-                    options={languages}
-                    showSearch
-                    filterOption={(input, option) =>
-                        option.label.toLowerCase().includes(input.toLowerCase())
-                    }
+                      placeholder="Sélectionnez"
+                      value={item.skill_id !== null && item.skill_id !== undefined ? item.skill_id : undefined}
+                      onChange={(value) => updateSkill(item.id, 'skill_id', value)}
+                      className="w-full"
+                      options={skillType ? filteredSkills : skills}
+                      showSearch
+                      loading={loading}
+                      allowClear
+                      filterOption={(input, option) =>
+                        option?.label?.toLowerCase().includes(input.toLowerCase())
+                      }
                     />
+                    {resumeSkills.length > 1 && (
+                      <Button
+                        type="text"
+                        danger
+                        icon={<DeleteOutlined />}
+                        onClick={() => removeSkill(item.id)}
+                        disabled={loading}
+                      />
+                    )}
+                  </div>
                 </Form.Item>
-                </Col>
+              </Card>
+            </Col>
+          ))}
+        </Row>
 
-              {/* Filière Field */}
-               <Col xs={24} md={8}>
-                <Form.Item
-                    label="Niveau"
-                    required
-                    tooltip="Ce champ est requis"
-                >
-                    <Select
-                    placeholder="Sélectionnez un Niveau"
-                    value={item.level || undefined}
-                    onChange={(value) => updateFormItem(item.id, 'level', value)}
-                    className="w-full"
-                    options={languages}
-                    showSearch
-                    filterOption={(input, option) =>
-                        option.label.toLowerCase().includes(input.toLowerCase())
-                    }
-                    />
-                </Form.Item>
-                </Col>
-
-            </Row>
-          </Card>
-        ))}
-
-        {/* Add Button */}
         <div className="flex justify-center mt-6">
           <Button
             type="dashed"
             icon={<PlusOutlined />}
             onClick={addFormItem}
-            className="flex items-center border-dashed text-gray-600 hover:text-blue-500 overflow-hidden"
+            disabled={loading}
+            className='overflow-hidden'
           >
-            Ajouter un expérience
+            Ajouter une compétence
           </Button>
         </div>
 
-        {/* Submit Button */}
         <div className="flex justify-end mt-8">
           <Button
             type="primary"
             icon={<SaveOutlined />}
             onClick={handleSubmit}
-            className="flex items-center bg-blue-600 hover:bg-blue-700"
             size="large"
+            className='overflow-hidden'
+            loading={loading}
           >
             Enregistrer
           </Button>

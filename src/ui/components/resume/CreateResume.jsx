@@ -4,6 +4,11 @@ import ResumeInfoForm from './ResumeInfoForm';
 import { ArrowLeftCircle, ArrowRightCircle, CheckCircle } from 'lucide-react';
 import ResumeDiplome from './ResumeDiplome';
 import ResumeExperience from './ResumeExperience';
+import ResumeSkill from './ResumeSkill';
+import ResumeLanguage from './ResumeLanguage';
+
+
+
 const steps = [
   {
     title: 'Person',
@@ -19,9 +24,16 @@ const steps = [
   },
    {
     title: 'Compétences',
-    content: 'Last-content',
+    content: <ResumeSkill />,
+  },
+
+   {
+    title: 'Langue',
+    content: <ResumeLanguage />,
   },
 ];
+
+
 const CreateResume = () => {
   const { token } = theme.useToken();
   const [current, setCurrent] = useState(0);
@@ -34,7 +46,6 @@ const CreateResume = () => {
   const items = steps.map(item => ({ key: item.title, title: item.title }));
   const contentStyle = {
     lineHeight: '260px',
-    // textAlign: 'center',
     color: token.colorTextTertiary,
     backgroundColor: token.colorFillAlter,
     borderRadius: token.borderRadiusLG,
@@ -59,7 +70,6 @@ const CreateResume = () => {
                   margin: '0 8px 0 0',
                   minWidth: 100
                 }}
-                 className='flx items-center'
                 onClick={() => prev()}
               >
                 <ArrowLeftCircle size={20} />
@@ -83,7 +93,7 @@ const CreateResume = () => {
                 onClick={() => next()}
                 iconPosition="end"
                 style={{ minWidth: 100 }}
-                className='flx items-center'
+                className=''
               >
                 <ArrowRightCircle size={20} />
                 <span>Suivant</span>
@@ -92,7 +102,7 @@ const CreateResume = () => {
               <Button
                 type="primary"
                 onClick={() => message.success('Traitement terminé avec succès!')}
-                 className='flx items-center'
+                 className=''
                 style={{
                   minWidth: 100,
                   backgroundColor: '#52c41a',
