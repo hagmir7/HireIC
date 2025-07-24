@@ -16,6 +16,7 @@ export default function ResumeExperience() {
       const { data } = await api.get(`resumes/${id}/experiences`);
       const prepared = data.map(d => ({
         ...d,
+        start_date: d.start_date ? dayjs(d.start_date) : null, // Fixed: format start_date too
         end_date: d.end_date ? dayjs(d.end_date) : null
       }));
       if (data?.length === 0) {
@@ -31,7 +32,14 @@ export default function ResumeExperience() {
 
   const addFormItem = () => {
     const newId = Math.max(0, ...formItems.map(item => item.id)) + 1;
-    setFormItems([...formItems, { id: newId, resume_id: id, company: null, start_date: '', end_date: null, work_post: '' }]);
+    setFormItems([...formItems, { 
+      id: newId, 
+      resume_id: id, 
+      company: null, 
+      start_date: null, // Fixed: changed from '' to null
+      end_date: null, 
+      work_post: '' 
+    }]);
   };
 
   const removeFormItem = (id) => {
@@ -46,11 +54,8 @@ export default function ResumeExperience() {
     ));
   };
 
-
-
   useEffect(() => {
     getExperiences();
-
   }, []);
 
   const handleSubmit = async () => {
@@ -60,9 +65,8 @@ export default function ResumeExperience() {
       resume_id: parseInt(experience.resume_id),
       company: experience.company || null,
       work_post: experience.work_post,
-      start_date: experience.end_date ? dayjs(experience.end_date).format('YYYY-MM-DD') : null,
+      start_date: experience.start_date ? dayjs(experience.start_date).format('YYYY-MM-DD') : null, // Fixed: use start_date instead of end_date
       end_date: experience.end_date ? dayjs(experience.end_date).format('YYYY-MM-DD') : null,
-
     }));
 
     try {
@@ -134,9 +138,9 @@ export default function ResumeExperience() {
                   <DatePicker
                     className="w-full"
                     placeholder="Sélectionnez une date début"
-                    value={item.end_start}
+                    value={item.start_date}
                     locale={locale}
-                    onChange={(date) => updateFormItem(item.id, 'end_start', date)}
+                    onChange={(date) => updateFormItem(item.id, 'start_date', date)}
                   />
                 </Form.Item>
               </Col>
