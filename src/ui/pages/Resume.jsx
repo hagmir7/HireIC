@@ -25,7 +25,11 @@ export const Resume = () => {
         try {
             const url = `/resume/create${id ? `/${id}` : ''}`
             if (window.electron && typeof window.electron.openShow === 'function') {
-                await window.electron.openShow(url)
+                await window.electron.openShow({
+                    path: url,
+                    width: 1100,
+                    height: 800
+                })
             } else {
                 navigate(`/layout/resume/create${id ? `/${id}` : ''}`)
             }

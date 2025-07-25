@@ -6,16 +6,18 @@ import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { api } from '../../utils/api';
 import { locale } from '../../utils/config';
+import { ArrowLeftCircle, ArrowRightCircle } from 'lucide-react';
 
 const { Option } = Select;
 
-export default function ResumeInfoForm() {
+export default function ResumeInfoForm({ next, prev }) {
   const [form] = Form.useForm();
   const [cities, setCities] = useState([]);
-  const { id } = useParams();
+  const [saveLoading, setSaveLoading] = useState(false);
   const navigate = useNavigate();
+  const { id } = useParams();
 
-  // Load list of cities
+
   const getCities = async () => {
     try {
       const { data } = await api.get('cities');
@@ -26,7 +28,7 @@ export default function ResumeInfoForm() {
     }
   };
 
-  // Load existing resume for edit
+
   const getResume = async () => {
     if (!id) return;
     try {
@@ -45,6 +47,7 @@ export default function ResumeInfoForm() {
   }, [id]);
 
   const handleSubmit = async (values) => {
+    setSaveLoading(true)
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       if (value && value.originFileObj) {
@@ -57,26 +60,22 @@ export default function ResumeInfoForm() {
     });
 
     const token = localStorage.getItem('authToken') || '';
+    const url = "http://localhost:8000/api/resumes";
+    const headers = { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
     try {
       if (id) {
-        const { data } = await axios.post(
-          `http://localhost:8000/api/resumes/${id}?_method=PUT`,
-          formData,
-          { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
-        );
+        await axios.post(`${url}/${id}?_method=PUT`, formData, headers);
         message.success('CV mis à jour avec succès !');
-       
+        setSaveLoading(false)
+        next();
       } else {
-        const { data } = await axios.post(
-          `http://localhost:8000/api/resumes`,
-          formData,
-          { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
-        );
+        const { data } = await axios.post(url, formData, headers);
         message.success('CV envoyé avec succès !');
-        // form.resetFields();
         navigate(`/resume/create/${data.resume.id}`)
+        next();
       }
     } catch (err) {
+      setSaveLoading(false)
       console.error(err);
       message.error(err?.response?.data?.message || 'Une erreur est survenue');
     }
@@ -173,11 +172,34 @@ export default function ResumeInfoForm() {
           </Form.Item>
         </div>
 
-        <Form.Item className="mt-6">
-          <Button type="primary" htmlType="submit" className="bg-blue-600 hover:bg-blue-700 mt-5">
-            {id ? 'Mettre à jour' : 'Soumettre'}
-          </Button>
-        </Form.Item>
+
+        <div className="mt-6 fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 px-6 py-4 shadow-lg z-[1000]" >
+          <div className="flex justify-between items-center">
+            <Button
+              style={{
+                margin: '0 8px 0 0',
+                minWidth: 100
+              }}
+              onClick={() => prev()}
+              className='flex-shrink-0'
+            >
+              <ArrowLeftCircle size={20} />
+              <span>Précédent</span>
+            </Button>
+            <Button
+              htmlType="submit"
+              type="primary"
+              loading={saveLoading}
+              iconPosition="end"
+              style={{ minWidth: 100 }}
+              className='flex-shrink-0'
+            >
+              <ArrowRightCircle size={20} />
+              <span>Suivant</span>
+            </Button>
+          </div>
+        </div>
+
       </Form>
     </div>
   );

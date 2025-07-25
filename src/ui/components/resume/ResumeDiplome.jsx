@@ -5,11 +5,13 @@ import { locale } from '../../utils/config';
 import { api } from '../../utils/api';
 import { useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
+import { ArrowLeftCircle, ArrowRightCircle } from 'lucide-react';
 
-export default function ResumeDiplome() {
+export default function ResumeDiplome( { next }) {
   const { id } = useParams();
 
   const [formItems, setFormItems] = useState([]);
+  const [saveLoading, setSaveLoading] = useState(false);
 
   const getDeplomes = async () => {
     try {
@@ -65,6 +67,7 @@ export default function ResumeDiplome() {
   }, []);
 
   const handleSubmit = async () => {
+    setSaveLoading(true)
     const formattedDiplomas = formItems.map(diploma => ({
       level_id: diploma.level_id || null,
       name: diploma.name,
@@ -75,7 +78,10 @@ export default function ResumeDiplome() {
     try {
       await api.post("diplomas", { diplomas: formattedDiplomas });
       message.success("Diplômes enregistrés avec succès !");
+      setSaveLoading(false)
+      next();
     } catch (error) {
+      setSaveLoading(false);
       console.error(error);
       message.error(error.response?.data?.message || "Erreur lors de l'enregistrement.");
     }
@@ -169,17 +175,32 @@ export default function ResumeDiplome() {
           </Button>
         </div>
 
-        {/* Submit Button */}
-        <div className="flex justify-end mt-8">
-          <Button
-            type="primary"
-            icon={<SaveOutlined />}
-            onClick={handleSubmit}
-            className="flex items-center bg-blue-600 hover:bg-blue-700"
-            size="large"
-          >
-            Enregistrer
-          </Button>
+        <div className="mt-6 fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 px-6 py-4 shadow-lg z-[1000]" >
+          <div className="flex justify-between items-center">
+            <Button
+              style={{
+                margin: '0 8px 0 0',
+                minWidth: 100
+              }}
+              onClick={() => prev()}
+              className='flex-shrink-0'
+            >
+              <ArrowLeftCircle size={20} />
+              <span>Précédent</span>
+            </Button>
+
+            <Button
+              onClick={handleSubmit}
+              type="primary"
+              loading={saveLoading}
+              iconPosition="end"
+              style={{ minWidth: 100 }}
+              className='flex-shrink-0'
+            >
+             {!saveLoading ?  <ArrowRightCircle size={20} /> : null}
+              <span>Suivant</span>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

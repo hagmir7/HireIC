@@ -3,8 +3,9 @@ import { Form, Select, Button, Row, Col, Card, message } from 'antd';
 import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { api } from '../../utils/api';
 import { useParams } from 'react-router-dom';
+import { ArrowLeftCircle, ArrowRightCircle } from 'lucide-react';
 
-export default function ResumeSkill() {
+export default function ResumeSkill({ next }) {
   const { id: resumeId } = useParams();
 
   const [skillType, setSkillType] = useState(null);
@@ -13,6 +14,7 @@ export default function ResumeSkill() {
   const [resumeSkills, setResumeSkills] = useState([]);
   const [filteredSkills, setFilteredSkills] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [saveLoading, setSaveLoading] = useState(false);
 
   useEffect(() => {
     if (resumeId) {
@@ -109,8 +111,9 @@ export default function ResumeSkill() {
   };
 
   const handleSubmit = async () => {
+    setSaveLoading(true);
     const hasValidSkills = resumeSkills.some(skill => skill.skill_id !== null);
-    
+
     if (!hasValidSkills) {
       message.warning("Veuillez sélectionner au moins une compétence.");
       return;
@@ -124,15 +127,16 @@ export default function ResumeSkill() {
       }));
 
     try {
-      setLoading(true);
       await api.post('skills/resume/store', { skills: formatted });
       message.success("Compétences enregistrées avec succès !");
-      getResumeSkills(); 
+      getResumeSkills();
+      setSaveLoading(false)
+      next();
     } catch (error) {
       console.error('Error saving skills:', error);
       message.error(error.response?.data?.message || "Erreur lors de l'enregistrement.");
     } finally {
-      setLoading(false);
+      setSaveLoading(false)
     }
   };
 
@@ -212,17 +216,31 @@ export default function ResumeSkill() {
           </Button>
         </div>
 
-        <div className="flex justify-end mt-8">
-          <Button
-            type="primary"
-            icon={<SaveOutlined />}
-            onClick={handleSubmit}
-            size="large"
-            className='overflow-hidden'
-            loading={loading}
-          >
-            Enregistrer
-          </Button>
+        <div className="mt-6 fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 px-6 py-4 shadow-lg z-[1000]" >
+          <div className="flex justify-between items-center">
+            <Button
+              style={{
+                margin: '0 8px 0 0',
+                minWidth: 100
+              }}
+              onClick={() => prev()}
+              className='flex-shrink-0'
+            >
+              <ArrowLeftCircle size={20} />
+              <span>Précédent</span>
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              type="primary"
+              iconPosition="end"
+              style={{ minWidth: 100 }}
+              loading={loading}
+              className='flex-shrink-0'
+            >
+              <ArrowRightCircle size={20} />
+              <span>Suivant</span>
+            </Button>
+          </div>
         </div>
       </div>
     </div>

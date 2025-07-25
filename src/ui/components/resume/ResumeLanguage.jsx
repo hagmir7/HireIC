@@ -3,12 +3,14 @@ import { Form, Select, Button, Row, Col, Card, message } from 'antd';
 import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { api } from '../../utils/api';
 import { useParams } from 'react-router-dom';
+import { ArrowLeftCircle, CheckCircle } from 'lucide-react';
 
-export default function ResumeLanguage() {
+export default function ResumeLanguage({ next, prev }) {
     const { id } = useParams();
 
     const [resumeLanguages, setResumeLanguages] = useState([]);
     const [languages, setLanguages] = useState([]);
+    const [saveLoading, setSaveLoading] = useState(false);
 
     // Fetch language options
     const getLanguages = async () => {
@@ -77,6 +79,7 @@ export default function ResumeLanguage() {
 
     // Submit handler
     const handleSubmit = async () => {
+        setSaveLoading(true)
         const formattedLanguages = resumeLanguages.map(lang => ({
             resume_id: parseInt(lang.resume_id),
             language_id: lang.language_id || null,
@@ -86,9 +89,11 @@ export default function ResumeLanguage() {
         try {
             await api.post("languages/resume/store", { languages: formattedLanguages });
             message.success("Langues enregistrées avec succès !");
+            setSaveLoading(false)
         } catch (error) {
             console.error(error);
             message.error(error.response?.data?.message || "Erreur lors de l'enregistrement.");
+            setSaveLoading(false)
         }
     };
 
@@ -173,18 +178,37 @@ export default function ResumeLanguage() {
                 </div>
 
                 {/* Submit Button */}
-                <div className="flex justify-end mt-8">
+
+            </Form>
+
+            <div className="mt-6 fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 px-6 py-4 shadow-lg z-[1000]" >
+                <div className="flex justify-between items-center">
                     <Button
-                        type="primary"
-                        icon={<SaveOutlined />}
-                        onClick={handleSubmit}
-                        className="flex items-center overflow-hidden"
-                        size="large"
+                        style={{
+                            margin: '0 8px 0 0',
+                            minWidth: 100
+                        }}
+                        onClick={() => prev()}
+                        className='flex-shrink-0'
                     >
-                        Enregistrer
+                        <ArrowLeftCircle size={20} />
+                        <span>Précédent</span>
+                    </Button>
+                    <Button
+                        onClick={handleSubmit}
+                        type="primary"
+                        iconPosition="end"
+                        loading={saveLoading}
+                        style={{ minWidth: 100 }}
+                        className='flex-shrink-0'
+                    >
+                        {
+                            !saveLoading ? <CheckCircle size={19} /> : null
+                        }
+                        <span>Enregistrer</span>
                     </Button>
                 </div>
-            </Form>
+            </div>
         </div>
     );
 }
