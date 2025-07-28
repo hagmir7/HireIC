@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Select, Button, Row, Col, Card, message } from 'antd';
+import { Form, Select, Button, Row, Col, Card, message, Skeleton } from 'antd';
 import { DeleteOutlined, PlusOutlined, SaveOutlined } from '@ant-design/icons';
 import { api } from '../../utils/api';
 import { useParams } from 'react-router-dom';
@@ -11,6 +11,7 @@ export default function ResumeLanguage({ next, prev }) {
     const [resumeLanguages, setResumeLanguages] = useState([]);
     const [languages, setLanguages] = useState([]);
     const [saveLoading, setSaveLoading] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     // Fetch language options
     const getLanguages = async () => {
@@ -28,6 +29,7 @@ export default function ResumeLanguage({ next, prev }) {
 
 
     const getResumeLanguages = async () => {
+        setLoading(true)
         try {
             const { data } = await api.get(`resumes/${id}/languages`);
 
@@ -46,7 +48,9 @@ export default function ResumeLanguage({ next, prev }) {
                 }));
                 setResumeLanguages(prepared);
             }
+            setLoading(false)
         } catch (error) {
+            setLoading(false)
             console.log(error);
             message.error(error.response?.data?.message || "Erreur lors du chargement des langues.");
         }
@@ -107,63 +111,90 @@ export default function ResumeLanguage({ next, prev }) {
             <Form layout="vertical">
                 {/* Cards: 2 per row */}
                 <Row gutter={[16, 16]}>
-                    {resumeLanguages.map((item) => (
-                        <Col xs={24} md={12} key={item.id}>
-                            <Card
-                                className="relative border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                {resumeLanguages.length > 1 && (
-                                    <Button
-                                        type="text"
-                                        danger
-                                        icon={<DeleteOutlined />}
-                                        onClick={() => removeResumeLang(item.id)}
-                                        className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
-                                    />
-                                )}
-
-                                <Row gutter={16}>
-                                    <Col span={12}>
-                                        <Form.Item label="Langue" required>
-                                            <Select
-                                                placeholder="Sélectionnez une langue"
-                                                value={item.language_id ?? undefined}
-                                                onChange={(value) => updateResumeLang(item.id, 'language_id', value)}
-                                                className="w-full"
-                                                options={languages}
-                                                showSearch
-                                                allowClear
-                                                filterOption={(input, option) =>
-                                                    option?.label?.toLowerCase().includes(input.toLowerCase())
-                                                }
-                                            />
-                                        </Form.Item>
-                                    </Col>
-
-                                    <Col span={12}>
-                                        <Form.Item label="Niveau" required>
-                                            <Select
-                                                placeholder="Sélectionnez le niveau"
-                                                value={item.level ?? undefined}
-                                                onChange={(value) => updateResumeLang(item.id, 'level', value)}
-                                                className="w-full"
-                                                options={[
-                                                    { value: 1, label: "A1" },
-                                                    { value: 2, label: "A2" },
-                                                    { value: 3, label: "B1" },
-                                                    { value: 4, label: "B2" },
-                                                    { value: 5, label: "C1" },
-                                                    { value: 6, label: "C2" },
-                                                ]}
-                                                allowClear
-                                            />
-                                        </Form.Item>
-                                    </Col>
-                                </Row>
-                            </Card>
+    {loading ? (
+        // Skeleton loading state
+        Array.from({ length: 2 }).map((_, index) => (
+            <Col xs={24} md={12} key={`skeleton-${index}`}>
+                <Card
+                    className="relative border border-gray-100 shadow-sm"
+                >
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item label="Langue" required>
+                                <Skeleton.Input active style={{ width: '100%' }} />
+                            </Form.Item>
                         </Col>
-                    ))}
-                </Row>
+
+                        <Col span={12}>
+                            <Form.Item label="Niveau" required>
+                                <Skeleton.Input active style={{ width: '100%' }} />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Card>
+            </Col>
+        ))
+    ) : (
+        // Actual content
+        resumeLanguages.map((item) => (
+            <Col xs={24} md={12} key={item.id}>
+                <Card
+                    className="relative border border-gray-100 shadow-sm hover:shadow-md transition-shadow"
+                >
+                    {resumeLanguages.length > 1 && (
+                        <Button
+                            type="text"
+                            danger
+                            icon={<DeleteOutlined />}
+                            onClick={() => removeResumeLang(item.id)}
+                            className="absolute top-2 right-2 text-gray-400 hover:text-red-500"
+                        />
+                    )}
+
+                    <Row gutter={16}>
+                        <Col span={12}>
+                            <Form.Item label="Langue" required>
+                                <Select
+                                    placeholder="Sélectionnez une langue"
+                                    value={item.language_id ?? undefined}
+                                    onChange={(value) => updateResumeLang(item.id, 'language_id', value)}
+                                    className="w-full"
+                                    options={languages}
+                                    showSearch
+                                    allowClear
+                                    filterOption={(input, option) =>
+                                        option?.label?.toLowerCase().includes(input.toLowerCase())
+                                    }
+                                />
+                                
+                            </Form.Item>
+                        </Col>
+
+                        <Col span={12}>
+                            <Form.Item label="Niveau" required>
+                                <Select
+                                    placeholder="Sélectionnez le niveau"
+                                    value={item.level ?? undefined}
+                                    onChange={(value) => updateResumeLang(item.id, 'level', value)}
+                                    className="w-full"
+                                    options={[
+                                        { value: 1, label: "A1" },
+                                        { value: 2, label: "A2" },
+                                        { value: 3, label: "B1" },
+                                        { value: 4, label: "B2" },
+                                        { value: 5, label: "C1" },
+                                        { value: 6, label: "C2" },
+                                    ]}
+                                    allowClear
+                                />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                </Card>
+            </Col>
+        ))
+    )}
+</Row>
 
                 {/* Add Button */}
                 <div className="flex justify-center mt-6">
@@ -176,9 +207,6 @@ export default function ResumeLanguage({ next, prev }) {
                         Ajouter une langue
                     </Button>
                 </div>
-
-                {/* Submit Button */}
-
             </Form>
 
             <div className="mt-6 fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 px-6 py-4 shadow-lg z-[1000]" >
@@ -199,6 +227,7 @@ export default function ResumeLanguage({ next, prev }) {
                         type="primary"
                         iconPosition="end"
                         loading={saveLoading}
+                        disabled={loading}
                         style={{ minWidth: 100 }}
                         className='flex-shrink-0'
                     >

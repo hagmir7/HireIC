@@ -15,6 +15,7 @@ export default function ResumeInfoForm({ next, prev }) {
   const [cities, setCities] = useState([]);
   const [saveLoading, setSaveLoading] = useState(false);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState();
   const { id } = useParams();
 
 
@@ -31,11 +32,14 @@ export default function ResumeInfoForm({ next, prev }) {
 
   const getResume = async () => {
     if (!id) return;
+    setLoading(true)
     try {
       const { data } = await api.get(`resumes/${id}`);
       if (data.birth_date) data.birth_date = dayjs(data.birth_date);
       form.setFieldsValue(data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.error(error);
       message.error(error?.response?.data?.message || 'Erreur chargement CV');
     }
@@ -47,7 +51,7 @@ export default function ResumeInfoForm({ next, prev }) {
   }, [id]);
 
   const handleSubmit = async (values) => {
-    setSaveLoading(true)
+    setSaveLoading(true);
     const formData = new FormData();
     Object.entries(values).forEach(([key, value]) => {
       if (value && value.originFileObj) {
@@ -191,10 +195,11 @@ export default function ResumeInfoForm({ next, prev }) {
               type="primary"
               loading={saveLoading}
               iconPosition="end"
+              disabled={loading}
               style={{ minWidth: 100 }}
               className='flex-shrink-0'
             >
-              <ArrowRightCircle size={20} />
+             {!saveLoading ?  <ArrowRightCircle size={20} /> : null}
               <span>Suivant</span>
             </Button>
           </div>
