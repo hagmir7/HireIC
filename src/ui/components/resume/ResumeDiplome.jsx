@@ -159,10 +159,9 @@ export default function ResumeDiplome({ next, prev }) {
         api.get(`resumes/${id}/diplomes`)
       ]);
 
-      // Process levels
       setLevels(levelsRes.data);
 
-      // Process diplomas
+
       if (diplomasRes.data?.length === 0) {
         setFormItems([{
           id: 1, 
@@ -198,7 +197,6 @@ export default function ResumeDiplome({ next, prev }) {
     loadInitialData();
   }, [loadInitialData]);
 
-  // Memoized form validation
   const isFormValid = useMemo(() => {
     return formItems.some(item => 
       item.level_id && 
@@ -215,7 +213,6 @@ export default function ResumeDiplome({ next, prev }) {
 
     setSaveLoading(true);
     
-    // Filter out empty diplomas and format data
     const validDiplomas = formItems.filter(item => 
       item.level_id && item.name?.trim() && item.end_date
     );
@@ -239,7 +236,7 @@ export default function ResumeDiplome({ next, prev }) {
     }
   }, [formItems, isFormValid, next]);
 
-  // Memoize skeleton items
+
   const skeletonItems = useMemo(() => (
     Array.from({ length: 2 }, (_, index) => (
       <DiplomaSkeleton key={`skeleton-${index}`} />
@@ -250,7 +247,6 @@ export default function ResumeDiplome({ next, prev }) {
     <div className="max-w-4xl mx-auto p-4">
       <div className="space-y-6">
         {loading ? (
-          // Show skeleton loading
           <div className="space-y-4">
             {skeletonItems}
             <div className="flex justify-center mt-6">
@@ -258,7 +254,6 @@ export default function ResumeDiplome({ next, prev }) {
             </div>
           </div>
         ) : (
-          // Show actual content
           <>
             {formItems.map((item) => (
               <DiplomaItem

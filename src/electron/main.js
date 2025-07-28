@@ -20,7 +20,7 @@ const createMainWindow = () => {
     });
 
 
-    mainWindow.setMenu(null)
+    // mainWindow.setMenu(null)
 
     if (isDev()) {
         mainWindow.loadURL('http://localhost:5123');

@@ -87,6 +87,7 @@ export default function ResumeInfoForm({ next, prev }) {
 
   return (
     <div className="max-w-4xl mx-auto p-4 mt-4 pb-16">
+    
       <Form
         form={form}
         layout="vertical"

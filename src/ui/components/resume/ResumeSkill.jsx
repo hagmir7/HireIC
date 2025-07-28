@@ -172,9 +172,6 @@ export default function ResumeSkill({ next, prev }) {
     setSkillType(selectedType);
   }, [skillTypes]);
 
-  if (!resumeId) {
-    return <div>ID de CV manquant</div>;
-  }
 
   return (
     <div className="max-w-4xl mx-auto p-4">

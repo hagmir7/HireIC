@@ -62,7 +62,7 @@ const CreateResume = () => {
       <Steps
         current={current}
         items={items}
-        onChange={(value) => setCurrent(value)} // <-- Enables step click
+        onChange={(value) => setCurrent(value)}
       />
       <div style={contentStyle}>{steps[current].content}</div>
     </div>
