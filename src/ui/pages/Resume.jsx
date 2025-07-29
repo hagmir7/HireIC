@@ -6,8 +6,6 @@ import { api } from '../utils/api';
 import { getResumeStatus } from '../utils/config';
 
 
-
-
 export const Resume = () => {
     const navigate = useNavigate();
     const [resumes, setResumes] = useState([]);
@@ -18,6 +16,8 @@ export const Resume = () => {
     const [languages, setLanguages] = useState([]);
     const [categories, setCategories] = useState([]);
     const [skills, setSkills] = useState([]);
+
+    const [filterDataLoaded, setFilterDataLoaded] = useState(false)
 
     const [filters, setFilters] = useState({
         status: null,
@@ -50,7 +50,6 @@ export const Resume = () => {
             message.error(error.response.data.message)
 
         }
-
 
     };
 
@@ -105,14 +104,18 @@ export const Resume = () => {
         }
     }
 
-    useEffect(() => {
-        getResumes();
-        getCategories()
-        getLevels();
-        getCities();
-        getLanguages();
-        getSkills();
-    }, []);
+ useEffect(() => {
+   getResumes()
+   if (filterModalOpen && !filterDataLoaded) {
+     Promise.all([
+       getCategories(),
+       getLevels(),
+       getCities(),
+       getLanguages(),
+       getSkills(),
+     ]).then(() => setFilterDataLoaded(true))
+   }
+ }, [filterModalOpen])
 
     const handleShow = async (id) => {
         try {
