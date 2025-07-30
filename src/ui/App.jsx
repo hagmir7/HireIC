@@ -9,12 +9,12 @@ import Users from './pages/Users'
 import Home from './pages/Home'
 import Profile from './pages/profile';
 import { Resume } from './pages/Resume'
-import { Needs } from './pages/Needs'
 import { Invetation } from './pages/Invetation'
 import Interview from './pages/Interview'
 import { Onboarding } from './pages/Onboarding'
 import CreateResume from './components/resume/CreateResume'
 import Departements from './pages/Departements'
+import Needs from './pages/Needs'
 
 
 
