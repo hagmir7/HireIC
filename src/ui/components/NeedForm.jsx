@@ -12,7 +12,6 @@ import {
   Space,
   Spin,
 } from 'antd'
-import axios from 'axios'
 import { api } from '../utils/api'
 
 const { Option } = Select
@@ -118,8 +117,9 @@ const NeedForm = () => {
         className='space-y-4'
       >
         {/* Section Service et Responsable */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-2 mb-0'>
           <Form.Item
+            className='pb-0 mb-0'
             name='service_id'
             label='Service'
             rules={[
@@ -130,6 +130,7 @@ const NeedForm = () => {
               placeholder='Sélectionnez un service'
               size='large'
               showSearch
+              className='pb-0'
               filterOption={(input, option) =>
                 option.children.toLowerCase().includes(input.toLowerCase())
               }
@@ -145,6 +146,7 @@ const NeedForm = () => {
           <Form.Item
             name='responsable_id'
             label='Responsable'
+            className='pb-0'
             rules={[
               {
                 required: true,
@@ -155,6 +157,7 @@ const NeedForm = () => {
             <Select
               placeholder='Sélectionnez un responsable'
               size='large'
+              className='pb-0'
               showSearch
               filterOption={(input, option) =>
                 option.children.toLowerCase().includes(input.toLowerCase())
@@ -170,10 +173,11 @@ const NeedForm = () => {
         </div>
 
         {/* Section Exigences */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
+        <div className='grid grid-cols-1 md:grid-cols-2 gap-2 pb-0 mb-0'>
           <Form.Item
             name='level_id'
             label='Niveau requis'
+            className='pb-0 mb-0'
             rules={[
               { required: true, message: 'Veuillez sélectionner un niveau' },
             ]}
@@ -181,6 +185,7 @@ const NeedForm = () => {
             <Select
               placeholder='Sélectionnez un niveau requis'
               size='large'
+              className='pb-0 mb-0'
               showSearch
               filterOption={(input, option) =>
                 option.children.toLowerCase().includes(input.toLowerCase())
@@ -195,32 +200,9 @@ const NeedForm = () => {
           </Form.Item>
 
           <Form.Item
-            name='experience_min'
-            label='Expérience minimale (années)'
-            rules={[
-              {
-                required: true,
-                message: 'Veuillez saisir une expérience minimale',
-              },
-              {
-                type: 'number',
-                min: 0,
-                message: "L'expérience ne peut pas être négative",
-              },
-            ]}
-          >
-            <InputNumber
-              className='w-full'
-              min={0}
-              max={50}
-              size='large'
-              placeholder='0'
-            />
-          </Form.Item>
-
-          <Form.Item
             name='gender'
             label='Sexe préféré'
+            className='pb-0 mb-0'
             rules={[
               {
                 required: true,
@@ -231,68 +213,11 @@ const NeedForm = () => {
             <Select
               placeholder='Sélectionnez une préférence de sexe'
               size='large'
+              className='pb-0 mb-0'
             >
               <Option value='1'>Homme</Option>
               <Option value='2'>Femme</Option>
             </Select>
-          </Form.Item>
-
-          <Form.Item
-            name='status'
-            label='Statut actif'
-            valuePropName='checked'
-            extra='Activer/Désactiver ce besoin'
-          >
-            <Switch size='default' />
-          </Form.Item>
-        </div>
-
-        {/* Section Âge */}
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
-          <Form.Item
-            name='min_age'
-            label='Âge minimum'
-            rules={[
-              { required: true, message: 'Veuillez entrer l’âge minimum' },
-              {
-                type: 'number',
-                min: 16,
-                max: 100,
-                message: 'L’âge doit être compris entre 16 et 100 ans',
-              },
-              { validator: validateAgeRange },
-            ]}
-          >
-            <InputNumber
-              className='w-full'
-              min={16}
-              max={100}
-              size='large'
-              placeholder='18'
-            />
-          </Form.Item>
-
-          <Form.Item
-            name='max_age'
-            label='Âge maximum'
-            rules={[
-              { required: true, message: 'Veuillez entrer l’âge maximum' },
-              {
-                type: 'number',
-                min: 16,
-                max: 100,
-                message: 'L’âge doit être compris entre 16 et 100 ans',
-              },
-              { validator: validateAgeRange },
-            ]}
-          >
-            <InputNumber
-              className='w-full'
-              min={16}
-              max={100}
-              size='large'
-              placeholder='65'
-            />
           </Form.Item>
         </div>
 
@@ -301,11 +226,13 @@ const NeedForm = () => {
           name='skills'
           label='Compétences requises'
           extra='Sélectionnez plusieurs compétences si nécessaire'
+          className='pb-0 mb-0'
         >
           <Select
             mode='multiple'
             placeholder='Sélectionnez les compétences requises'
             size='large'
+            className='pb-0 mb-0'
             showSearch
             filterOption={(input, option) =>
               option.children.toLowerCase().includes(input.toLowerCase())
@@ -323,6 +250,7 @@ const NeedForm = () => {
         <Form.Item
           name='description'
           label='Description du poste'
+          className='pb-0 mb-0'
           rules={[
             {
               max: 1000,
@@ -332,11 +260,90 @@ const NeedForm = () => {
         >
           <TextArea
             rows={4}
+            className='pb-0 mb-0'
             placeholder='Fournissez une description détaillée du poste, des responsabilités et des attentes...'
             showCount
             maxLength={1000}
           />
         </Form.Item>
+
+        {/* Section Âge */}
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-2 pb-0 mb-0'>
+          <Form.Item
+            name='experience_min'
+            label='Expérience minimale (années)'
+            className='pb-0 mb-0'
+            rules={[
+              {
+                required: true,
+                message: 'Veuillez saisir une expérience minimale',
+              },
+              {
+                type: 'number',
+                min: 0,
+                message: "L'expérience ne peut pas être négative",
+              },
+            ]}
+          >
+            <InputNumber
+              className='pb-0 mb-0'
+              style={{ width: '100%' }}
+              min={0}
+              max={50}
+              size='large'
+              placeholder='0'
+            />
+          </Form.Item>
+          <Form.Item
+            name='min_age'
+            label='Âge minimum'
+            className='pb-0 mb-0'
+            rules={[
+              { required: true, message: 'Veuillez entrer l’âge minimum' },
+              {
+                type: 'number',
+                min: 16,
+                max: 100,
+                message: 'L’âge doit être compris entre 16 et 100 ans',
+              },
+              { validator: validateAgeRange },
+            ]}
+          >
+            <InputNumber
+              className='pb-0 mb-0'
+              min={16}
+              max={100}
+              style={{ width: '100%' }}
+              size='large'
+              placeholder='18'
+            />
+          </Form.Item>
+
+          <Form.Item
+            name='max_age'
+            label='Âge maximum'
+            className='mb-0 pb-0'
+            rules={[
+              { required: true, message: 'Veuillez entrer l’âge maximum' },
+              {
+                type: 'number',
+                min: 16,
+                max: 100,
+                message: 'L’âge doit être compris entre 16 et 100 ans',
+              },
+              { validator: validateAgeRange },
+            ]}
+          >
+            <InputNumber
+              className='mb-0 pb-0'
+              style={{ width: '100%' }}
+              min={16}
+              max={100}
+              size='large'
+              placeholder='65'
+            />
+          </Form.Item>
+        </div>
 
         {/* Section Soumission */}
         <Form.Item className='mb-0 pt-4'>

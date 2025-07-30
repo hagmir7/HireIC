@@ -4,6 +4,7 @@ import { Button, Checkbox, message, Modal, Popconfirm, Select, Tag } from 'antd'
 import { ArrowRight, PlusCircle, RefreshCcw, Undo2 } from 'lucide-react' // Added missing Undo2 import
 import Skeleton from '../components/ui/Sketelon'
 import NeedForm from '../components/NeedForm'
+import { formatDate } from '../utils/config'
 
 const Needs = () => {
   const [selected, setSelected] = useState([])
@@ -43,59 +44,49 @@ const Needs = () => {
     fetchData()
   }, [])
 
-  const transfer = () => {
-    setTransferSpin(true)
-    setTimeout(() => setTransferSpin(false), 1500)
-  }
+    const NeedsStatus = {
+        0: { label: 'En attente', color: 'text-gray-600', bg: 'bg-gray-100' },
+        1: { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-100' },
+        2: { label: 'Annulé', color: 'text-red-600', bg: 'bg-red-100' },
+        3: { label: 'Exécuté', color: 'text-green-600', bg: 'bg-green-100' },
+    }
+
+
+    function renderStatus(statusCode) {
+    const status = NeedsStatus[statusCode]
+    if (!status) return null
+
+    return (
+        <span
+        className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${status.bg} ${status.color}`}
+        >
+        {status.label}
+        </span>
+    )
+    }
 
   return (
     <div className='h-full flex flex-col bg-gray-50'>
       <div className='flex-shrink-0 bg-white border-b border-gray-200 shadow-sm'>
         <div className='max-w-7xl mx-auto p-4'>
-          {/* Header */}
-          <div className='flex justify-between items-center mb-4'>
-            <div className='flex items-center space-x-3'>
-              <h1 className='text-md font-bold text-gray-900 flex gap-3 items-center'>
-                <span>Title</span>
-
-                {data?.docentete?.document && (
-                  <Tag>{data?.docentete?.document?.status.name}</Tag>
-                )}
-              </h1>
-            </div>
-            <div className='flex gap-3'>
-              <Button
-                onClick={fetchData} // Fixed: uncommented onClick
-                className='flex items-center gap-2 hover:shadow-md transition-shadow'
-              >
-                {loading ? (
-                  <RefreshCcw className='animate-spin h-4 w-4' />
-                ) : (
-                  <RefreshCcw className='h-4 w-4' />
-                )}
-                Rafraîchir
-              </Button>
-            </div>
-          </div>
-
           {/* Document Info Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4'>
             {[
               {
-                label: 'Client',
-                value: 'This is the ref',
+                label: 'En attente',
+                value: '0',
               },
               {
-                label: 'Référence',
-                value: 'Ref',
+                label: 'En cours',
+                value: '0',
               },
               {
-                label: 'Expédition',
-                value: 'Test Exp',
+                label: 'Annulé',
+                value: '0',
               },
               {
-                label: 'Type de document',
-                value: 'Doc type',
+                label: 'Exécuté',
+                value: '0',
               },
             ].map(({ label, value }, idx) => (
               <div
@@ -104,10 +95,11 @@ const Needs = () => {
               >
                 <div className='flex flex-col gap-2'>
                   <span className='text-sm text-gray-500 uppercase tracking-wider font-medium'>
+                    <span className='text-lg font-semibold text-gray-900'>
+                      {value}
+                    </span>{' '}
+                    {'  '}
                     {label}
-                  </span>
-                  <span className='text-sm font-semibold text-gray-900'>
-                    {value || <Skeleton />}
                   </span>
                 </div>
               </div>
@@ -116,7 +108,7 @@ const Needs = () => {
 
           {/* Table Header Controls */}
           <div className='flex justify-between items-center'>
-            <h2 className='text-md font-semibold text-gray-800'>Articles</h2>
+            <h2 className='text-lg font-semibold text-gray-800'>Besoins</h2>
             <div className='flex gap-3'>
               {/* Fixed: Added proper JSX syntax with curly braces */}
               {Number(data?.docentete?.document?.status_id) < 8 && (
@@ -135,11 +127,34 @@ const Needs = () => {
                 </Popconfirm>
               )}
 
-              <Select placeholder='Transférer vers' style={{ width: 200 }} />
+              {/* <Select placeholder='Transférer vers' style={{ width: 200 }} /> */}
 
+              <Button
+                onClick={fetchData} // Fixed: uncommented onClick
+                className='flex items-center gap-2 hover:shadow-md transition-shadow'
+              >
+                {loading ? (
+                  <RefreshCcw className='animate-spin h-4 w-4' />
+                ) : (
+                  <RefreshCcw className='h-4 w-4' />
+                )}
+                Rafraîchir
+              </Button>
+
+              <Select
+                style={{ width: 200 }}
+                placeholder="Filtre d'état"
+                options={[
+                  { label: 'Toute', value: null },
+                  { label: 'En attente', value: 1 },
+                  { label: 'En cours', value: 2 },
+                  { label: 'Annulé', value: 3 },
+                  { label: 'Exécuté', value: 4 },
+                ]}
+              />
               {/* Responsive */}
               <Button type='primary' onClick={() => setOpenResponsive(true)}>
-                <PlusCircle />
+                <PlusCircle className='h-4 w-4' />
                 Créer
               </Button>
               <Modal
@@ -166,13 +181,13 @@ const Needs = () => {
 
       {/* Main Content Area */}
       <div className='flex-1 overflow-hidden'>
-        <div className='max-w-7xl mx-auto p-4 h-full'>
+        <div className='mx-auto pt-4 h-full'>
           {/* Desktop Table */}
-          <div className='hidden md:block h-full'>
-            <div className='bg-white border border-gray-200 rounded-lg h-full flex flex-col overflow-hidden'>
+          <div className='h-full'>
+            <div className='bg-white border border-gray-200 h-full flex flex-col overflow-hidden'>
               <div className='flex-1 overflow-hidden'>
-                <div className='h-full overflow-auto'>
-                  <table className='w-full border-collapse'>
+                <div className='w-full overflow-x-auto'>
+                  <table className='min-w-[800px] w-full border-collapse'>
                     <thead className='sticky top-0 bg-gradient-to-b from-gray-50 to-gray-100 border-b border-gray-300 shadow-sm z-10'>
                       <tr>
                         <th className='px-2 py-1 text-left border-r border-gray-200'>
@@ -180,7 +195,7 @@ const Needs = () => {
                             onChange={handleSelectAll}
                             checked={
                               selected.length === data?.doclignes?.length &&
-                              data?.doclignes?.length > 0 // Fixed: added optional chaining
+                              data?.doclignes?.length > 0
                             }
                           />
                         </th>
@@ -194,13 +209,13 @@ const Needs = () => {
                           Deplome
                         </th>
                         <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200'>
-                          Min Experince
+                          Min Experience
                         </th>
                         <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200'>
                           Etat
                         </th>
                         <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200'>
-                          Cree le
+                          Créé le
                         </th>
                       </tr>
                     </thead>
@@ -244,11 +259,11 @@ const Needs = () => {
                             </td>
 
                             <td className='px-2 tex2-sm border-r border-gray-100'>
-                              {item.status}
+                              {renderStatus(item.status)}
                             </td>
 
                             <td className='px-2 tex2-sm border-r border-gray-100'>
-                              {item.created_at}
+                              {formatDate(item.created_at)}
                             </td>
                           </tr>
                         ))
@@ -272,7 +287,7 @@ const Needs = () => {
                                 />
                               </svg>
                               <h3 className='mt-2 text-sm font-medium text-gray-900'>
-                                Aucun article trouvé
+                                Aucun besoin trouvé
                               </h3>
                             </div>
                           </td>

@@ -9,7 +9,7 @@ import Users from './pages/Users'
 import Home from './pages/Home'
 import Profile from './pages/profile';
 import { Resume } from './pages/Resume'
-import { Invetation } from './pages/Invetation'
+import Invetation from './pages/Invetation'
 import Interview from './pages/Interview'
 import { Onboarding } from './pages/Onboarding'
 import CreateResume from './components/resume/CreateResume'
