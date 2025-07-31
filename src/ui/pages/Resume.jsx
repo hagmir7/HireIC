@@ -106,13 +106,18 @@ export const Resume = () => {
     }
 
     useEffect(() => {
+
         getResumes();
-        getCategories()
-        getLevels();
-        getCities();
-        getLanguages();
-        getSkills();
-    }, []);
+        if (filterModalOpen) {
+            getCategories()
+            getLevels();
+            getCities();
+            getLanguages();
+            getSkills();
+        }
+
+
+    }, [filterModalOpen]);
 
     const handleShow = async (id) => {
         try {
@@ -217,12 +222,12 @@ export const Resume = () => {
                                     <div className="font-medium text-gray-800">{resume.city.name}</div>
                                     <div className="text-sm text-gray-500">{resume.email}</div>
                                 </td>
-                                <td className="p-3">
-                                    <div className="inline-flex items-center gap-2 px-2 py-1 rounded bg-gray-100 text-gray-800 text-sm">
-                                        <span
-                                            className={`h-2.5 w-2.5 rounded-full ${getResumeStatus(resume.status).color}`}
-                                        ></span>
-                                        {getResumeStatus(resume.status).label}
+                               <td className="p-3">
+                                    <div className="inline-flex items-center py-1.5 px-3 rounded-full bg-white shadow-sm border border-gray-200 text-sm font-medium transition-all duration-200 hover:shadow-md hover:scale-105">
+                                        <span className={`h-2.5 rounded-full ${getResumeStatus(resume.status).color} animate-pulse shadow-sm`}></span>
+                                        <span className="text-gray-700 select-none">
+                                            {getResumeStatus(resume.status).label}
+                                        </span>
                                     </div>
                                 </td>
                                 <td className="p-3">
