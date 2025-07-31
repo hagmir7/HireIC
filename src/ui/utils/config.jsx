@@ -1,8 +1,26 @@
-export function formatDate(date) {
-  const year = date.getFullYear()
-  const month = date.getMonth() + 1 // months are 0-based
-  const day = date.getDate()
-  return `${year}/${month}/${day}`
+// export function formatDate(date) {
+//   const year = date.getFullYear()
+//   const month = date.getMonth() + 1 // months are 0-based
+//   const day = date.getDate()
+//   return `${year}/${month}/${day}`
+// }
+
+export function formatDate(isoDate) {
+  const date = new Date(isoDate)
+
+  // Options for French formatting
+  const options = {
+    weekday: undefined, // Add 'long' to show day name (e.g., mercredi)
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'Europe/Paris',
+    hour12: false,
+  }
+
+  return new Intl.DateTimeFormat('fr-FR', options).format(date)
 }
 
 

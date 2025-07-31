@@ -9,11 +9,12 @@ import Users from './pages/Users'
 import Home from './pages/Home'
 import Profile from './pages/profile';
 import { Resume } from './pages/Resume'
-import { Needs } from './pages/Needs'
-import { Invetation } from './pages/Invetation'
+import Invetation from './pages/Invetation'
 import Interview from './pages/Interview'
 import { Onboarding } from './pages/Onboarding'
 import CreateResume from './components/resume/CreateResume'
+import Departements from './pages/Departements'
+import Needs from './pages/Needs'
 
 
 
@@ -36,7 +37,7 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/user/:id' element={<Profile />} />
         <Route path='/resume/create' element={<CreateResume />} />
-         <Route path='/resume/create/:id' element={<CreateResume />} />
+        <Route path='/resume/create/:id' element={<CreateResume />} />
         <Route element={<MainLayout />}>
           <Route path='/' element={<Home />} />
           <Route path='/users' element={<Users />} />
@@ -44,6 +45,7 @@ function App() {
           <Route path='/layout/resume/create/:id' element={<CreateResume />} />
 
           <Route path='/roles' element={<Roles />} />
+          <Route path='/departements' element={<Departements />} />
           <Route path='/roles/:id' element={<ViewRole />} />
           <Route path='/resume' element={<Resume />} />
           <Route path='/needs' element={<Needs />} />
