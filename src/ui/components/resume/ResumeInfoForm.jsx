@@ -87,45 +87,84 @@ export default function ResumeInfoForm({ next, prev }) {
 
   return (
     <div className="max-w-4xl mx-auto p-4 mt-4 pb-16">
-    
+
       <Form
         form={form}
         layout="vertical"
         onFinish={handleSubmit}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          <Form.Item name="first_name" label="Prénom" rules={[{ required: true }]} style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="first_name"
+            label="Prénom"
+            rules={[{ required: true, message: "Le prénom est requis" }]}
+            style={{ marginBottom: 0 }}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="last_name" label="Nom" rules={[{ required: true }]} style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="last_name"
+            label="Nom"
+            rules={[{ required: true, message: "Le nom est requis" }]}
+            style={{ marginBottom: 0 }}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="email" label="Email" rules={[{ type: 'email' }]} style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[
+              { required: true, message: "L'adresse email est requise" },
+              { type: 'email', message: "L'adresse email est invalide" }
+            ]}
+            style={{ marginBottom: 0 }}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="phone" label="Téléphone" style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="phone"
+            label="Téléphone"
+            style={{ marginBottom: 0 }}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="gender" label="Genre" rules={[{ required: true }]} style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="gender"
+            label="Genre"
+            rules={[{ required: true, message: "Le genre est requis" }]}
+            style={{ marginBottom: 0 }}
+          >
             <Select placeholder="Sélectionner le genre">
               <Option value={1}>Homme</Option>
               <Option value={2}>Femme</Option>
             </Select>
           </Form.Item>
 
-          <Form.Item name="birth_date" label="Date de naissance" style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="birth_date"
+            label="Date de naissance"
+            style={{ marginBottom: 0 }}
+          >
             <DatePicker className="w-full" locale={locale} />
           </Form.Item>
 
-          <Form.Item name="cin" label="CIN" style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="cin"
+            label="CIN"
+            style={{ marginBottom: 0 }}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="marital_status" label="État civil" style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="marital_status"
+            label="État civil"
+            style={{ marginBottom: 0 }}
+          >
             <Select placeholder="Sélectionner">
               <Option value={1}>Célibataire</Option>
               <Option value={2}>Marié(e)</Option>
@@ -133,11 +172,20 @@ export default function ResumeInfoForm({ next, prev }) {
             </Select>
           </Form.Item>
 
-          <Form.Item name="nationality" label="Nationalité" initialValue="Marocaine" style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="nationality"
+            label="Nationalité"
+            initialValue="Marocaine"
+            style={{ marginBottom: 0 }}
+          >
             <Input />
           </Form.Item>
 
-          <Form.Item name="city_id" label="Ville" style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="city_id"
+            label="Ville"
+            style={{ marginBottom: 0 }}
+          >
             <Select
               showSearch
               placeholder="Sélectionner la ville"
@@ -148,7 +196,12 @@ export default function ResumeInfoForm({ next, prev }) {
             />
           </Form.Item>
 
-          <Form.Item name="address" label="Adresse" className="md:col-span-2" style={{ marginBottom: 0 }}>
+          <Form.Item
+            name="address"
+            label="Adresse"
+            className="md:col-span-2"
+            style={{ marginBottom: 0 }}
+          >
             <Input.TextArea rows={2} />
           </Form.Item>
 
@@ -175,6 +228,8 @@ export default function ResumeInfoForm({ next, prev }) {
               <Button icon={<UploadOutlined />} className="w-full">Choisir le fichier</Button>
             </Upload>
           </Form.Item>
+
+
         </div>
 
 
@@ -200,7 +255,7 @@ export default function ResumeInfoForm({ next, prev }) {
               style={{ minWidth: 100 }}
               className='flex-shrink-0'
             >
-             {!saveLoading ?  <ArrowRightCircle size={20} /> : null}
+              {!saveLoading ? <ArrowRightCircle size={20} /> : null}
               <span>Suivant</span>
             </Button>
           </div>

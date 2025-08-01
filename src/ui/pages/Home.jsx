@@ -1,10 +1,11 @@
 import React from 'react'
-import InvetationCalendar from '../components/InvetationCalendar'
+import InvitationCalendar from '../components/InvitationCalendar'
+
 
 export default function Home() {
   return (
     <div>
-      <InvetationCalendar />
+      <InvitationCalendar />
     </div>
   )
 }

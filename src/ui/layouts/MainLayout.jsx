@@ -57,7 +57,7 @@ const sideMenu = () => {
         {
           key: 'submenu-21',
           icon: <MessagesSquare size={19} />,
-          label: <Link to='/invetation'>Invitations</Link>,
+          label: <Link to='/invitation'>Invitations</Link>,
         },
 
         {

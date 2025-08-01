@@ -112,6 +112,16 @@ const ExperienceSkeleton = React.memo(() => (
 export default function ResumeExperience({ next, prev }) {
   const { id } = useParams();
 
+  if (!id) {
+    return (
+      <div className='max-w-4xl mx-auto p-4'>
+        <Card>
+          <p>Entrez d'abord les informations personnelles.</p>
+        </Card>
+      </div>
+    )
+  }
+
   const [formItems, setFormItems] = useState([]);
   const [saveLoading, setSaveLoading] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -134,13 +144,13 @@ export default function ResumeExperience({ next, prev }) {
   const addFormItem = useCallback(() => {
     setFormItems(prev => {
       const newId = Math.max(0, ...prev.map(item => item.id || 0)) + 1;
-      return [...prev, { 
-        id: newId, 
-        resume_id: id, 
-        company: '', 
+      return [...prev, {
+        id: newId,
+        resume_id: id,
+        company: '',
         start_date: null,
-        end_date: null, 
-        work_post: '' 
+        end_date: null,
+        work_post: ''
       }];
     });
   }, [id]);
@@ -148,24 +158,24 @@ export default function ResumeExperience({ next, prev }) {
   // Optimized data fetching
   const getExperiences = useCallback(async () => {
     if (!id) return;
-    
+
     setLoading(true);
     try {
       const { data } = await api.get(`resumes/${id}/experiences`);
-      
+
       if (data?.length === 0) {
-        setFormItems([{ 
-          id: 1, 
-          resume_id: id, 
-          company: '', 
-          start_date: null, 
-          end_date: null, 
-          work_post: '' 
+        setFormItems([{
+          id: 1,
+          resume_id: id,
+          company: '',
+          start_date: null,
+          end_date: null,
+          work_post: ''
         }]);
       } else {
         const prepared = data.map(d => ({
           ...d,
-          start_date: d.start_date ? dayjs(d.start_date) : null, 
+          start_date: d.start_date ? dayjs(d.start_date) : null,
           end_date: d.end_date ? dayjs(d.end_date) : null
         }));
         setFormItems(prepared);
@@ -174,13 +184,13 @@ export default function ResumeExperience({ next, prev }) {
       console.error('Error loading experiences:', error);
       message.error(error.response?.data?.message || "Erreur lors du chargement des expériences.");
       // Set default item on error
-      setFormItems([{ 
-        id: 1, 
-        resume_id: id, 
-        company: '', 
-        start_date: null, 
-        end_date: null, 
-        work_post: '' 
+      setFormItems([{
+        id: 1,
+        resume_id: id,
+        company: '',
+        start_date: null,
+        end_date: null,
+        work_post: ''
       }]);
     } finally {
       setLoading(false);
@@ -193,9 +203,9 @@ export default function ResumeExperience({ next, prev }) {
 
   // Memoized form validation
   const isFormValid = useMemo(() => {
-    return formItems.some(item => 
-      item.company?.trim() && 
-      item.work_post?.trim() && 
+    return formItems.some(item =>
+      item.company?.trim() &&
+      item.work_post?.trim() &&
       item.start_date
     );
   }, [formItems]);
@@ -207,9 +217,9 @@ export default function ResumeExperience({ next, prev }) {
     }
 
     setSaveLoading(true);
-    
+
     // Filter out empty experiences and format data
-    const validExperiences = formItems.filter(item => 
+    const validExperiences = formItems.filter(item =>
       item.company?.trim() && item.work_post?.trim() && item.start_date
     );
 
@@ -239,6 +249,9 @@ export default function ResumeExperience({ next, prev }) {
       <ExperienceSkeleton key={`skeleton-${index}`} />
     ))
   ), []);
+
+
+
 
   return (
     <div className="max-w-4xl mx-auto p-4">

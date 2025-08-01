@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Checkbox, message, Modal, Popconfirm, Select, Tag } from 'antd'
-import { RefreshCcw, PlusCircle, Undo2 } from 'lucide-react'
+import { RefreshCcw, PlusCircle, Undo2, Trash, Edit } from 'lucide-react'
 import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
 import InvitationForm from '../components/ui/InvitationForm'
@@ -13,6 +13,7 @@ export default function Invitation() {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState([])
   const [openResponsive, setOpenResponsive] = useState(false)
+  const [editId, setEditId] = useState(null);
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -24,6 +25,7 @@ export default function Invitation() {
 
   const fetchData = async () => {
     setLoading(true)
+    setOpenResponsive(false)
     try {
       const res = await api.get('invitations') // Adjust API route
       setData(res.data)
@@ -56,10 +58,23 @@ export default function Invitation() {
     )
   }
 
+
+
+  const deleteInvitation = async (invetation_id)=>{
+    try {
+      await api.delete(`invitations/${invetation_id}`)
+      message.success("Invitation supprimée avec succès.")
+      fetchData();
+    } catch (error) {
+      message.error(error.response.data.message);
+    }
+  }
+
+
   return (
     <div className='h-full flex flex-col bg-gray-50'>
       <div className='flex-shrink-0 bg-white border-b border-gray-200 shadow-sm'>
-        <div className='max-w-7xl mx-auto p-4'>
+        <div className='p-4'>
           {/* Table Actions */}
           <div className='flex justify-between items-center mb-4'>
             <h2 className='text-lg font-semibold text-gray-800'>Invitations</h2>
@@ -104,7 +119,7 @@ export default function Invitation() {
                 footer={null}
                 width='60%'
               >
-                <InvitationForm />
+                <InvitationForm id={editId} fetchItems={fetchData} />
               </Modal>
             </div>
           </div>
@@ -119,7 +134,7 @@ export default function Invitation() {
               <div className='flex-1 overflow-hidden'>
                 <div className='w-full overflow-x-auto'>
                   <table className='min-w-[900px] w-full border-collapse'>
-                    <thead className='sticky top-0 bg-gradient-to-b from-gray-50 to-gray-100 border-b border-gray-300 shadow-sm z-10'>
+                    <thead className='sticky top-0 bg-gradient-to-b from-gray-50 to-gray-100  shadow-sm z-10'>
                       <tr>
                         <th className='px-2 py-2 border-r border-gray-200'>
                           <Checkbox
@@ -129,44 +144,47 @@ export default function Invitation() {
                             }
                           />
                         </th>
-                        <th className='px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r'>
+                        <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600 border-r border-gray-200'>
                           Nom CV
                         </th>
-                        <th className='px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r'>
+                        <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600 border-r border-gray-200'>
                           Date d’envoi
                         </th>
-                        <th className='px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r'>
+                        <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600 border-r border-gray-200'>
                           Entretien
                         </th>
-                        <th className='px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r'>
+                        <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600 border-r border-gray-200'>
                           Accepté
                         </th>
-                        <th className='px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r'>
+                        <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600 border-r border-gray-200'>
                           Type
                         </th>
-                        <th className='px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r'>
+                        <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600 border-r border-gray-200'>
                           Statut
                         </th>
-                        <th className='px-2 py-2 text-left text-sm font-semibold text-gray-600'>
+                        <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600 border-r border-gray-200'>
                           Créé le
+                        </th>
+                         <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600'>
+                          Actions
                         </th>
                       </tr>
                     </thead>
                     <tbody className='bg-white'>
                       {loading ? (
-                        <Skeleton rows={3} columns={8} />
+                        <Skeleton rows={3} columns={9} />
                       ) : data.length > 0 ? (
                         data.map((item, index) => (
                           <tr
                             key={item.id}
-                            className={`border-b border-gray-200 hover:bg-blue-50 ${
+                            className={`border-b border-gray-200 hover:bg-blue-50 whitespace-nowrap ${
                               index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                             }`}
                           >
-                            <td className='px-2 py-2 border-r'>
+                            <td className='px-2 py-1 border-r border-gray-200 whitespace-nowrap'>
                               <Checkbox checked={selected.includes(item.id)} />
                             </td>
-                            <td className='px-2 text-sm border-r'>
+                            <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
                               <div className='font-medium text-gray-900'>
                                 {item?.resume?.full_name}
                               </div>
@@ -174,20 +192,20 @@ export default function Invitation() {
                                 {item?.resume?.email}
                               </div>
                             </td>
-                            <td className='px-2 text-sm border-r'>
+                            <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
                               {formatDate(item.date)}
                             </td>
-                            <td className='px-2 text-sm border-r'>
+                            <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
                               {formatDate(item.interview_date)}
                             </td>
-                            <td className='px-2 text-sm border-r'>
+                            <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
                               {item.accepted ? (
                                 <Tag color='green'>Oui</Tag>
                               ) : (
                                 <Tag color='red'>Non</Tag>
                               )}
                             </td>
-                            <td className='px-2 text-sm border-r'>
+                            <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
                               {item.type === 'email'
                                 ? 'Email'
                                 : item.type === 'phone'
@@ -196,11 +214,31 @@ export default function Invitation() {
                                 ? 'En personne'
                                 : item.type}
                             </td>
-                            <td className='px-2 text-sm border-r'>
+                            <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
                               {renderStatus(item.status)}
                             </td>
-                            <td className='px-2 text-sm'>
+                            <td className='px-2 py-1 text-sm'>
                               {formatDate(item.created_at)}
+                            </td>
+                             <td className='px-2 py-1 text-sm flex gap-2 pt-2 whitespace-nowrap'>
+                               <Button onClick={()=>{
+                                setEditId(item.id)
+                                setOpenResponsive(true);
+                               }} color="green" size="small" variant="solid" type="primary">
+                                  <Edit className="h-4 w-4" />
+                              </Button>
+                              <Popconfirm
+                                title="Supprimer l'invitation"
+                                description="Êtes-vous sûr de vouloir supprimer cette invitation ?"
+                                onConfirm={() => deleteInvitation(item.id)}
+                              >
+                                <Button color="red" size="small" variant="solid" type="primary">
+                                  <Trash className="h-4 w-4" />
+                                </Button>
+                              </Popconfirm>
+
+                             
+
                             </td>
                           </tr>
                         ))

@@ -16,7 +16,7 @@ import { api } from '../../utils/api';
 
 const { Option } = Select
 
-const InvitationForm = ({ id = null }) => {
+const InvitationForm = ({ id = null, fetchItems }) => {
   const [form] = Form.useForm()
   const [resumes, setResumes] = useState([])
   const [loading, setLoading] = useState(false)
@@ -68,11 +68,13 @@ const InvitationForm = ({ id = null }) => {
     try {
       if (isEdit) {
         await api.put(`invitations/${id}`, payload)
+        fetchItems()
         message.success('Invitation mise à jour avec succès')
       } else {
         await api.post('invitations', payload)
         message.success('Invitation créée avec succès')
         form.resetFields()
+        fetchItems()
       }
     } catch (error) {
       console.error(error)
@@ -81,7 +83,7 @@ const InvitationForm = ({ id = null }) => {
         const firstKey = Object.keys(errors)[0]
         message.error(errors[firstKey][0])
       } else {
-        message.error("Erreur lors de l'enregistrement")
+        message.error(error.response.data.message, "Erreur lors de l'enregistrement")
       }
     } finally {
       setLoading(false)
@@ -96,6 +98,14 @@ const InvitationForm = ({ id = null }) => {
     )
   }
 
+
+  const invitationStatus = [
+    { value: 1, label: "En attente" },
+    { value: 2, label: "Entretien planifié" },
+    { value: 3, label: "Appel manqué" },
+    { value: 4, label: "Refusé" }
+  ]
+
   return (
     <Card>
       <Form
@@ -107,15 +117,6 @@ const InvitationForm = ({ id = null }) => {
       >
         {/* Row with two inputs */}
         <div className='flex flex-col md:flex-row gap-4'>
-          <Form.Item
-            name='date'
-            label='Date d’envoi'
-            className='flex-1'
-            rules={[{ required: true, message: 'Date obligatoire' }]}
-          >
-            <DatePicker className='w-full' size='large' format='YYYY-MM-DD' />
-          </Form.Item>
-
           <Form.Item
             name='resume_id'
             label='CV concerné'
@@ -129,6 +130,17 @@ const InvitationForm = ({ id = null }) => {
               showSearch
             ></Select>
           </Form.Item>
+
+
+          <Form.Item
+            name='date'
+            label='Date d’envoi'
+            className='flex-1'
+          >
+            <DatePicker className='w-full' size='large' format='YYYY-MM-DD' />
+          </Form.Item>
+
+    
         </div>
 
         <div className='flex flex-col md:flex-row gap-4 w-full'>
@@ -140,12 +152,13 @@ const InvitationForm = ({ id = null }) => {
             name='type'
             label='Type d’invitation'
             className='w-full'
-            rules={[{ required: true, message: 'Type obligatoire' }]}
           >
-            <Select placeholder='Sélectionnez un type' size='large'>
-              <Option value='1'>Email</Option>
-              <Option value='2'>Téléphone</Option>
-              <Option value='in_person'>En personne</Option>
+            <Select
+              placeholder='Sélectionnez un type'
+              options={[{ value: 1, label: "En présentiel" },{ value: 2, label: "À distance" }]}
+              size='large'
+            >
+
             </Select>
           </Form.Item>
         </div>

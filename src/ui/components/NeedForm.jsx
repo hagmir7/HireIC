@@ -144,7 +144,7 @@ const NeedForm = () => {
           </Form.Item>
 
           <Form.Item
-            name='responsable_id'
+            name='responsible_id'
             label='Responsable'
             className='pb-0'
             rules={[

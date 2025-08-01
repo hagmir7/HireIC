@@ -9,7 +9,7 @@ import Users from './pages/Users'
 import Home from './pages/Home'
 import Profile from './pages/profile';
 import { Resume } from './pages/Resume'
-import Invetation from './pages/Invetation'
+import Invitation from './pages/Invitation'
 import Interview from './pages/Interview'
 import { Onboarding } from './pages/Onboarding'
 import CreateResume from './components/resume/CreateResume'
@@ -49,7 +49,7 @@ function App() {
           <Route path='/roles/:id' element={<ViewRole />} />
           <Route path='/resume' element={<Resume />} />
           <Route path='/needs' element={<Needs />} />
-          <Route path='/invetation' element={<Invetation />} />
+          <Route path='/invitation' element={<Invitation />} />
           <Route path='/onboarding' element={<Onboarding />} />
           <Route path='/interview' element={<Interview />} />
           <Route path='*' element={<NotFound />} />

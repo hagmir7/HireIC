@@ -127,7 +127,7 @@ export const Resume = () => {
             const isValidId = typeof id === 'string' || typeof id === 'number';
             const url = `/resume/create${isValidId ? `/${id}` : ''}`;
             if (window.electron && typeof window.electron.openShow === 'function') {
-                await window.electron.openShow({ path: url, width: 1100, height: 800 });
+                await window.electron.openShow({ path: url, width: 1000, height: 800 });
             } else {
                 navigate(`/layout${url}`);
             }
@@ -192,7 +192,7 @@ export const Resume = () => {
                   </div>
                 </th>
                 <th className='p-1 text-left'>Candidat</th>
-                <th className='p-1 text-left'>Position</th>
+                <th className='p-1 text-left'>Contact</th>
                 <th className='p-1 text-left'>Statut</th>
                 <th className='p-1 text-left'>Actions</th>
               </tr>
@@ -201,7 +201,7 @@ export const Resume = () => {
               {resumes.map((resume) => (
                 <tr
                   key={resume.id}
-                  className='border-t border-gray-300 hover:bg-gray-50 transition'
+                  className='border-b border-gray-300 hover:bg-gray-50 transition'
                 >
                   <td className='p-3 align-middle'>
                     <div className='flex items-center justify-center'>
@@ -234,7 +234,7 @@ export const Resume = () => {
                   </td>
                   <td className='p-3'>
                     <div className='font-medium text-gray-800'>
-                      {resume.city.name}
+                      {resume?.city?.name}
                     </div>
                     <div className='text-sm text-gray-500'>{resume.email}</div>
                   </td>

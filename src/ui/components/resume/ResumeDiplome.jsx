@@ -114,7 +114,18 @@ const DiplomaSkeleton = React.memo(() => (
 DiplomaSkeleton.displayName = 'DiplomaSkeleton'
 
 export default function ResumeDiplome({ next, prev }) {
-  const { id } = useParams()
+  const { id } = useParams();
+
+
+   if (!id) {
+    return (
+      <div className='max-w-4xl mx-auto p-4'>
+        <Card>
+          <p>Entrez d'abord les informations personnelles.</p>
+        </Card>
+      </div>
+    )
+  }
 
   const [formItems, setFormItems] = useState([])
   const [levels, setLevels] = useState([])
@@ -232,7 +243,7 @@ export default function ResumeDiplome({ next, prev }) {
       console.error('Error loading data:', error)
       message.error(
         error.response?.data?.message ||
-          'Erreur lors du chargement des données.'
+        'Erreur lors du chargement des données.'
       )
       // Set default item on error
       setFormItems([
@@ -310,16 +321,7 @@ export default function ResumeDiplome({ next, prev }) {
     []
   )
 
-  // Ensure we have valid props
-  if (!id) {
-    return (
-      <div className='max-w-4xl mx-auto p-4'>
-        <Card>
-          <p>ID de CV manquant. Veuillez vérifier l'URL.</p>
-        </Card>
-      </div>
-    )
-  }
+ 
 
   return (
     <div className='max-w-4xl mx-auto p-4'>
@@ -349,7 +351,7 @@ export default function ResumeDiplome({ next, prev }) {
                 type='dashed'
                 icon={<PlusOutlined />}
                 onClick={addFormItem}
-                className='flex items-center border-dashed text-gray-600 hover:text-blue-500'
+                className='flex items-center border-dashed text-gray-600 hover:text-blue-500 overflow-hidden'
               >
                 Ajouter un diplôme
               </Button>

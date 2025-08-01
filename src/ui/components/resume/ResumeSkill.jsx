@@ -42,6 +42,17 @@ const SkillItem = React.memo(({ item, skills, loading, onUpdate, onRemove, canRe
 export default function ResumeSkill({ next, prev }) {
   const { id: resumeId } = useParams();
 
+
+  if (!resumeId) {
+    return (
+      <div className='max-w-4xl mx-auto p-4'>
+        <Card>
+          <p>Entrez d'abord les informations personnelles.</p>
+        </Card>
+      </div>
+    )
+  }
+
   const [skillType, setSkillType] = useState(null);
   const [skillTypes, setSkillTypes] = useState([]);
   const [skills, setSkills] = useState([]);
@@ -94,7 +105,7 @@ export default function ResumeSkill({ next, prev }) {
 
   const loadInitialData = useCallback(async () => {
     if (!resumeId) return;
-    
+
     setLoading(true);
     try {
       const [skillTypesRes, skillsRes, resumeSkillsRes] = await Promise.all([
@@ -120,9 +131,9 @@ export default function ResumeSkill({ next, prev }) {
         resume_id: Number(resumeId),
         skill_id: item.id
       }));
-      
+
       setResumeSkills(
-        prepared.length === 0 
+        prepared.length === 0
           ? [{ id: 1, resume_id: Number(resumeId), skill_id: null }]
           : prepared
       );
@@ -141,9 +152,9 @@ export default function ResumeSkill({ next, prev }) {
 
   const handleSubmit = useCallback(async () => {
     setSaveLoading(true);
-    
+
     const validSkills = resumeSkills.filter(skill => skill.skill_id !== null);
-    
+
     if (validSkills.length === 0) {
       message.warning("Veuillez sélectionner au moins une compétence.");
       setSaveLoading(false);
@@ -171,6 +182,8 @@ export default function ResumeSkill({ next, prev }) {
     const selectedType = skillTypes.find(item => item.value === value);
     setSkillType(selectedType);
   }, [skillTypes]);
+
+
 
 
   return (

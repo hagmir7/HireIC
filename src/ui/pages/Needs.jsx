@@ -68,7 +68,7 @@ const Needs = () => {
   return (
     <div className='h-full flex flex-col bg-gray-50'>
       <div className='flex-shrink-0 bg-white border-b border-gray-200 shadow-sm'>
-        <div className='max-w-7xl mx-auto p-4'>
+        <div className='p-4'>
           {/* Document Info Cards */}
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4'>
             {[
