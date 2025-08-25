@@ -46,6 +46,7 @@ function App() {
           <Route path='/users' element={<Users />} />
           <Route path='/layout/resume/create' element={<CreateResume />} />
           <Route path='/layout/resume/create/:id' element={<CreateResume />} />
+          <Route path='/layout/template/create' element={<CreateTemplate /> } />
 
           <Route path='/roles' element={<Roles />} />
           <Route path='/departements' element={<Departements />} />

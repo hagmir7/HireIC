@@ -1,12 +1,14 @@
 import { Button, Checkbox, Select, Skeleton } from 'antd'
 import { PlusCircle, RefreshCcw } from 'lucide-react'
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom';
 
 export default function Template() {
 
     const [loading, setLoading] = useState([]);
     const [data, setData] = useState([]);
     const [selected, setSelected] = useState([]);
+    const navigate = useNavigate();
     const fetchData = () => {
 
     }
@@ -24,7 +26,7 @@ export default function Template() {
             if (window.electron && typeof window.electron.openShow === 'function') {
                 await window.electron.openShow({ path: url, width: 1000, height: 800 });
             } else {
-                navigate(`/layout${url}`);
+                navigate(`/layout/${url}`);
             }
         } catch (error) {
             console.error('Error navigating to resume:', error);
