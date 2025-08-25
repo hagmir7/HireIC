@@ -13,6 +13,7 @@ export default function CreateTemplate() {
     const [selected, setSelected] = useState([]);
     const [selectedCriteriaType, setSelectedCriteriaType] = useState(null);
     const [form] = Form.useForm();
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         getDepartments();
@@ -76,17 +77,29 @@ export default function CreateTemplate() {
         setSelected(selected.filter(item => item.value !== valueToRemove));
     };
 
+
+
     const handleSubmit = async (values) => {
+        setLoading(true);
+        
         try {
-            const response = await api.post('', {
+            const response = await api.post('templates', {
                 ...values,
                 criteria: selected
-            })
+            });
+            message.success("Template created successfully");
+      
+            return response.data;
         } catch (error) {
+            console.error(error);
+            
+            
             message.error(error?.response?.data?.message || "Error");
-
+        } finally {
+            setLoading(false);
         }
     }
+
 
     const clearAll = () => {
         setSelected([]);
@@ -121,6 +134,15 @@ export default function CreateTemplate() {
         <div className='p-4'>
             <Form onFinish={handleSubmit} form={form}>
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-2'>
+                    <Form.Item
+                        name="name"
+                        label="Modèle"
+                        rules={[{ required: true, message: "La nom de modèle est requise" }]}
+                        style={{ marginTop: 0, marginBottom: 0 }}
+                    >
+                        <Input placeholder="Entrez le nom de modèle" />
+                    </Form.Item>
+
                     <Form.Item
                         name="code"
                         label="Référence"
