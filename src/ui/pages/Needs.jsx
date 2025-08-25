@@ -255,7 +255,7 @@ const Needs = () => {
                             </td>
 
                             <td className='px-2 tex2-sm border-r border-gray-100'>
-                              {item.experience_min || 'Pas nécessaire'}
+                              {item.experience_min + " mois"  || 'Pas nécessaire'}
                             </td>
 
                             <td className='px-2 tex2-sm border-r border-gray-100'>

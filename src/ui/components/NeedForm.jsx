@@ -176,14 +176,14 @@ const NeedForm = () => {
         <div className='grid grid-cols-1 md:grid-cols-2 gap-2 pb-0 mb-0'>
           <Form.Item
             name='level_id'
-            label='Niveau requis'
+            label='Diplôme requis'
             className='pb-0 mb-0'
             rules={[
-              { required: true, message: 'Veuillez sélectionner un niveau' },
+              { required: true, message: 'Veuillez sélectionner un diplôme' },
             ]}
           >
             <Select
-              placeholder='Sélectionnez un niveau requis'
+              placeholder='Sélectionnez un diplôme requis'
               size='large'
               className='pb-0 mb-0'
               showSearch
@@ -271,7 +271,7 @@ const NeedForm = () => {
         <div className='grid grid-cols-1 md:grid-cols-3 gap-2 pb-0 mb-0'>
           <Form.Item
             name='experience_min'
-            label='Expérience minimale (années)'
+            label='Expérience minimale (mois)'
             className='pb-0 mb-0'
             rules={[
               {

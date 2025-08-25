@@ -61,8 +61,8 @@ const InvitationForm = ({ id = null, fetchItems }) => {
     setLoading(true)
     const payload = {
       ...values,
-      date: values.date?.format('YYYY-MM-DD'),
-      interview_date: values.interview_date?.format('YYYY-MM-DD'),
+      date: values.date?.format('YYYY-MM-DD HH:mm:ss'),
+      interview_date: values.interview_date?.format('YYYY-MM-DD HH:mm:ss'),
     }
 
     try {
@@ -137,7 +137,7 @@ const InvitationForm = ({ id = null, fetchItems }) => {
             label='Date d’envoi'
             className='flex-1'
           >
-            <DatePicker className='w-full' size='large' format='YYYY-MM-DD' />
+             <DatePicker className='w-full' size='large' showTime format="YYYY-MM-DD HH:mm:ss" />
           </Form.Item>
 
     
@@ -145,7 +145,7 @@ const InvitationForm = ({ id = null, fetchItems }) => {
 
         <div className='flex flex-col md:flex-row gap-4 w-full'>
           <Form.Item name='interview_date' className='w-full' label='Date d’entretien'>
-            <DatePicker className='w-full' size='large' format='YYYY-MM-DD' />
+             <DatePicker className='w-full' size='large' showTime format="YYYY-MM-DD HH:mm:ss" />
           </Form.Item>
 
           <Form.Item

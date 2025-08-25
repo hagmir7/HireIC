@@ -15,6 +15,8 @@ import { Onboarding } from './pages/Onboarding'
 import CreateResume from './components/resume/CreateResume'
 import Departements from './pages/Departements'
 import Needs from './pages/Needs'
+import Template from './pages/Template'
+import CreateTemplate from './components/template/CreateTemplate'
 
 
 
@@ -38,6 +40,7 @@ function App() {
         <Route path='/user/:id' element={<Profile />} />
         <Route path='/resume/create' element={<CreateResume />} />
         <Route path='/resume/create/:id' element={<CreateResume />} />
+        <Route path='template/create' element={<CreateTemplate /> } />
         <Route element={<MainLayout />}>
           <Route path='/' element={<Home />} />
           <Route path='/users' element={<Users />} />
@@ -50,6 +53,7 @@ function App() {
           <Route path='/resume' element={<Resume />} />
           <Route path='/needs' element={<Needs />} />
           <Route path='/invitation' element={<Invitation />} />
+          <Route path='/template' element={<Template />} />
           <Route path='/onboarding' element={<Onboarding />} />
           <Route path='/interview' element={<Interview />} />
           <Route path='*' element={<NotFound />} />

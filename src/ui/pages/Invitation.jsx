@@ -181,9 +181,17 @@ export default function Invitation() {
                               index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                             }`}
                           >
-                            <td className='px-2 py-1 border-r border-gray-200 whitespace-nowrap'>
-                              <Checkbox checked={selected.includes(item.id)} />
+                            <td className='px-2 py-1 border-r border-gray-200 whitespace-nowrap pl-3'>
+                              <Checkbox checked={selected.includes(item.id)} onChange={(e) => {
+                                if (e.target.checked) {
+                                  setSelected([...selected, item.id]);
+                                } else {
+                                  setSelected(selected.filter(id => id !== item.id));
+                                }
+                              }}
+                              />
                             </td>
+
                             <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
                               <div className='font-medium text-gray-900'>
                                 {item?.resume?.full_name}
@@ -206,13 +214,10 @@ export default function Invitation() {
                               )}
                             </td>
                             <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
-                              {item.type === 'email'
-                                ? 'Email'
-                                : item.type === 'phone'
-                                ? 'Téléphone'
-                                : item.type === 'in_person'
-                                ? 'En personne'
-                                : item.type}
+                              {item.type === 1
+                                ? 'En présentiel'
+                                : 'À distance'
+                              }
                             </td>
                             <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
                               {renderStatus(item.status)}
@@ -236,9 +241,6 @@ export default function Invitation() {
                                   <Trash className="h-4 w-4" />
                                 </Button>
                               </Popconfirm>
-
-                             
-
                             </td>
                           </tr>
                         ))
