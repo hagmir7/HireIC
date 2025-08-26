@@ -162,9 +162,7 @@ export default function Invitation() {
                         <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600 border-r border-gray-200'>
                           Statut
                         </th>
-                        <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600 border-r border-gray-200'>
-                          Créé le
-                        </th>
+                     
                          <th className='px-2 py-2 whitespace-nowrap text-left text-sm font-semibold text-gray-600'>
                           Actions
                         </th>
@@ -221,9 +219,6 @@ export default function Invitation() {
                             </td>
                             <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
                               {renderStatus(item.status)}
-                            </td>
-                            <td className='px-2 py-1 text-sm'>
-                              {formatDate(item.created_at)}
                             </td>
                              <td className='px-2 py-1 text-sm flex gap-2 pt-2 whitespace-nowrap'>
                                <Button onClick={()=>{
