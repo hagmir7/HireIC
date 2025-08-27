@@ -79,20 +79,6 @@ export default function Invitation() {
           <div className='flex justify-between items-center mb-4'>
             <h2 className='text-lg font-semibold text-gray-800'>Invitations</h2>
             <div className='flex gap-3 flex-wrap'>
-              <Popconfirm
-                title='Réinitialiser la commande'
-                description='Êtes-vous sûr de vouloir réinitialiser cette tâche ?'
-                okText='Réinitialiser'
-                cancelText='Annuler'
-              >
-                <Button
-                  danger
-                  className='flex items-center gap-2 hover:shadow-md'
-                >
-                  Réinitialiser <Undo2 size={18} />
-                </Button>
-              </Popconfirm>
-
               <Button
                 onClick={fetchData}
                 className='flex items-center gap-2 hover:shadow-md'

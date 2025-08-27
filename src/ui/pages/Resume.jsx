@@ -190,12 +190,12 @@ export const Resume = () => {
     }
   };
 
-   const items = [
+  const items = [
     { label: "Lancer l'entretien", key: "startInterview", icon: <ClipboardList size={15} /> },
-    { label: "Changer l'état", key: "changeStatus", icon: <Settings2 size={15} />},
-    { label: "Ajouter à la liste", key: "addToList", icon: <ListPlus size={15} />},
+    { label: "Changer l'état", key: "changeStatus", icon: <Settings2 size={15} /> },
+    { label: "Ajouter à la liste", key: "addToList", icon: <ListPlus size={15} /> },
     { type: "divider" },
-    { label: "Modifier", key: "edit", icon:  <Edit size={15} /> },
+    { label: "Modifier", key: "edit", icon: <Edit size={15} /> },
     { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true, },
   ];
 

@@ -18,6 +18,7 @@ import Needs from './pages/Needs'
 import Template from './pages/Template'
 import CreateTemplate from './components/template/CreateTemplate'
 import CreateInterview from './components/interview/CreateInterview'
+import Evaluation from './components/interview/Evaluation'
 
 
 
@@ -43,6 +44,7 @@ function App() {
         <Route path='/resume/create/:id' element={<CreateResume />} />
         <Route path='template/create' element={<CreateTemplate /> } />
         <Route path='template/create/:id' element={<CreateTemplate /> } />
+        <Route path='interview/evaluation' element={<Evaluation /> } />
 
         <Route path='interview/create' element={<CreateInterview /> } />
         <Route path='interview/create/:id' element={<CreateInterview /> } />

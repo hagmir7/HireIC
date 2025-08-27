@@ -83,6 +83,21 @@ const Interview = () => {
     }
   };
 
+  const handleShowEvaluation = async (id) => {
+    try {
+
+
+      const url = `interview/evaluation`;
+      if (window.electron && typeof window.electron.openShow === 'function') {
+        await window.electron.openShow({ path: url, width: 1000, height: 550 });
+      } else {
+        navigate(`/layout/${url}`);
+      }
+    } catch (error) {
+      console.error('Error navigating to resume:', error);
+    }
+  };
+
 
   return (
     <div>
@@ -182,6 +197,7 @@ const Interview = () => {
                       ) : data?.length > 0 ? (
                         data.map((item, index) => (
                           <tr
+                           onClick={handleShowEvaluation}
                             key={index}
                             className={`
                               border-b border-gray-200 
