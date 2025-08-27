@@ -1,10 +1,11 @@
 import { Button, Modal, Checkbox, Col, Form, Input, DatePicker, Row, Select, message, Space, Empty, Typography } from 'antd';
-import { Filter, PlusCircle, User } from 'lucide-react';
+import { ClipboardList, Edit, Filter, ListPlus, PlusCircle, Settings2, Trash, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
 import { getResumeStatus } from '../utils/config';
 import Skeleton from '../components/ui/Sketelon';
+import RightClickMenu from '../components/ui/RightClickMenu';
 
 
 export const Resume = () => {
@@ -157,6 +158,48 @@ export const Resume = () => {
 
     }
 
+    const handleShowInterview = async (id, resume_id) => {
+        try {
+          const isValidId = typeof id === 'string' || typeof id === 'number';
+
+          const url = `interview/create${isValidId ? `/${id}` : ''}?resume_id=${resume_id}`;
+          if (window.electron && typeof window.electron.openShow === 'function') {
+            await window.electron.openShow({ path: url, width: 1000, height: 550 });
+          } else {
+            navigate(`/layout/${url}`);
+          }
+        } catch (error) {
+          console.error('Error navigating to resume:', error);
+        }
+      };
+
+    
+  const handleMenuClick = (key, id) => {
+    message.info(`You clicked ${key} with the ID ${id}`);
+
+    switch (key) {
+      case "startInterview":
+        handleShowInterview(null, id)
+        break;
+      case "edit":
+        handleShow(id);
+        break;
+      // ... more cases
+      default:
+      // Code to execute if no case matches
+    }
+  };
+
+   const items = [
+    { label: "Lancer l'entretien", key: "startInterview", icon: <ClipboardList size={15} /> },
+    { label: "Changer l'état", key: "changeStatus", icon: <Settings2 size={15} />},
+    { label: "Ajouter à la liste", key: "addToList", icon: <ListPlus size={15} />},
+    { type: "divider" },
+    { label: "Modifier", key: "edit", icon:  <Edit size={15} /> },
+    { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true, },
+  ];
+
+
     return (
       <div className='space-y-4'>
         {/* Header */}
@@ -199,11 +242,17 @@ export const Resume = () => {
             </thead>
             <tbody>
               {resumes.map((resume) => (
+                <RightClickMenu 
+                  key={resume.id}
+                  menuItems={items.map(item => ({ ...item, id: resume.id }))} 
+                  onItemClick={handleMenuClick}
+                >
                 <tr
                   key={resume.id}
                   className='border-b border-gray-300 hover:bg-gray-50 transition'
                 >
-                  <td className='p-3 align-middle'>
+                  
+                  <td className='p-2 align-middle'>
                     <div className='flex items-center justify-center'>
                       <Checkbox
                         checked={selectedIds.includes(resume.id)}
@@ -215,7 +264,7 @@ export const Resume = () => {
                     </div>
                   </td>
                   <td
-                    className='p-3 cursor-pointer'
+                    className='p-2 cursor-pointer'
                     onClick={() => handleShow(resume.id)}
                   >
                     <div className='flex items-center gap-3'>
@@ -259,7 +308,9 @@ export const Resume = () => {
                       Voir
                     </Button>
                   </td>
+                 
                 </tr>
+                 </RightClickMenu>
               ))}
 
               {loading ? <Skeleton rows={5} columns={5} /> : ''}

@@ -1,6 +1,6 @@
 import { Form, Input, Select, DatePicker, Button, Typography, Space, message } from "antd";
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "../../utils/api";
 import { CircleCheckBig } from "lucide-react";
 import dayjs from "dayjs";
@@ -11,6 +11,8 @@ const { Title } = Typography;
 export default function CreateInterview({ onSuccess }) {
   const { id } = useParams();
   const interviewId = id || null;
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
 
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -124,38 +126,44 @@ export default function CreateInterview({ onSuccess }) {
     }
   };
 
-  const handleSearch = async (value) => {
-    if (!value) {
-      setOptions([]);
-      return;
-    }
+    const handleSearch = async (value) => {
 
-    setFetching(true);
+      if (!value && !queryParams.get('resume_id')) {
+        setOptions([]);
+        return;
+      }
+      setFetching(true);
 
-    try {
-      const response = await api.get('resumes/list', {
-        params: { q: value, per_page: 30 }
-      });
+      try {
+        const response = await api.get('resumes/list', {
+          params: { q: value, per_page: 30, resume_id: queryParams.get('resume_id') }
+        });
 
-      setOptions(
-        response.data.data.map((resume) => ({
-          label: `${resume.full_name} (${resume.phone})`,
-          value: resume.id,
-        }))
-      );
-    } catch (error) {
-      console.error('Error fetching resumes:', error);
-    }
+        setOptions(
+          response.data.data.map((resume) => ({
+            label: `${resume.full_name} (${resume.phone})`,
+            value: resume.id,
+          }))
+        );
+      } catch (error) {
+        console.error('Error fetching resumes:', error);
+      }
 
-    setFetching(false);
-  };
+      setFetching(false);
+    };
+
 
 
   useEffect(() => {
+    handleSearch()
     if (users.length > 0 && !interviewId && user?.id) {
       form.setFieldValue('responsible_id', user.id);
     }
-  }, [users, user, interviewId, form]);
+
+    if (options.length > 0 && !id) {
+      form.setFieldValue('resume_id', Number(queryParams.get('resume_id')));
+    }
+  }, [users, user, interviewId, form, ]);
 
   
 
@@ -223,10 +231,11 @@ export default function CreateInterview({ onSuccess }) {
                 },
               },
             ]}
+            initialValue={queryParams.get('resume_id') ? Number(queryParams.get('resume_id')) : undefined}
           >
             <Select
               showSearch
-              placeholder="Sélectionnez un CV (optionnel)"
+              placeholder="Sélectionnez un CV"
               allowClear
               onSearch={handleSearch}
               filterOption={false}
@@ -234,6 +243,8 @@ export default function CreateInterview({ onSuccess }) {
               options={options}
             />
           </Form.Item>
+
+ 
 
           <Form.Item name="post_id" label="Poste" style={{ marginBottom: 0 }}>
             <Select
