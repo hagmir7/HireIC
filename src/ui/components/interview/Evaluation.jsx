@@ -67,6 +67,47 @@ export default function Evaluation() {
         },
     ];
 
+    const foooterColumns = [
+        {
+            title: 'Description du Critère',
+            dataIndex: 'label',
+            key: 'label',
+            ellipsis: true,
+        },
+        {
+            title: 'Jamais',
+            key: 'jamais',
+            width: 100,
+            onCell: () => ({
+                className: 'hover-box',
+            }),
+        },
+        {
+            title: 'Base',
+            key: 'base',
+            width: 100,
+            onCell: () => ({
+                className: 'hover-box',
+            }),
+        },
+        {
+            title: 'Moyen',
+            key: 'moyen',
+            width: 100,
+            onCell: () => ({
+                className: 'hover-box',
+            }),
+        },
+        {
+            title: 'Acquis',
+            key: 'acquis',
+            width: 100,
+            onCell: () => ({
+                className: 'hover-box',
+            }),
+        },
+    ];
+
     const formatDate = (dateString) => {
         if (!dateString) return 'Non spécifiée';
         const date = new Date(dateString);
@@ -183,6 +224,30 @@ export default function Evaluation() {
                 className='shadow-sm rounded-2xl overflow-hidden'
                 scroll={{ x: 600 }}
             />
+
+
+            <table className="table-auto border-collapse border mt-3 border-gray-200 w-full text-sm text-left rounded-xl shadow-sm overflow-hidden bg-white">
+            <tbody>
+                <tr className="border-b border-gray-200">
+                <td colSpan="3" className="p-3 border border-gray-200 font-semibold text-center">
+                    <strong>Decision finale</strong>
+                </td>
+                </tr>
+                <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                <td className="p-3 border border-gray-200 font-semibold">A retenir</td>
+                <td className="p-3 border border-gray-200 font-semibold">List d'attente</td>
+                <td className="p-3 border border-gray-200 font-semibold">A elimine</td>
+                </tr>
+
+                <tr className="border-b border-gray-200 hover:bg-gray-50 transition">
+                <td className="p-3 border border-gray-200 h-10 hover-box"></td>
+                <td className="p-3 border border-gray-200 h-10 hover-box"></td>
+                <td className="p-3 border border-gray-200 h-10 hover-box"></td>
+                </tr>
+            </tbody>
+            </table>
+
+
         </div>
     )
 }
