@@ -237,7 +237,6 @@ export const Resume = () => {
                 <th className='p-1 text-left'>Candidat</th>
                 <th className='p-1 text-left'>Contact</th>
                 <th className='p-1 text-left'>Statut</th>
-                <th className='p-1 text-left'>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -288,27 +287,10 @@ export const Resume = () => {
                     <div className='text-sm text-gray-500'>{resume.email}</div>
                   </td>
                   <td className='p-3'>
-                    <div className='inline-flex items-center gap-2 px-2 py-1 rounded bg-gray-100 text-gray-800 text-sm'>
-                      <span
-                        className={`h-2.5 w-2.5 rounded-full ${
-                          getResumeStatus(resume.status).color
-                        }`}
-                      ></span>
+                    <div className=' items-center border border-gray-300 gap-2  py-1 rounded bg-gray-100 text-gray-800 text-sm text-center'>
                       {getResumeStatus(resume.status).label}
                     </div>
                   </td>
-                  <td className='p-3'>
-                    <Button
-                      type='link'
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleShow(resume.id)
-                      }}
-                    >
-                      Voir
-                    </Button>
-                  </td>
-                 
                 </tr>
                  </RightClickMenu>
               ))}

@@ -42,6 +42,7 @@ const Interview = () => {
     };
     return modes[key] || "__";
   }
+  
 
   function getDecision(key) {
     const decisions = {
@@ -65,9 +66,6 @@ const Interview = () => {
   }
 
 
-
-
-
   const handleShow = async (id) => {
     try {
       const isValidId = typeof id === 'string' || typeof id === 'number';
@@ -84,12 +82,12 @@ const Interview = () => {
   };
 
   const handleShowEvaluation = async (id) => {
+    console.log(id);
+    
     try {
-
-
-      const url = `interview/evaluation`;
+      const url = `interview/evaluation/${id}`;
       if (window.electron && typeof window.electron.openShow === 'function') {
-        await window.electron.openShow({ path: url, width: 1000, height: 550 });
+        await window.electron.openShow({ path: url, width: 1000, height: 1500 });
       } else {
         navigate(`/layout/${url}`);
       }
@@ -197,7 +195,7 @@ const Interview = () => {
                       ) : data?.length > 0 ? (
                         data.map((item, index) => (
                           <tr
-                           onClick={handleShowEvaluation}
+                           onClick={()=> handleShowEvaluation(item.id)}
                             key={index}
                             className={`
                               border-b border-gray-200 

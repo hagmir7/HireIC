@@ -44,7 +44,7 @@ function App() {
         <Route path='/resume/create/:id' element={<CreateResume />} />
         <Route path='template/create' element={<CreateTemplate /> } />
         <Route path='template/create/:id' element={<CreateTemplate /> } />
-        <Route path='interview/evaluation' element={<Evaluation /> } />
+        <Route path='interview/evaluation/:id' element={<Evaluation /> } />
 
         <Route path='interview/create' element={<CreateInterview /> } />
         <Route path='interview/create/:id' element={<CreateInterview /> } />
