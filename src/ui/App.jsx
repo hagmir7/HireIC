@@ -19,6 +19,7 @@ import Template from './pages/Template'
 import CreateTemplate from './components/template/CreateTemplate'
 import CreateInterview from './components/interview/CreateInterview'
 import Evaluation from './components/interview/Evaluation'
+import ViewNeed from './pages/ViewNeed'
 
 
 
@@ -42,19 +43,23 @@ function App() {
         <Route path='/user/:id' element={<Profile />} />
         <Route path='/resume/create' element={<CreateResume />} />
         <Route path='/resume/create/:id' element={<CreateResume />} />
-        <Route path='template/create' element={<CreateTemplate /> } />
-        <Route path='template/create/:id' element={<CreateTemplate /> } />
-        <Route path='interview/evaluation/:id' element={<Evaluation /> } />
+        <Route path='template/create' element={<CreateTemplate />} />
+        <Route path='template/create/:id' element={<CreateTemplate />} />
+        <Route path='interview/evaluation/:id' element={<Evaluation />} />
+        <Route path='needs/view/:id' element={<ViewNeed />} />
 
-        <Route path='interview/create' element={<CreateInterview /> } />
-        <Route path='interview/create/:id' element={<CreateInterview /> } />
+        <Route path='interview/create' element={<CreateInterview />} />
+        <Route path='interview/create/:id' element={<CreateInterview />} />
         <Route element={<MainLayout />}>
           <Route path='/' element={<Home />} />
           <Route path='/users' element={<Users />} />
           <Route path='/layout/resume/create' element={<CreateResume />} />
           <Route path='/layout/resume/create/:id' element={<CreateResume />} />
-          <Route path='/layout/template/create' element={<CreateTemplate /> } />
-          <Route path='layout/template/create/:id' element={<CreateTemplate /> } />
+          <Route path='/layout/template/create' element={<CreateTemplate />} />
+          <Route
+            path='layout/template/create/:id'
+            element={<CreateTemplate />}
+          />
 
           <Route path='/roles' element={<Roles />} />
           <Route path='/departements' element={<Departements />} />

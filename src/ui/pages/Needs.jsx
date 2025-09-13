@@ -5,12 +5,14 @@ import { ArrowRight, PlusCircle, RefreshCcw, Undo2 } from 'lucide-react' // Adde
 import Skeleton from '../components/ui/Sketelon'
 import NeedForm from '../components/NeedForm'
 import { formatDate } from '../utils/config'
+import { useNavigate } from 'react-router-dom'
 
 const Needs = () => {
-  const [selected, setSelected] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [transferSpin, setTransferSpin] = useState(false)
-  const [data, setData] = useState([])
+  const [selected, setSelected] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [transferSpin, setTransferSpin] = useState(false);
+  const [data, setData] = useState([]);
+  const navigate = useNavigate();
 
    const [openResponsive, setOpenResponsive] = useState(false)
   const handleSelectAll = (e) => {
@@ -64,6 +66,21 @@ const Needs = () => {
         </span>
     )
     }
+
+
+   const handleShow = async (need_id) => {
+     try {
+
+       const url = `needs/view/${need_id}`
+       if (window.electron && typeof window.electron.openShow === 'function') {
+         await window.electron.openShow({ path: url, width: 1300, height: 750 })
+       } else {
+         navigate(`/layout/${url}`)
+       }
+     } catch (error) {
+       console.error('Error navigating to resume:', error)
+     }
+   }
 
   return (
     <div className='h-full flex flex-col bg-gray-50'>
@@ -238,7 +255,10 @@ const Needs = () => {
                               <Checkbox />
                             </td>
 
-                            <td className='px-2 py-2 whitespace-nowrap border-r border-gray-100'>
+                            <td
+                              onClick={() => handleShow(item.id)}
+                              className='px-2 py-2 whitespace-nowrap border-r border-gray-100 cursor-pointer'
+                            >
                               <span className='text-sm font-semibold text-gray-900'>
                                 {item?.service?.name}
                               </span>
@@ -255,7 +275,8 @@ const Needs = () => {
                             </td>
 
                             <td className='px-2 tex2-sm border-r border-gray-100'>
-                              {item.experience_min + " mois"  || 'Pas nécessaire'}
+                              {item.experience_min + ' mois' ||
+                                'Pas nécessaire'}
                             </td>
 
                             <td className='px-2 tex2-sm border-r border-gray-100'>

@@ -175,16 +175,15 @@ const NeedForm = () => {
         {/* Section Exigences */}
         <div className='grid grid-cols-1 md:grid-cols-2 gap-2 pb-0 mb-0'>
           <Form.Item
-            name='level_id'
+            name='levels'
             label='Diplôme requis'
+            extra='Sélectionnez plusieurs compétences si nécessaire'
             className='pb-0 mb-0'
-            rules={[
-              { required: true, message: 'Veuillez sélectionner un diplôme' },
-            ]}
           >
             <Select
               placeholder='Sélectionnez un diplôme requis'
               size='large'
+              mode='multiple'
               className='pb-0 mb-0'
               showSearch
               filterOption={(input, option) =>
@@ -199,17 +198,7 @@ const NeedForm = () => {
             </Select>
           </Form.Item>
 
-          <Form.Item
-            name='gender'
-            label='Sexe préféré'
-            className='pb-0 mb-0'
-            rules={[
-              {
-                required: true,
-                message: 'Veuillez sélectionner une préférence de sexe',
-              },
-            ]}
-          >
+          <Form.Item name='gender' label='Sexe préféré' className='pb-0 mb-0'>
             <Select
               placeholder='Sélectionnez une préférence de sexe'
               size='large'
