@@ -17,7 +17,7 @@ import { api } from '../utils/api'
 const { Option } = Select
 const { TextArea } = Input
 
-const NeedForm = () => {
+const NeedForm = ({fetchData}) => {
   const [form] = Form.useForm()
   const [services, setServices] = useState([])
   const [users, setUsers] = useState([])
@@ -75,6 +75,7 @@ const NeedForm = () => {
       await api.post('needs', values)
       message.success('Besoin créé avec succès !')
       form.resetFields()
+      fetchData()
     } catch (error) {
       console.error('Erreur de soumission du formulaire :', error)
 

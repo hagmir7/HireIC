@@ -231,8 +231,7 @@ const Interview = () => {
                               <span className='mt-2 text-gray-600 text-xs'>{item?.responsible?.post?.name}</span>
                             </td>
 
-                           
-
+                          
                             <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
                               {getMode(item?.type)}
                             </td>

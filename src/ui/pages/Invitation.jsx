@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Checkbox, message, Modal, Popconfirm, Select, Tag } from 'antd'
+import { Badge, Button, Checkbox, message, Modal, Popconfirm, Select, Tag } from 'antd'
 import { RefreshCcw, PlusCircle, Undo2, Trash, Edit } from 'lucide-react'
 import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
 import InvitationForm from '../components/ui/InvitationForm'
-import { formatDate } from '../utils/config'
+import { formatDate, getInvitationStatus } from '../utils/config'
 
 const { Option } = Select
 
@@ -39,24 +39,6 @@ export default function Invitation() {
     fetchData()
   }, [])
 
-  const InvitationStatus = {
-    0: { label: 'En attente', color: 'text-gray-600', bg: 'bg-gray-100' },
-    1: { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-100' },
-    2: { label: 'Annulé', color: 'text-red-600', bg: 'bg-red-100' },
-    3: { label: 'Exécuté', color: 'text-green-600', bg: 'bg-green-100' },
-  }
-
-  const renderStatus = (statusCode) => {
-    const status = InvitationStatus[statusCode]
-    if (!status) return null
-    return (
-      <span
-        className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${status.bg} ${status.color}`}
-      >
-        {status.label}
-      </span>
-    )
-  }
 
 
 
@@ -156,7 +138,7 @@ export default function Invitation() {
                     </thead>
                     <tbody className='bg-white'>
                       {loading ? (
-                        <Skeleton rows={3} columns={9} />
+                        <Skeleton rows={3} columns={8} />
                       ) : data.length > 0 ? (
                         data.map((item, index) => (
                           <tr
@@ -203,8 +185,10 @@ export default function Invitation() {
                                 : 'À distance'
                               }
                             </td>
-                            <td className='px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap'>
-                              {renderStatus(item.status)}
+                            <td className="px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap">
+                              <Tag color={getInvitationStatus(item.status).color}>
+                                {getInvitationStatus(item.status).label}
+                              </Tag>
                             </td>
                              <td className='px-2 py-1 text-sm flex gap-2 pt-2 whitespace-nowrap'>
                                <Button onClick={()=>{

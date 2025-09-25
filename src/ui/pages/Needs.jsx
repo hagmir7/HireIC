@@ -12,6 +12,7 @@ const Needs = () => {
   const [loading, setLoading] = useState(false);
   const [transferSpin, setTransferSpin] = useState(false);
   const [data, setData] = useState([]);
+  const [statusFilter, setStatusFilter] = useState(0);
   const navigate = useNavigate();
 
    const [openResponsive, setOpenResponsive] = useState(false)
@@ -32,7 +33,7 @@ const Needs = () => {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const res = await api.get('needs')
+      const res = await api.get(`needs?status=${statusFilter}` )
       setData(res.data)
       console.log(res.data);
       
@@ -44,7 +45,7 @@ const Needs = () => {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, [statusFilter])
 
     const NeedsStatus = {
         0: { label: 'En attente', color: 'text-gray-600', bg: 'bg-gray-100' },
@@ -81,6 +82,18 @@ const Needs = () => {
        console.error('Error navigating to resume:', error)
      }
    }
+
+
+  const updateStatus = async (need_id, value) => {
+    try {
+      const response = await api.post(`needs/${need_id}/update-status`, {
+        status: value
+      })
+      message.success("Le besoin est édité avec succès")
+    } catch (error) {
+      message.error(error.response.data.message || "Erreur de modifier le besoin")
+    }
+  }
 
   return (
     <div className='h-full flex flex-col bg-gray-50'>
@@ -147,11 +160,11 @@ const Needs = () => {
               {/* <Select placeholder='Transférer vers' style={{ width: 200 }} /> */}
 
               <Button
-                onClick={fetchData} // Fixed: uncommented onClick
+                onClick={fetchData}
                 className='flex items-center gap-2 hover:shadow-md transition-shadow'
               >
                 {loading ? (
-                  <RefreshCcw className='animate-spin h-4 w-4' />
+                  <RefreshCcw className='animate-spin h-4 w-4 [animation-direction:reverse]' />
                 ) : (
                   <RefreshCcw className='h-4 w-4' />
                 )}
@@ -161,8 +174,9 @@ const Needs = () => {
               <Select
                 style={{ width: 200 }}
                 placeholder="Filtre d'état"
+                onChange={(value) => setStatusFilter(value)}
                 options={[
-                  { label: 'Toute', value: null },
+                  { label: 'Toute', value: 0 },
                   { label: 'En attente', value: 1 },
                   { label: 'En cours', value: 2 },
                   { label: 'Annulé', value: 3 },
@@ -189,7 +203,7 @@ const Needs = () => {
                   xxl: '60%',
                 }}
               >
-                <NeedForm />
+                <NeedForm fetchData={fetchData} />
               </Modal>
             </div>
           </div>
@@ -280,7 +294,31 @@ const Needs = () => {
                             </td>
 
                             <td className='px-2 tex2-sm border-r border-gray-100'>
-                              {renderStatus(item.status)}
+                              <Select
+                                style={{width: 150}}
+                                defaultValue={item.status}
+                                onChange={(value) => updateStatus(item.id, value)}
+                                options={[
+                                  {
+                                    label: "En attente",
+                                    value: 1
+                                  },
+                                  {
+                                    label: "En cours",
+                                    value: 2
+                                  },
+                                  {
+                                    label: "Annulé",
+                                    value: 3
+                                  },
+                                  {
+                                    label: "Exécuté",
+                                    value: 4
+                                  },
+                                ]}
+                              >
+
+                              </Select>
                             </td>
 
                             <td className='px-2 tex2-sm border-r border-gray-100'>
