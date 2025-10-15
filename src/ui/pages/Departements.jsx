@@ -50,7 +50,7 @@ const Departements = () => {
 
   return (
     <div className='h-full flex flex-col bg-gray-50'>
-      <div className='bg-white border-b shadow-sm p-4 flex items-center justify-between'>
+      <div className='shadow-sm p-4 flex items-center justify-between bg-gradient-to-b from-gray-50 to-gray-100'>
         <h2 className='text-lg font-semibold text-gray-800'>
           Départements & Services
         </h2>
@@ -94,9 +94,8 @@ const Departements = () => {
               data.map((item, index) => (
                 <tr
                   key={item.id}
-                  className={`border-b border-gray-200 hover:bg-blue-50 transition ${
-                    index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                  }`}
+                  className={`border-b border-gray-200 hover:bg-blue-50 transition ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
+                    }`}
                 >
                   <td className='px-2 py-2 border-r border-gray-300'>
                     <Checkbox
@@ -104,16 +103,11 @@ const Departements = () => {
                       onChange={() => handleSelect(item.id)}
                     />
                   </td>
-                  <td className='px-2 py-2 border-r border-gray-300 text-sm font-medium text-gray-800'>
+                  <td className='px-2 py-1 border-r border-gray-300 text-sm font-medium text-gray-800'>
                     {item.name || '__'}
                   </td>
-                  <td className='px-2 py-2 border-r border-gray-300 text-sm text-gray-700'>
+                  <td className='px-2 py-1 border-r border-gray-300 text-sm text-gray-700'>
                     {item.services_count}
-                  </td>
-                  <td className='px-2 py-2 text-sm'>
-                    <span className='inline-block px-2 py-1 bg-green-50 text-green-700 border border-green-200 rounded-md'>
-                      {Math.floor(item.DL_Qte || 0)}
-                    </span>
                   </td>
                 </tr>
               ))

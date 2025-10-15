@@ -323,6 +323,7 @@ const ViewNeed = () => {
               strategy={verticalListSortingStrategy}
             >
               <Table
+                className='whitespace-nowrap'
                 components={{
                   body: {
                     row: DraggableRow,

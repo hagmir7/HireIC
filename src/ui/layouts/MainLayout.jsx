@@ -26,6 +26,7 @@ import {
 import { Link, Outlet } from 'react-router-dom'
 import DropMenu from '../components/DropMenu'
 import { useAuth } from '../contexts/AuthContext'
+import { handleShow } from '../utils/config'
 const { Header, Content, Sider } = Layout
 
 const sideMenu = () => {
@@ -101,7 +102,9 @@ const sideMenu = () => {
         {
           key: 'submenu-131',
           icon: <Building2 size={19} />,
-          label: <Link to='/city'>Villes</Link>,
+          label: 'Villes',
+          onClick: ()=> handleShow('city')
+
         },
         {
           key: 'submenu-141',

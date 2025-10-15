@@ -134,3 +134,15 @@ export function getInvitationStatus(value) {
   return statuses[value] || { label: "Inconnu", color: "black" };
 }
 
+
+export async function handleShow(path, width = 1000, height = 800) {
+    try {
+        if (window.electron && typeof window.electron.openShow === 'function') {
+            await window.electron.openShow({ path, width, height });
+        } else {
+            navigate(`/layout/${path}`);
+        }
+    } catch (error) {
+        console.error('Error navigating to resume:', error);
+    }
+}

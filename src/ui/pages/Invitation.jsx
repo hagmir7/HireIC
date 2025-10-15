@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Badge, Button, Checkbox, message, Modal, Popconfirm, Select, Tag } from 'antd'
-import { RefreshCcw, PlusCircle, Undo2, Trash, Edit } from 'lucide-react'
+import { RefreshCcw, PlusCircle, Trash, Edit } from 'lucide-react'
 import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
 import InvitationForm from '../components/ui/InvitationForm'
 import { formatDate, getInvitationStatus } from '../utils/config'
-
-const { Option } = Select
 
 export default function Invitation() {
   const [selected, setSelected] = useState([])

@@ -104,7 +104,7 @@ export default function Template() {
                 <div className='mx-auto pt-4 h-full'>
                     {/* Desktop Table */}
                     <div className='h-full'>
-                        <div className='bg-white border border-gray-200 h-full flex flex-col overflow-hidden'>
+                        <div className='bg-white border-t border-gray-200 h-full flex flex-col overflow-hidden'>
                             <div className='flex-1 overflow-hidden'>
                                 <div className='w-full overflow-x-auto'>
                                     <table className='min-w-[800px] w-full border-collapse'>

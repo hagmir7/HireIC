@@ -20,6 +20,7 @@ import CreateTemplate from './components/template/CreateTemplate'
 import CreateInterview from './components/interview/CreateInterview'
 import Evaluation from './components/interview/Evaluation'
 import ViewNeed from './pages/ViewNeed'
+import City from './pages/City'
 
 
 
@@ -47,6 +48,7 @@ function App() {
         <Route path='template/create/:id' element={<CreateTemplate />} />
         <Route path='interview/evaluation/:id' element={<Evaluation />} />
         <Route path='needs/view/:id' element={<ViewNeed />} />
+        <Route path='city' element={<City />} />
 
         <Route path='interview/create' element={<CreateInterview />} />
         <Route path='interview/create/:id' element={<CreateInterview />} />
