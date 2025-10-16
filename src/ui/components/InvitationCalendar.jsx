@@ -146,14 +146,13 @@ const InvitationCalendar = () => {
   const currentDateTasks = selectedDate ? tasks[formatDate(selectedDate)] || [] : [];
 
   return (
-    <div style={{ background: '#f5f5f5', minHeight: '100vh' }}>
+    <div>
       <div style={{ 
         maxWidth: '1200px', 
         margin: '0 auto',
         background: 'white',
         borderRadius: '8px',
         padding: '24px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
       }}>
         <div style={{ 
           display: 'flex', 

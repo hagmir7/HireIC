@@ -175,7 +175,7 @@ export const Resume = () => {
 
     
   const handleMenuClick = (key, id) => {
-    message.info(`You clicked ${key} with the ID ${id}`);
+    // message.info(`You clicked ${key} with the ID ${id}`);
 
     switch (key) {
       case "startInterview":

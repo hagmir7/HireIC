@@ -5,6 +5,8 @@
 //   return `${year}/${month}/${day}`
 // }
 
+import { useNavigate } from "react-router-dom";
+
 export function formatDate(isoDate) {
   const date = new Date(isoDate)
 
@@ -146,3 +148,21 @@ export async function handleShow(path, width = 1000, height = 800) {
         console.error('Error navigating to resume:', error);
     }
 }
+
+
+
+export async function downloadFiles(url) {
+  try {
+    await window.electron.ipcRenderer.invoke('download-file', url);
+  } catch (error) {
+    console.error(error);
+    message.error('Erreur lors du téléchargement');
+  }
+};
+
+
+
+export async function handlePrint(url) {
+   window.open(url, '_blank');
+}
+

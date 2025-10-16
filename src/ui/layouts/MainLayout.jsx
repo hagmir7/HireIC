@@ -27,6 +27,7 @@ import { Link, Outlet } from 'react-router-dom'
 import DropMenu from '../components/DropMenu'
 import { useAuth } from '../contexts/AuthContext'
 import { handleShow } from '../utils/config'
+import DocumentTemplates from '../components/DocumentTemplates'
 const { Header, Content, Sider } = Layout
 
 const sideMenu = () => {
@@ -246,7 +247,8 @@ const MainLayout = () => {
               />
             </Link>
           </div>
-          <div>
+          <div className='flex gap-3 items-center'>
+             <DocumentTemplates />
             <DropMenu />
           </div>
         </div>

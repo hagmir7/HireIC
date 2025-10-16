@@ -12,6 +12,7 @@ import {
   Typography,
   Badge,
   Tooltip,
+  Button,
 } from 'antd'
 import { UserOutlined, FileTextOutlined, MenuOutlined } from '@ant-design/icons'
 
@@ -29,6 +30,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { Plus, Trash } from 'lucide-react'
 
 const { Title, Text } = Typography
 
@@ -118,7 +120,7 @@ const ViewNeed = () => {
       key: 'full_name',
       render: (text, record) => (
         <div className='flex items-center'>
-          <Avatar icon={<UserOutlined />} />
+          {/* <Avatar icon={<UserOutlined />} /> */}
           <div className='pl-3'>
             <div className='font-medium'>{text}</div>
             <div className='text-gray-500 text-sm'>{record.phone}</div>
@@ -187,14 +189,41 @@ const ViewNeed = () => {
       key: 'city',
       filters: need.resumes
         ? [
-            ...new Set(need.resumes.map((r) => r.city?.name).filter(Boolean)),
-          ].map((cityName) => ({
-            text: cityName,
-            value: cityName,
-          }))
+          ...new Set(need.resumes.map((r) => r.city?.name).filter(Boolean)),
+        ].map((cityName) => ({
+          text: cityName,
+          value: cityName,
+        }))
         : [],
       onFilter: (value, record) => record.city?.name === value,
       render: (city) => city,
+    },
+
+    {
+      title: 'Actions',
+      dataIndex: ['city', 'name'],
+      key: 'actions',
+      render: (city) => <div className='flex gap-2'>
+
+        <Tooltip title='Supprimer'>
+          <Button
+            type='primary'
+            danger
+            icon={<Trash size={15} />}
+            size='small'
+          />
+        </Tooltip>
+
+        <Tooltip title='Ajouter'>
+          <Button
+            type='primary'
+            icon={<Plus size={15} />}
+            size='small'
+            style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+          />
+        </Tooltip>
+
+      </div>,
     },
   ]
 

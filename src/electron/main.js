@@ -4,6 +4,7 @@ import { isDev, getPreloadPath } from "./util.js";
 import createLoginWindow from "./windows/loginWindow.js";
 import { createShowWindow } from "./windows/showWindow.js";
 
+
 let showWindow;
 let mainWindow;
 let loginWindow;
@@ -121,4 +122,12 @@ app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
         loginWindow = createLoginWindow();
     }
+});
+
+// For Downloading files
+ipcMain.handle('download-file', async (event, url) => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (win) {
+    win.webContents.downloadURL(url);
+  }
 });
