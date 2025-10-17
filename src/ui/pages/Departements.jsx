@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { ArrowRight, Undo2 } from 'lucide-react'
-import { Checkbox, message } from 'antd'
+import { ArrowRight, PlusCircle, Undo2 } from 'lucide-react'
+import { Button, Checkbox, message } from 'antd'
 import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
 
@@ -49,19 +49,15 @@ const Departements = () => {
   const isAllSelected = selected.length > 0 && selected.length === data.length
 
   return (
-    <div className='h-full flex flex-col bg-gray-50'>
-      <div className='shadow-sm p-4 flex items-center justify-between bg-gradient-to-b from-gray-50 to-gray-100'>
+    <div className='h-full flex flex-col'>
+      <div className='shadow-sm p-4 flex items-center justify-between from-gray-50 to-gray-100 border-b'>
         <h2 className='text-lg font-semibold text-gray-800'>
           Départements & Services
         </h2>
         <div className='flex gap-3'>
-          <button
-            onClick={transfer}
-            disabled={transferSpin}
-            className='px-3 py-2 rounded-md text-sm bg-blue-600 text-white border border-blue-600 hover:bg-blue-700 flex items-center gap-2'
-          >
-            Transfer <ArrowRight size={18} />
-          </button>
+          <Button type='primary'>
+            Create <PlusCircle size={18} />
+          </Button>
         </div>
       </div>
 

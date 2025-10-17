@@ -8,11 +8,12 @@
 import { useNavigate } from "react-router-dom";
 
 export function formatDate(isoDate) {
-  const date = new Date(isoDate)
+  if (!isoDate) return ''
 
-  // Options for French formatting
+  const date = new Date(isoDate)
+  if (isNaN(date.getTime())) return ''
+
   const options = {
-    weekday: undefined, // Add 'long' to show day name (e.g., mercredi)
     year: 'numeric',
     month: 'long',
     day: 'numeric',
@@ -24,6 +25,7 @@ export function formatDate(isoDate) {
 
   return new Intl.DateTimeFormat('fr-FR', options).format(date)
 }
+
 
 
 export const locale = {
@@ -122,9 +124,7 @@ export function getResumeStatus(value) {
 }
 
 
-
-export function getInvitationStatus(value) {
-  const statuses = {
+const InvetationStatus = {
     1: { label: "En attente", color: "gray" },
     2: { label: "Planifié", color: "blue" },
     3: { label: "En cours", color: "orange" },
@@ -133,9 +133,20 @@ export function getInvitationStatus(value) {
     6: { label: "Annulé", color: "purple" }
   };
 
-  return statuses[value] || { label: "Inconnu", color: "black" };
+export function InvitationStatus() {
+  return {
+    1: { label: "En attente", color: "gray" },
+    2: { label: "Planifié", color: "blue" },
+    3: { label: "En cours", color: "orange" },
+    4: { label: "Achevé", color: "green" },
+    5: { label: "Expiré", color: "red" },
+    6: { label: "Annulé", color: "purple" },
+  };
 }
 
+export function getInvitationStatus(value) {
+  return InvitationStatus()[value] || { label: "Inconnu", color: "black" };
+}
 
 export async function handleShow(path, width = 1000, height = 800) {
     try {

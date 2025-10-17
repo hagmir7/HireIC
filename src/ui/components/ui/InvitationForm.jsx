@@ -128,6 +128,9 @@ const InvitationForm = ({ id = null, fetchItems }) => {
               placeholder='Sélectionnez un CV'
               size='large'
               showSearch
+               filterOption={(input, option) =>
+                (option?.label ?? "").toLowerCase().includes(input.toLowerCase())
+              }
             ></Select>
           </Form.Item>
 

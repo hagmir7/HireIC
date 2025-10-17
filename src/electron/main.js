@@ -87,20 +87,26 @@ ipcMain.handle('user', async (event, data) => {
 });
 
 ipcMain.on('openShow', async (event, preload) => {
+  try {
 
-    try {
-        if (!showWindow || showWindow.isDestroyed()) {
-            showWindow = createShowWindow(preload);
-        } else {
-            showWindow.show();
-        }
-
-        return { success: true };
-    } catch (error) {
-        console.error('Logout error:', error);
-        return { success: false, error: error.message };
+    if (showWindow && !showWindow.isDestroyed()) {
+      await new Promise((resolve) => {
+        showWindow.once('closed', resolve);
+        showWindow.close();
+      });
     }
+
+    showWindow = createShowWindow(preload);
+    showWindow.show();
+
+    event.reply('openShow-response', { success: true });
+  } catch (error) {
+    console.error('openShow error:', error);
+    event.reply('openShow-response', { success: false, error: error.message });
+  }
 });
+
+
 
 
 app.on('ready', () => {

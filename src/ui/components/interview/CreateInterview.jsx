@@ -2,9 +2,10 @@ import { Form, Input, Select, DatePicker, Button, Typography, Space, message } f
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "../../utils/api";
-import { CircleCheckBig } from "lucide-react";
+import { ArrowRight, CircleCheckBig, ListCheck } from "lucide-react";
 import dayjs from "dayjs";
 import { useAuth } from "../../contexts/AuthContext";
+import { handleShow } from "../../utils/config";
 
 const { Title } = Typography;
 
@@ -115,6 +116,7 @@ export default function CreateInterview({ onSuccess }) {
         response = await api.post("interviews", payload);
         message.success("Interview created successfully");
         navigate(`/interview/create/${response.data.id}`);
+
       }
 
       if (onSuccess) onSuccess(response.data);
@@ -173,8 +175,6 @@ export default function CreateInterview({ onSuccess }) {
     <div className="p-4">
       <Form onFinish={handleSubmit} form={form} layout="vertical">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-
-
           <Form.Item
             name="responsible_id"
             label="Responsable"
@@ -306,8 +306,20 @@ export default function CreateInterview({ onSuccess }) {
               loading={loading}
               icon={<CircleCheckBig size={14} />}
             >
-              {interviewId ? "Mettre à jour" : "Enregistrer"}
+              {interviewId ? "Modifier" : "Enregistrer"}
             </Button>
+
+            {
+              interviewId ? <Button
+                color="cyan" variant="solid"
+                loading={loading}
+                iconPosition="end"
+                onClick={()=> handleShow(`interview/evaluation/${interviewId}`, 1000, 550)}
+                icon={<ArrowRight size={14} />}
+              >
+                Lancer l'entretien
+              </Button> : ""
+            }
           </Space>
         </div>
       </Form>

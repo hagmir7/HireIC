@@ -82,8 +82,6 @@ const Interview = () => {
   };
 
   const handleShowEvaluation = async (id) => {
-    console.log(id);
-    
     try {
       const url = `interview/evaluation/${id}`;
       if (window.electron && typeof window.electron.openShow === 'function') {
@@ -154,13 +152,13 @@ const Interview = () => {
         <div className='mx-auto pt-4 h-full'>
           {/* Desktop Table */}
           <div className='h-full'>
-            <div className='bg-white border border-gray-200 h-full flex flex-col overflow-hidden'>
+            <div className='bg-white  h-full flex flex-col overflow-hidden'>
               <div className='flex-1 overflow-hidden'>
                 <div className='w-full overflow-x-auto'>
-                  <table className='min-w-[800px] w-full border-collapse'>
+                  <table className='min-w-[800px] w-full'>
                     <thead className='sticky top-0 bg-gradient-to-b from-gray-50 to-gray-100 border-b border-gray-300 shadow-sm z-10'>
                       <tr>
-                        <th className='px-2 py-1 text-left border-r border-gray-200'>
+                        <th className='px-2 py-1 text-left'>
                           <Checkbox
                             onChange={handleSelectAll}
                             checked={
@@ -169,22 +167,22 @@ const Interview = () => {
                             }
                           />
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200 whitespace-nowrap'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap'>
                           Candidat
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200 whitespace-nowrap'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap'>
                           Référence
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200 whitespace-nowrap'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap'>
                           Jury
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200 whitespace-nowrap'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap'>
                           Type
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200 whitespace-nowrap'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap'>
                           Décision
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200 whitespace-nowrap '>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap '>
                           Date d'entretien
                         </th>
                       </tr>

@@ -39,13 +39,13 @@ export default function Evaluation() {
             value: item.id,
             label: item.description,
             note: existing?.pivot?.note || null,
-            type: existing?.criteria_type?.name || "Sans type",
+            type: item?.criteria_type?.name || "Sans type",
           };
         }) || [];
 
       setSelected(criteria);
 
-      console.log(criteria);
+      console.log(data);
 
       setLoading(false);
       setType(data?.type);
@@ -196,7 +196,7 @@ export default function Evaluation() {
       groups[g].push(c);
     });
 
-    // produce an array where each group header is a row followed by its criteria
+
     const rows = [];
     Object.keys(groups).forEach((groupName) => {
       rows.push({
@@ -337,6 +337,7 @@ export default function Evaluation() {
         loading={loading}
         className="shadow-sm rounded-2xl overflow-hidden"
         // scroll={{ x: 800 }}
+
       />
 
       {/* Decision table */}
@@ -355,33 +356,33 @@ export default function Evaluation() {
 
           <tr className="border-b border-gray-200 transition text-center">
             <td
-              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === 1 ? "bg-green-100 border-green-500" : ""
+              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === 2 ? "bg-green-100 border-green-500" : ""
                 }`}
-              onClick={() => handleDecisionChange(1)}
+              onClick={() => handleDecisionChange(2)}
             >
               <CheckCircle
                 size={22}
-                className={`mx-auto ${decision === 1 ? "text-green-600" : "text-gray-400"}`}
+                className={`mx-auto ${decision === 2 ? "text-green-600" : "text-gray-400"}`}
               />
             </td>
 
             <td
-              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === 2 ? "bg-yellow-100 border-yellow-500" : ""}`}
-              onClick={() => handleDecisionChange(2)}
+              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === 3 ? "bg-yellow-100 border-yellow-500" : ""}`}
+              onClick={() => handleDecisionChange(3)}
             >
               <Clock
                 size={22}
-                className={`mx-auto ${decision === 2 ? "text-yellow-600" : "text-gray-400"}`}
+                className={`mx-auto ${decision === 3 ? "text-yellow-600" : "text-gray-400"}`}
               />
             </td>
 
             <td
-              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === 3 ? "bg-red-100 border-red-500" : ""}`}
-              onClick={() => handleDecisionChange(3)}
+              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === 4 ? "bg-red-100 border-red-500" : ""}`}
+              onClick={() => handleDecisionChange(4)}
             >
               <XCircle
                 size={22}
-                className={`mx-auto ${decision === 3 ? "text-red-600" : "text-gray-400"}`}
+                className={`mx-auto ${decision === 4 ? "text-red-600" : "text-gray-400"}`}
               />
             </td>
           </tr>
