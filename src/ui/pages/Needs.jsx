@@ -221,7 +221,7 @@ const Needs = () => {
                   <table className='min-w-[800px] w-full border-collapse'>
                     <thead className='sticky top-0 bg-gradient-to-b from-gray-50 to-gray-100 border-b border-gray-300 shadow-sm z-10'>
                       <tr>
-                        <th className='px-2 py-1 text-left border-r border-gray-200'>
+                        <th className='px-2 py-1 text-left'>
                           <Checkbox
                             onChange={handleSelectAll}
                             checked={
@@ -230,22 +230,22 @@ const Needs = () => {
                             }
                           />
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 whitespace-nowrap uppercase tracking-wider border-r border-gray-200'>
                           Service
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 whitespace-nowrap uppercase tracking-wider border-r border-gray-200'>
                           Responsable
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 whitespace-nowrap uppercase tracking-wider border-r border-gray-200'>
                           Deplome
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 whitespace-nowrap uppercase tracking-wider border-r border-gray-200'>
                           Min Experience
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 whitespace-nowrap uppercase tracking-wider border-r border-gray-200'>
                           Etat
                         </th>
-                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200'>
+                        <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 whitespace-nowrap uppercase tracking-wider border-r border-gray-200'>
                           Créé le
                         </th>
                       </tr>
@@ -262,6 +262,7 @@ const Needs = () => {
                               hover:bg-blue-50 
                               transition-colors 
                               duration-150 
+                              white
                               ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                             `}
                           >
@@ -278,22 +279,22 @@ const Needs = () => {
                               </span>
                             </td>
 
-                            <td className='px-2 tex2-sm border-r border-gray-100'>
+                            <td className='px-2 tex2-sm border-r whitespace-nowrap  border-gray-100'>
                               <div className='text-sm font-medium text-gray-900'>
                                 {item?.responsible?.full_name}
                               </div>
                             </td>
 
-                            <td className='px-2 tex2-sm border-r border-gray-100'>
+                            <td className='px-2 tex2-sm border-r whitespace-nowrap border-gray-100'>
                               {item?.level?.name}
                             </td>
 
-                            <td className='px-2 tex2-sm border-r border-gray-100'>
+                            <td className='px-2 tex2-sm border-r whitespace-nowrap border-gray-100'>
                               {item.experience_min + ' mois' ||
                                 'Pas nécessaire'}
                             </td>
 
-                            <td className='px-2 tex2-sm border-r border-gray-100'>
+                            <td className='px-2 tex2-sm border-r whitespace-nowrap border-gray-100'>
                               <Select
                                 style={{width: 150}}
                                 defaultValue={item.status}
@@ -321,7 +322,7 @@ const Needs = () => {
                               </Select>
                             </td>
 
-                            <td className='px-2 tex2-sm border-r border-gray-100'>
+                            <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
                               {formatDate(item.created_at)}
                             </td>
                           </tr>

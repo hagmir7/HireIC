@@ -29,7 +29,7 @@ export default function Invitation() {
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
-  const [openResponsive, setOpenResponsive] = useState(false);
+  const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState(null);
   const navigate = useNavigate();
 
@@ -45,7 +45,7 @@ export default function Invitation() {
   // ------------------ FETCH DATA ------------------
   const fetchData = async () => {
     setLoading(true);
-    setOpenResponsive(false);
+    setOpen(false);
     try {
       const res = await api.get('invitations');
       setData(res.data);
@@ -104,14 +104,14 @@ export default function Invitation() {
         break;
       case 'edit':
         setEditId(id);
-        setOpenResponsive(true);
+        setOpen(true);
         break;
       case 'delete':
         deleteInvitation(id);
         break;
       case 'NewInvetation':
         setEditId(null);
-        setOpenResponsive(true);
+        setOpen(true);
         break;
       default:
         break;
@@ -140,7 +140,7 @@ export default function Invitation() {
                 Rafraîchir
               </Button>
 
-              <Button type="primary" onClick={() => setOpenResponsive(true)}>
+              <Button type="primary" onClick={() => setOpen(true)}>
                 <PlusCircle className="h-4 w-4" />
                 Créer
               </Button>
@@ -148,8 +148,8 @@ export default function Invitation() {
               <Modal
                 title="Créer une invitation"
                 centered
-                open={openResponsive}
-                onCancel={() => setOpenResponsive(false)}
+                open={open}
+                onCancel={() => setOpen(false)}
                 footer={null}
                 width="60%"
               >
@@ -166,7 +166,7 @@ export default function Invitation() {
           <div className="h-full bg-white border border-gray-200 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-hidden">
               <div className="w-full overflow-x-auto">
-                <table className="min-w-[900px] w-full border-collapse">
+                <table className="min-w-[900px] w-full">
                   <thead className="sticky top-0 bg-gradient-to-b from-gray-50 to-gray-100 shadow-sm z-10">
                     <tr>
                       <th className="px-2 py-2 border-r border-gray-200">
@@ -190,18 +190,15 @@ export default function Invitation() {
                       <th className="px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r border-gray-200">
                         Type
                       </th>
-                      <th className="px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r border-gray-200">
-                        Statut
-                      </th>
                       <th className="px-2 py-2 text-left text-sm font-semibold text-gray-600">
-                        Actions
+                        Statut
                       </th>
                     </tr>
                   </thead>
 
                   <tbody className="bg-white">
                     {loading ? (
-                      <Skeleton rows={3} columns={8} />
+                      <Skeleton rows={3} columns={7} />
                     ) : data.length > 0 ? (
                       data.map((item, index) => (
                         <RightClickMenu
@@ -218,7 +215,7 @@ export default function Invitation() {
                               index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                             }`}
                           >
-                            <td className="px-2 py-1 border-r border-gray-200 whitespace-nowrap pl-3">
+                            <td className="px-2 py-1  border-gray-200 whitespace-nowrap pl-3">
                               <Checkbox
                                 checked={selected.includes(item.id)}
                                 onChange={(e) => {
@@ -268,7 +265,7 @@ export default function Invitation() {
                               )}
                             </td>
 
-                            <td className="px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap">
+                            <td className="px-2 py-1 text-sm whitespace-nowrap">
                               <Select
                                 size="small"
                                 value={item.status}
@@ -280,35 +277,12 @@ export default function Invitation() {
                                 }))}
                               />
                             </td>
-
-                            <td className="px-2 py-1 text-sm flex gap-2 pt-2 whitespace-nowrap">
-                              <Button
-                                onClick={() => {
-                                  setEditId(item.id);
-                                  setOpenResponsive(true);
-                                }}
-                                size="small"
-                                type="primary"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-
-                              <Popconfirm
-                                title="Supprimer l'invitation"
-                                description="Êtes-vous sûr de vouloir supprimer cette invitation ?"
-                                onConfirm={() => deleteInvitation(item.id)}
-                              >
-                                <Button size="small" danger type="primary">
-                                  <Trash className="h-4 w-4" />
-                                </Button>
-                              </Popconfirm>
-                            </td>
                           </tr>
                         </RightClickMenu>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="8" className="p-8 text-center">
+                        <td colSpan="7" className="p-8 text-center">
                           <div className="text-center">
                             <svg
                               className="mx-auto h-12 w-12 text-gray-400"

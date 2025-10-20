@@ -13,8 +13,9 @@ import {
   Badge,
   Tooltip,
   Button,
+  Popconfirm,
 } from 'antd'
-import { UserOutlined, FileTextOutlined, MenuOutlined } from '@ant-design/icons'
+import { UserOutlined, FileTextOutlined, MenuOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 
 import {
   DndContext,
@@ -98,6 +99,16 @@ const ViewNeed = () => {
     ) : (
       <Badge status='default' text='Inactif' />
     )
+  }
+
+  const deleteResume = async (need_resume_id) =>{
+    try {
+      const response = await api.delete(`needs/resume/${need_resume_id}/delete`)
+      message.success(response.data.message);
+    } catch (error) {
+      console.error(error);
+      message.error(error?.response?.data?.message || "Erreur de supprimer le cv")
+    }
   }
 
   // Colonnes du tableau
@@ -204,16 +215,21 @@ const ViewNeed = () => {
       dataIndex: ['city', 'name'],
       key: 'actions',
       render: (city) => <div className='flex gap-2'>
-
-        <Tooltip title='Supprimer'>
+        <Popconfirm
+          title="Delete the task"
+          description="Are you sure to delete this task?"
+          onConfirm={confirmDelete}
+          okText="Yes"
+          cancelText="No"
+          icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+        >
           <Button
-            type='primary'
+            type="primary"
             danger
             icon={<Trash size={15} />}
-            size='small'
+            size="small"
           />
-        </Tooltip>
-
+        </Popconfirm>
         <Tooltip title='Ajouter'>
           <Button
             type='primary'
@@ -245,7 +261,7 @@ const ViewNeed = () => {
         await api.post(`needs/${id}/resumes/order`, {
           order: newResumes.map((r, index) => ({
             resume_id: r.id,
-            position: index + 1,
+            order: index + 1,
           })),
         })
         message.success('Ordre sauvegardé')
@@ -271,7 +287,7 @@ const ViewNeed = () => {
   return (
     <div className='p-6 bg-gray-50 min-h-screen'>
       <div className='max-w-7xl mx-auto space-y-6'>
-        <Card className='shadow-sm'>
+        {/* <Card className='shadow-sm'>
           <div className='flex items-center justify-between'>
             <div>
               <Title level={4} className='mb-2 text-blue-600'>
@@ -288,15 +304,20 @@ const ViewNeed = () => {
               </div>
             </div>
           </div>
-        </Card>
+        </Card> */}
 
-        <div className='mt-3'></div>
+        {/* <div className='mt-3'></div> */}
 
         <Card
           title={
             <div className='flex items-center space-x-2'>
               <FileTextOutlined />
-              <span>Exigences du besoin</span>
+              <div>
+                <span>Besoin #{need.id}</span>
+                <div className='text-xs text-gray-500'>
+                  Créé le : {new Date(need.created_at).toLocaleDateString()}
+                </div>
+              </div>
             </div>
           }
           className='shadow-sm h-full mt-3'
@@ -332,12 +353,24 @@ const ViewNeed = () => {
             <Descriptions.Item label="Tranche d'âge">
               {need.min_age} - {need.max_age} ans
             </Descriptions.Item>
+            {need.gender ? 
             <Descriptions.Item label='Exigence de sexe'>
-              {need.gender ? getGenderText(need.gender) : 'Peu importe'}
-            </Descriptions.Item>
+              {getGenderText(need.gender)}
+            </Descriptions.Item> : null}
+            
+          {need.description ?
             <Descriptions.Item label='Description'>
-              {need.description || 'Aucune description fournie'}
+              {need.description}
             </Descriptions.Item>
+            : null}
+
+
+            <Descriptions.Item label='État'>
+              {getStatusBadge(need.status)}
+            </Descriptions.Item>
+
+            
+            
           </Descriptions>
         </Card>
 

@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {
   Form,
-  Input,
   Select,
   Button,
   DatePicker,
-  Switch,
   message,
   Card,
   Space,
@@ -14,7 +12,6 @@ import {
 import dayjs from 'dayjs';
 import { api } from '../../utils/api';
 
-const { Option } = Select
 
 const InvitationForm = ({ id = null, fetchItems }) => {
   const [form] = Form.useForm()
@@ -46,6 +43,8 @@ const InvitationForm = ({ id = null, fetchItems }) => {
               : null,
           })
         }
+
+
       } catch (error) {
         console.error(error)
         message.error('Erreur lors du chargement des données')
