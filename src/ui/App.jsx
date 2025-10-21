@@ -21,6 +21,7 @@ import CreateInterview from './components/interview/CreateInterview'
 import Evaluation from './components/interview/Evaluation'
 import ViewNeed from './pages/ViewNeed'
 import City from './pages/City'
+import ViewResume from './pages/ViewResume'
 
 
 
@@ -49,6 +50,7 @@ function App() {
         <Route path='interview/evaluation/:id' element={<Evaluation />} />
         <Route path='needs/view/:id' element={<ViewNeed />} />
         <Route path='city' element={<City />} />
+        <Route path='view-resume/:id' element={<ViewResume />} />
 
         <Route path='interview/create' element={<CreateInterview />} />
         <Route path='interview/create/:id' element={<CreateInterview />} />

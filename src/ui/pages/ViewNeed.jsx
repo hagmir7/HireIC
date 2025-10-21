@@ -14,6 +14,7 @@ import {
   Tooltip,
   Button,
   Popconfirm,
+  Modal,
 } from 'antd'
 import { UserOutlined, FileTextOutlined, MenuOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 
@@ -31,12 +32,15 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Plus, Trash } from 'lucide-react'
+import { Plus, Trash, Edit, Eye, MessageSquare, CircleAlert, MessageCircleCode, CircleCheck, Activity } from 'lucide-react'
+import RightClickMenu from '../components/ui/RightClickMenu'
+import { handleShow } from '../utils/config'
 
 const { Title, Text } = Typography
+const { confirm } = Modal
 
-// Ligne draggable
-const DraggableRow = (props) => {
+// Ligne draggable avec right-click
+const DraggableRow = ({ onMenuClick, menuItems, ...props }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props['data-row-key'] })
 
@@ -48,13 +52,18 @@ const DraggableRow = (props) => {
   }
 
   return (
-    <tr
-      {...props}
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-    />
+    <RightClickMenu
+      menuItems={menuItems || []}
+      onItemClick={onMenuClick}
+    >
+      <tr
+        {...props}
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
+      />
+    </RightClickMenu>
   )
 }
 
@@ -101,15 +110,99 @@ const ViewNeed = () => {
     )
   }
 
-  const deleteResume = async (need_resume_id) =>{
+  const deleteResume = async (need_resume_id) => {
     try {
       const response = await api.delete(`needs/resume/${need_resume_id}/delete`)
-      message.success(response.data.message);
+      message.success(response.data.message || 'CV supprimé avec succès')
+      fetchData()
     } catch (error) {
-      console.error(error);
+      console.error(error)
       message.error(error?.response?.data?.message || "Erreur de supprimer le cv")
     }
   }
+
+
+  const createInvitation = async (resumeId) => {
+    try {
+      const response = await api.post('needs/invitation/create', { resume_id: resumeId, need_id: id })
+      message.success("Invitation créée avec succès")
+      fetchData()
+    } catch (error) {
+      message.error(error?.response?.data?.message || "Erreur de création d'invitation")
+      console.error(error)
+    }
+  }
+
+  const showDeleteConfirm = (needResumeId) => {
+    confirm({
+      title: 'Êtes-vous sûr de vouloir retirer ce CV du besoin ?',
+      icon: <CircleAlert size={25} className='text-red-600 mt-1 mr-2' color='red' />,
+      content: 'Cette action ne peut pas être annulée.',
+      okText: 'Oui, retirez-le',
+      okType: 'danger',
+      cancelText: 'Annuler',
+      onOk() {
+        deleteResume(needResumeId)
+      },
+    })
+  }
+
+  const newInvitationConfirm = (resumeId) => {
+    confirm({
+      title: 'Voulez-vous créer une nouvelle invitation ?',
+      icon: <CircleAlert size={25} className='text-green-600 mt-1 mr-2' color='green' />,
+      content: "Confirmez la création de l'invitation pour ce candidat.",
+      okText: 'Oui, créer',
+      okType: 'primary',
+      cancelText: 'Annuler',
+      onOk() {
+        createInvitation(resumeId)
+      },
+    })
+  }
+
+  const handleMenuClick = (key, itemData) => {
+    switch (key) {
+      case 'view':
+        handleShow(`view-resume/${itemData}`)
+        break
+      case 'edit':
+        handleViewResume(itemData)
+        break
+      case 'newInvitation':
+        newInvitationConfirm(itemData)
+        break
+      case 'delete':
+        showDeleteConfirm(itemData)
+        break
+      default:
+        break
+    }
+  }
+
+  const handleViewResume = async (id) => {
+    try {
+      const isValidId = typeof id === 'string' || typeof id === 'number';
+      const url = `/resume/create${isValidId ? `/${id}` : ''}`;
+      if (window.electron && typeof window.electron.openShow === 'function') {
+        await window.electron.openShow({ path: url, width: 1000, height: 800 });
+      } else {
+        navigate(`/layout${url}`);
+      }
+    } catch (error) {
+      console.error('Error navigating to resume:', error);
+    }
+  };
+
+  // Menu items for right-click
+  const menuItems = (record) => [
+    { label: 'Voir le CV', key: 'view', icon: <Eye size={15} />, id: record.id },
+    { label: 'Modifier', key: 'edit', icon: <Edit size={15} />, id: record.id },
+    // { label: 'Traçabilité', key: 'traceability', icon: <Activity size={15} />, id: record.id },
+    { label: 'Nouvelle invitation', key: 'newInvitation', icon: <MessageSquare size={15} />, id: record.id },
+    { type: 'divider' },
+    { label: 'Retirer du besoin', key: 'delete', icon: <Trash size={15} />, danger: true, id: record.pivot?.id || record.id },
+  ]
 
   // Colonnes du tableau
   const resumeColumns = [
@@ -131,10 +224,8 @@ const ViewNeed = () => {
       key: 'full_name',
       render: (text, record) => (
         <div className='flex items-center'>
-          {/* <Avatar icon={<UserOutlined />} /> */}
           <div className='pl-3'>
             <div className='font-medium'>{text}</div>
-            <div className='text-gray-500 text-sm'>{record.phone}</div>
           </div>
         </div>
       ),
@@ -168,7 +259,6 @@ const ViewNeed = () => {
       onFilter: (value, record) => record.gender === value,
       render: (gender) => <Text>{getGenderText(gender)}</Text>,
     },
-
     {
       title: 'Diplôme',
       key: 'top_level',
@@ -182,7 +272,6 @@ const ViewNeed = () => {
         </Tooltip>
       ),
     },
-
     {
       title: 'Expérience',
       dataIndex: 'experience_monthe',
@@ -209,38 +298,16 @@ const ViewNeed = () => {
       onFilter: (value, record) => record.city?.name === value,
       render: (city) => city,
     },
-
     {
-      title: 'Actions',
-      dataIndex: ['city', 'name'],
-      key: 'actions',
-      render: (city) => <div className='flex gap-2'>
-        <Popconfirm
-          title="Delete the task"
-          description="Are you sure to delete this task?"
-          onConfirm={confirmDelete}
-          okText="Yes"
-          cancelText="No"
-          icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-        >
-          <Button
-            type="primary"
-            danger
-            icon={<Trash size={15} />}
-            size="small"
-          />
-        </Popconfirm>
-        <Tooltip title='Ajouter'>
-          <Button
-            type='primary'
-            icon={<Plus size={15} />}
-            size='small'
-            style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
-          />
-        </Tooltip>
-
-      </div>,
-    },
+      title: 'Invitations',
+      key: 'invitations',
+      render: (_, record) => (
+        <div className='flex gap-2 text-md font-semibold'>
+          {record.invitations.length}
+          {record.pivot.invitation_id ? (<CircleCheck className='text-green-500' size={20} />) : ''}
+        </div>
+      ),
+    }
   ]
 
   // DnD config
@@ -256,7 +323,7 @@ const ViewNeed = () => {
       // Met à jour le state local
       setNeed((prev) => ({ ...prev, resumes: newResumes }))
 
-      // Envoie le nouvel ordre à l’API
+      // Envoie le nouvel ordre à l'API
       try {
         await api.post(`needs/${id}/resumes/order`, {
           order: newResumes.map((r, index) => ({
@@ -267,7 +334,7 @@ const ViewNeed = () => {
         message.success('Ordre sauvegardé')
       } catch (error) {
         console.error(error)
-        message.error('Erreur lors de la sauvegarde de l’ordre')
+        message.error("Erreur lors de la sauvegarde de l'ordre")
       }
     }
   }
@@ -285,42 +352,37 @@ const ViewNeed = () => {
   }
 
   return (
-    <div className='p-6 bg-gray-50 min-h-screen'>
+    <div className='p-6 bg-gray-50'>
       <div className='max-w-7xl mx-auto space-y-6'>
-        {/* <Card className='shadow-sm'>
-          <div className='flex items-center justify-between'>
-            <div>
-              <Title level={4} className='mb-2 text-blue-600'>
-                Besoin #{need.id}
-              </Title>
-              <Text className='text-xl text-gray-600'>
-                Service : {need.service?.name}
-              </Text>
-            </div>
-            <div className='text-right'>
-              {getStatusBadge(need.status)}
-              <div className='text-sm text-gray-500 mt-2'>
-                Créé le : {new Date(need.created_at).toLocaleDateString()}
-              </div>
-            </div>
-          </div>
-        </Card> */}
-
-        {/* <div className='mt-3'></div> */}
 
         <Card
           title={
-            <div className='flex items-center space-x-2'>
-              <FileTextOutlined />
-              <div>
-                <span>Besoin #{need.id}</span>
-                <div className='text-xs text-gray-500'>
-                  Créé le : {new Date(need.created_at).toLocaleDateString()}
+            <div className='flex items-center space-x-2 w-full justify-between'>
+              <div className="flex gap-2">
+                <FileTextOutlined className='text-2xl' />
+                <div>
+                  <span>Besoin #{need.id}</span>
+                  <div className='text-xs text-gray-500'>
+                    Créé le : {new Date(need.created_at).toLocaleDateString()}
+                  </div>
                 </div>
+              </div>
+
+              <div className='flex gap-2'>
+                <Button
+                  type="primary"
+                  warning
+                  icon={<MessageCircleCode size={20} className='mt-1' />}
+                > Invitation pour tous</Button>
+                <Button
+                  type="primary"
+                  danger
+                  icon={<Trash size={15} />}
+                >Supprimer</Button>
               </div>
             </div>
           }
-          className='shadow-sm h-full mt-3'
+          className='shadow-sm h-full w-full mt-3'
         >
           <Descriptions column={2} bordered size='small'>
             <Descriptions.Item label='Service'>
@@ -335,7 +397,7 @@ const ViewNeed = () => {
               {need.levels?.length > 0 ? (
                 <div className='space-y-3'>
                   {need.levels.map((level) => (
-                    <Tooltip title={level.description}>
+                    <Tooltip key={level.id} title={level.description}>
                       <Tag color='blue' className='text-lg'>
                         {level.name}
                       </Tag>
@@ -353,24 +415,21 @@ const ViewNeed = () => {
             <Descriptions.Item label="Tranche d'âge">
               {need.min_age} - {need.max_age} ans
             </Descriptions.Item>
-            {need.gender ? 
-            <Descriptions.Item label='Exigence de sexe'>
-              {getGenderText(need.gender)}
-            </Descriptions.Item> : null}
-            
-          {need.description ?
-            <Descriptions.Item label='Description'>
-              {need.description}
-            </Descriptions.Item>
-            : null}
+            {need.gender ?
+              <Descriptions.Item label='Exigence de sexe'>
+                {getGenderText(need.gender)}
+              </Descriptions.Item> : null}
 
+            {need.description ?
+              <Descriptions.Item label='Description'>
+                {need.description}
+              </Descriptions.Item>
+              : null}
 
             <Descriptions.Item label='État'>
               {getStatusBadge(need.status)}
             </Descriptions.Item>
 
-            
-            
           </Descriptions>
         </Card>
 
@@ -388,11 +447,20 @@ const ViewNeed = () => {
                 className='whitespace-nowrap'
                 components={{
                   body: {
-                    row: DraggableRow,
+                    row: (props) => {
+                      const record = need.resumes?.find(r => r.id === props['data-row-key'])
+                      return (
+                        <DraggableRow
+                          {...props}
+                          onMenuClick={handleMenuClick}
+                          menuItems={record ? menuItems(record) : []}
+                        />
+                      )
+                    },
                   },
                 }}
                 dataSource={need.resumes}
-                scroll={{ x: 1200, y: 400 }}
+                scroll={{ x: 1200}}
                 columns={resumeColumns}
                 rowKey='id'
                 pagination={false}
