@@ -89,7 +89,7 @@ const ViewNeed = () => {
 
   useEffect(() => {
     fetchData()
-  }, [])
+  }, []);
 
   const getGenderText = (gender) => {
     switch (gender) {
@@ -198,6 +198,7 @@ const ViewNeed = () => {
   const menuItems = (record) => [
     { label: 'Voir le CV', key: 'view', icon: <Eye size={15} />, id: record.id },
     { label: 'Modifier', key: 'edit', icon: <Edit size={15} />, id: record.id },
+     
     // { label: 'Traçabilité', key: 'traceability', icon: <Activity size={15} />, id: record.id },
     { label: 'Nouvelle invitation', key: 'newInvitation', icon: <MessageSquare size={15} />, id: record.id },
     { type: 'divider' },

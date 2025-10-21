@@ -1,9 +1,9 @@
 import { Button, Modal, Checkbox, Col, Form, Input, DatePicker, Row, Select, message, Space, Empty, Typography } from 'antd';
-import { CircleAlert, ClipboardList, Edit, Filter, ListPlus, MessageSquare, PlusCircle, Settings2, Trash, User } from 'lucide-react';
+import { CircleAlert, ClipboardList, Edit, Eye, Filter, ListPlus, MessageSquare, PlusCircle, Settings2, Trash, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
-import { getResumeStatus } from '../utils/config';
+import { getResumeStatus, handleShow } from '../utils/config';
 import Skeleton from '../components/ui/Sketelon';
 import RightClickMenu from '../components/ui/RightClickMenu';
 
@@ -124,20 +124,6 @@ export const Resume = () => {
     }
   }, [filterModalOpen])
 
-  const handleShow = async (id) => {
-    try {
-      const isValidId = typeof id === 'string' || typeof id === 'number';
-      const url = `/resume/create${isValidId ? `/${id}` : ''}`;
-      if (window.electron && typeof window.electron.openShow === 'function') {
-        await window.electron.openShow({ path: url, width: 1000, height: 800 });
-      } else {
-        navigate(`/layout${url}`);
-      }
-    } catch (error) {
-      console.error('Error navigating to resume:', error);
-    }
-  };
-
   const toggleCheckbox = (id) => {
     setSelectedIds((prev) =>
       prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
@@ -230,10 +216,10 @@ export const Resume = () => {
   const handleMenuClick = (key, id) => {
     switch (key) {
       case "startInterview":
-        handleShowInterview(null, id)
+        handleShowInterview(null, id);
         break;
       case "edit":
-        handleShow(id);
+        handleShow(`/resume/create/${id}`);
         break;
       case 'delete':
         showDeleteConfirm(id);
@@ -241,6 +227,8 @@ export const Resume = () => {
       case 'NewInvetation':
         newInterviewConfirm(id)
         break;
+      case 'view':
+         handleShow(`view-resume/${id}`)
       // ... more cases
       default:
       // Code to execute if no case matches
@@ -248,6 +236,7 @@ export const Resume = () => {
   };
 
   const items = [
+    { label: 'Voir le CV', key: 'view', icon: <Eye size={15} /> },
     { label: "Lancer l'entretien", key: "startInterview", icon: <ClipboardList size={15} /> },
     { label: "Changer l'état", key: "changeStatus", icon: <Settings2 size={15} /> },
     { label: "Nouvelle invitation", key: "NewInvetation", icon: <MessageSquare size={15} /> },
@@ -263,7 +252,7 @@ export const Resume = () => {
       <div className='flex justify-between items-center px-2 mt-2'>
         <h1 className='text-xl font-semibold'>Liste des CVs</h1>
         <div className='flex gap-3'>
-          <Button type='primary' onClick={() => handleShow()}>
+          <Button type='primary' onClick={() => handleShow('/resume/create')}>
             <PlusCircle size={16} className='me-1' /> Créer
           </Button>
           <Button
@@ -321,7 +310,7 @@ export const Resume = () => {
                   </td>
                   <td
                     className='p-2 cursor-pointer'
-                    onClick={() => handleShow(resume.id)}
+                    onClick={() => handleShow(`/resume/create/${resume.id}`)}
                   >
                     <div className='flex items-center gap-3'>
                       <div className='bg-gray-100 p-2 rounded-full'>

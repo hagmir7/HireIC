@@ -15,7 +15,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { api } from "../../utils/api";
 import { useParams } from "react-router-dom";
-import { CheckCircle, Clock, XCircle } from "lucide-react";
+import { CheckCircle, Clock, Printer, XCircle } from "lucide-react";
+import { handlePrint } from "../../utils/config";
 
 export default function Evaluation() {
   const [selected, setSelected] = useState([]);
@@ -78,7 +79,7 @@ export default function Evaluation() {
 
   useEffect(() => {
     fetchData();
-  }, [id]); // Add id as dependency
+  }, [id]);
 
   const evaluateCriteria = async (note, criteria) => {
     try {
@@ -105,7 +106,6 @@ export default function Evaluation() {
   };
 
   const renderCell = (record, noteValue, label) => {
-    // normal criteria row
     const isSelected = record.note === noteValue;
     return (
       <div
@@ -118,10 +118,8 @@ export default function Evaluation() {
     );
   };
 
-  // number of table columns (Description + 4 score columns)
   const TOTAL_COLS = 5;
 
-  // columns definition with group-row-aware renderers
   const columns = [
     {
       title: "Description du Critère",
@@ -129,7 +127,6 @@ export default function Evaluation() {
       key: "label",
       ellipsis: true,
       render: (text, record) => {
-        // If this is a group header row, return object to span all columns
         if (record.isGroup) {
           return {
             children: (
@@ -231,6 +228,8 @@ export default function Evaluation() {
     });
   };
 
+
+
   return (
     <div className="max-w-6xl mx-auto p-4 bg-gray-50 min-h-screen">
       {/* Header Card */}
@@ -294,7 +293,11 @@ export default function Evaluation() {
       <div className="mb-2"></div>
 
       {/* Interview Details */}
-      <Card title="Détails de l'Entretien" className="mb-6 shadow-sm" size="small">
+      <Card title={
+        <div className="flex justify-between"><span>Détails de l'Entretien</span>
+          <span className="cursor-pointer text-green-600" onClick={() => handlePrint(`http://localhost:8000/api/interviews/${id}/download`)}><Printer /></span>
+        </div>
+      } className="mb-6 shadow-sm" size="small">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
@@ -336,7 +339,7 @@ export default function Evaluation() {
         rowKey={(r) => r.key}
         loading={loading}
         className="shadow-sm rounded-2xl overflow-hidden"
-        // scroll={{ x: 800 }}
+      // scroll={{ x: 800 }}
 
       />
 
