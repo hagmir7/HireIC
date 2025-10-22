@@ -38,6 +38,14 @@ export default function Invitation() {
   const navigate = useNavigate();
   const [openFilter, setOpenFilter] = useState(false)
 
+
+  const [filters, setFilters] = useState({
+    search: '',
+    status: null,
+    type: null,
+    interview_date: null,
+  });
+
   // ------------------ SELECT ALL ------------------
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -152,13 +160,32 @@ export default function Invitation() {
     }
   ]
 
-  const onSearch = ()=>{
+ // ------------------ FILTER HANDLERS ------------------
+  const onSearch = (value) => {
+    setFilters((prev) => ({ ...prev, search: value }));
+    fetchData({ search: value });
+  };
 
-  }
+  const onChangeStatus = (value) => {
+    setFilters((prev) => ({ ...prev, status: value }));
+    fetchData({ status: value });
+  };
 
-  const onChangeDate = ()=>{
+  const onChangeType = (value) => {
+    setFilters((prev) => ({ ...prev, type: value }));
+    fetchData({ type: value });
+  };
 
-  }
+  const onChangeDate = (date) => {
+    const formatted = date ? dayjs(date).format('YYYY-MM-DD') : null;
+    setFilters((prev) => ({ ...prev, interview_date: formatted }));
+    fetchData({ interview_date: formatted });
+  };
+
+  const resetFilters = () => {
+    setFilters({ search: '', status: null, type: null, interview_date: null });
+    fetchData({});
+  };
 
 
   return (
@@ -210,14 +237,39 @@ export default function Invitation() {
            
           </div>
 
-          {
-            openFilter ? <div className='flex flex-wrap gap-2 justify-end mt-3'>
-              <Search placeholder="Rechercher par nom complet, email..." onSearch={onSearch} style={{ width: 200 }} />
-              <Select options={statuses} style={{ width: 150 }} placeholder="Etat" />
-              <Select options={types} style={{ width: 150 }} placeholder="Type" />
-              <DatePicker onChange={onChangeDate} placeholder="Date d'entretien" />
-            </div> : ""
-          }
+         {openFilter && (
+            <div className="flex flex-wrap gap-2 justify-end mt-3">
+              <Search
+                placeholder="Rechercher par nom complet, email..."
+                onSearch={onSearch}
+                style={{ width: 200 }}
+                allowClear
+              />
+              <Select
+                options={statuses}
+                style={{ width: 150 }}
+                placeholder="Statut"
+                value={filters.status}
+                onChange={onChangeStatus}
+                allowClear
+              />
+              <Select
+                options={types}
+                style={{ width: 150 }}
+                placeholder="Type"
+                value={filters.type}
+                onChange={onChangeType}
+                allowClear
+              />
+              <DatePicker
+                onChange={onChangeDate}
+                value={filters.interview_date ? dayjs(filters.interview_date) : null}
+                placeholder="Date d'entretien"
+              />
+              <Button onClick={resetFilters}>Réinitialiser</Button>
+            </div>
+          )}
+
 
         </div>
         
