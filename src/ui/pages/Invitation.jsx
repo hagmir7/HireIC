@@ -8,6 +8,8 @@ import {
   Popconfirm,
   Select,
   Tag,
+  Input,
+  DatePicker
 } from 'antd';
 import {
   RefreshCcw,
@@ -17,6 +19,7 @@ import {
   Clock,
   ClipboardList,
   MessageSquare,
+  Funnel,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
@@ -24,6 +27,7 @@ import Skeleton from '../components/ui/Sketelon';
 import InvitationForm from '../components/ui/InvitationForm';
 import { formatDate, InvitationStatus } from '../utils/config';
 import RightClickMenu from '../components/ui/RightClickMenu';
+const { Search } = Input;
 
 export default function Invitation() {
   const [selected, setSelected] = useState([]);
@@ -32,6 +36,7 @@ export default function Invitation() {
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState(null);
   const navigate = useNavigate();
+  const [openFilter, setOpenFilter] = useState(false)
 
   // ------------------ SELECT ALL ------------------
   const handleSelectAll = (e) => {
@@ -127,6 +132,35 @@ export default function Invitation() {
     { label: 'Supprimer', key: 'delete', icon: <Trash size={15} />, danger: true },
   ];
 
+  const statuses = [
+    { value: 1, label: "En attente" },
+    { value: 2, label: "Planifié" },
+    { value: 3, label: "En cours" },
+    { value: 4, label: "Achevé" },
+    { value: 5, label: "Expiré" },
+    { value: 6, label: "Annulé" }
+  ];
+
+  const types = [
+    {
+      label: "En présentiel",
+      value: 1
+    },
+    {
+      label: "À distance",
+      value: 2
+    }
+  ]
+
+  const onSearch = ()=>{
+
+  }
+
+  const onChangeDate = ()=>{
+
+  }
+
+
   return (
     <div className="h-full flex flex-col bg-gray-50">
       {/* ------------------ HEADER ------------------ */}
@@ -135,17 +169,25 @@ export default function Invitation() {
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold text-gray-800">Invitations</h2>
             <div className="flex gap-3 flex-wrap">
-              <Button onClick={fetchData} className="flex items-center gap-2 hover:shadow-md">
-                {loading ? <RefreshCcw className="animate-spin h-4 w-4" /> : <RefreshCcw className="h-4 w-4" />}
-                Rafraîchir
-              </Button>
+            <Button
+              onClick={() => setOpenFilter(!openFilter)}
+              className={`flex items-center gap-1 transition-colors duration-200 ${
+                openFilter
+                  ? "bg-blue-100 text-blue-600 border-blue-400"
+                  : "bg-gray-100 text-gray-700 border-gray-300"
+              } border rounded-md px-2 py-1`}
+            >
+              <Funnel className="h-4 w-4" />
+              {openFilter && <span>Filtre actif</span>}
+            </Button>
+
 
               <Button type="primary" onClick={() => setOpen(true)}>
                 <PlusCircle className="h-4 w-4" />
                 Créer
               </Button>
 
-              <Modal
+               <Modal
                 title="Créer une invitation"
                 centered
                 open={open}
@@ -155,9 +197,30 @@ export default function Invitation() {
               >
                 <InvitationForm id={editId} fetchItems={fetchData} />
               </Modal>
+
+              <Button onClick={fetchData} className="flex items-center gap-2 hover:shadow-md">
+                {loading ? <RefreshCcw className="animate-spin h-4 w-4" /> : <RefreshCcw className="h-4 w-4" />}
+                Rafraîchir
+              </Button>
+
+              
+            
+             
             </div>
+           
           </div>
+
+          {
+            openFilter ? <div className='flex flex-wrap gap-2 justify-end mt-3'>
+              <Search placeholder="Rechercher par nom complet, email..." onSearch={onSearch} style={{ width: 200 }} />
+              <Select options={statuses} style={{ width: 150 }} placeholder="Etat" />
+              <Select options={types} style={{ width: 150 }} placeholder="Type" />
+              <DatePicker onChange={onChangeDate} placeholder="Date d'entretien" />
+            </div> : ""
+          }
+
         </div>
+        
       </div>
 
       {/* ------------------ TABLE ------------------ */}
@@ -182,11 +245,9 @@ export default function Invitation() {
                         Date d’envoi
                       </th>
                       <th className="px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r border-gray-200">
-                        Entretien
+                        Date d'entretien
                       </th>
-                      <th className="px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r border-gray-200">
-                        Accepté
-                      </th>
+                     
                       <th className="px-2 py-2 text-left text-sm font-semibold text-gray-600 border-r border-gray-200">
                         Type
                       </th>
@@ -239,16 +300,6 @@ export default function Invitation() {
 
                             <td className="px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap">
                               {formatDate(item.interview_date)}
-                            </td>
-
-                            <td className="px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap">
-                              {item.accepted === 0 || item.accepted === 1 ? (
-                                <Tag color={item.accepted === 1 ? 'green' : 'red'}>
-                                  {item.accepted ? 'Oui' : 'Non'}
-                                </Tag>
-                              ) : (
-                                '--'
-                              )}
                             </td>
 
                             <td className="px-2 py-1 text-sm border-r border-gray-200 whitespace-nowrap">

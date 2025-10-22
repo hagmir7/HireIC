@@ -137,7 +137,7 @@ export function InvitationStatus() {
   return {
     1: { label: "En attente", color: "gray" },
     2: { label: "Planifié", color: "blue" },
-    3: { label: "En cours", color: "orange" },
+    3: { label: "Appel manqué", color: "orange" },
     4: { label: "Achevé", color: "green" },
     5: { label: "Expiré", color: "red" },
     6: { label: "Annulé", color: "purple" },

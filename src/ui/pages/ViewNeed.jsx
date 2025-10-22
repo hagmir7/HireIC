@@ -32,9 +32,9 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Plus, Trash, Edit, Eye, MessageSquare, CircleAlert, MessageCircleCode, CircleCheck, Activity } from 'lucide-react'
+import { Plus, Trash, Edit, Eye, MessageSquare, CircleAlert, MessageCircleCode, CircleCheck, Activity, Printer } from 'lucide-react'
 import RightClickMenu from '../components/ui/RightClickMenu'
-import { handleShow } from '../utils/config'
+import { handlePrint, handleShow } from '../utils/config'
 
 const { Title, Text } = Typography
 const { confirm } = Modal
@@ -355,7 +355,6 @@ const ViewNeed = () => {
   return (
     <div className='p-6 bg-gray-50'>
       <div className='max-w-7xl mx-auto space-y-6'>
-
         <Card
           title={
             <div className='flex items-center space-x-2 w-full justify-between'>
@@ -376,10 +375,11 @@ const ViewNeed = () => {
                   icon={<MessageCircleCode size={20} className='mt-1' />}
                 > Invitation pour tous</Button>
                 <Button
-                  type="primary"
-                  danger
-                  icon={<Trash size={15} />}
-                >Supprimer</Button>
+                  // type="primary"
+                  onClick={()=> handlePrint(`http://localhost:8000/api/needs/${id}/download`)}
+                  info
+                  icon={<Printer size={15} />}
+                > Imprimer</Button>
               </div>
             </div>
           }
@@ -394,7 +394,7 @@ const ViewNeed = () => {
               {need.responsible?.full_name}
             </Descriptions.Item>
 
-            <Descriptions.Item label='Diplômes requis'>
+            <Descriptions.Item label='Diplômes requis' className='whitespace-nowrap'>
               {need.levels?.length > 0 ? (
                 <div className='space-y-3'>
                   {need.levels.map((level) => (
@@ -421,15 +421,17 @@ const ViewNeed = () => {
                 {getGenderText(need.gender)}
               </Descriptions.Item> : null}
 
+            
+
+            <Descriptions.Item label='État'>
+              {getStatusBadge(need.status)}
+            </Descriptions.Item>
+
             {need.description ?
               <Descriptions.Item label='Description'>
                 {need.description}
               </Descriptions.Item>
               : null}
-
-            <Descriptions.Item label='État'>
-              {getStatusBadge(need.status)}
-            </Descriptions.Item>
 
           </Descriptions>
         </Card>
