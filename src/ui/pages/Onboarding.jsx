@@ -121,8 +121,8 @@ export default function Onboarding() {
       </div>
 
       <div className="mt-4 overflow-auto bg-white rounded shadow-sm">
-        <table className="min-w-full text-sm">
-          <thead className="bg-gray-100">
+        <table className="min-w-full text-sm border-t border-gray-300">
+          <thead className="bg-gray-100 ">
             <tr>
               <th className="px-3 py-2 text-left">Candidat</th>
               <th className="px-3 py-2 text-left">Code</th>

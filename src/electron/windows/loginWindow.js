@@ -13,7 +13,7 @@ export default function createLoginWindow() {
         }
     });
 
-    //  loginWindow.setMenu(null);
+     loginWindow.setMenu(null);
 
     if (isDev()) {
         loginWindow.loadURL('http://localhost:5123/#login');
