@@ -11,7 +11,6 @@ import Profile from './pages/profile';
 import { Resume } from './pages/Resume'
 import Invitation from './pages/Invitation'
 import Interview from './pages/Interview'
-import { Onboarding } from './pages/Onboarding'
 import CreateResume from './components/resume/CreateResume'
 import Departements from './pages/Departements'
 import Needs from './pages/Needs'
@@ -22,6 +21,7 @@ import Evaluation from './components/interview/Evaluation'
 import ViewNeed from './pages/ViewNeed'
 import City from './pages/City'
 import ViewResume from './pages/ViewResume'
+import Onboarding from './pages/Onboarding'
 
 
 

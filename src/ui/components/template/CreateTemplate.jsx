@@ -125,7 +125,7 @@ export default function TemplateForm({ onSuccess }) {
         
       } else {
         response = await api.post('templates', payload);
-        message.success("Template created successfully");
+        message.success("Modèle créé avec succès");
         navigate(`/template/create/${response.data.id}`)
         console.log(response.data);
       }

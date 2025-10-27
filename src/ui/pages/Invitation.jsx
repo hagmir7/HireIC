@@ -111,6 +111,7 @@ export default function Invitation() {
 
   // ------------------ MENU CLICK HANDLER ------------------
   const handleMenuClick = (key, id) => {
+
     switch (key) {
       case 'startInterview':
         handleShowInterview(null, id);
@@ -209,7 +210,10 @@ export default function Invitation() {
             </Button>
 
 
-              <Button type="primary" onClick={() => setOpen(true)}>
+              <Button type="primary" onClick={() => {
+                setEditId(null)
+                setOpen(true)
+              }}>
                 <PlusCircle className="h-4 w-4" />
                 Créer
               </Button>
@@ -266,7 +270,6 @@ export default function Invitation() {
                 value={filters.interview_date ? dayjs(filters.interview_date) : null}
                 placeholder="Date d'entretien"
               />
-              <Button onClick={resetFilters}>Réinitialiser</Button>
             </div>
           )}
 
@@ -315,10 +318,10 @@ export default function Invitation() {
                     ) : data.length > 0 ? (
                       data.map((item, index) => (
                         <RightClickMenu
-                          key={item?.resume?.id}
+                          key={item?.id}
                           menuItems={menuItems.map((menuItem) => ({
                             ...menuItem,
-                            id: item?.resume?.id,
+                            id: item?.id,
                           }))}
                           onItemClick={handleMenuClick}
                         >

@@ -70,7 +70,7 @@ export default function ResumeInvitations({ resume_id }) {
             <div className="p-4 space-y-8">
                 {/* Personal Info */}
                 <section>
-                    <h2 className="text-lg font-semibold text-gray-800 pb-1 mb-2">Entretiens {data?.interviews ? (<>({data?.interviews?.length})</>) : ''}</h2>
+                    <h2 className="text-lg font-semibold text-gray-800 pb-1 mb-2">Invitations {data?.invitations ? (<>({data?.invitations?.length})</>) : ''}</h2>
                     <div className="overflow-x-auto border rounded-lg border-gray-300 overflow-hidden">
                         <table className="min-w-full">
                             <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
