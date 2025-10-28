@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { Calendar, Badge, Typography, Modal, List, Checkbox, Tag } from 'antd';
 import dayjs from 'dayjs';
-import { locale } from '../utils/config';
+import { handleShow, locale } from '../utils/config';
 import { api } from '../utils/api'
 
 const { Title, Text } = Typography;
@@ -79,15 +78,6 @@ const InvitationCalendar = () => {
     setModalVisible(true);
   };
 
-  const handleToggleComplete = (dateKey, id) => {
-    setTasks((prev) => {
-      const updated = { ...prev };
-      updated[dateKey] = updated[dateKey].map((t) =>
-        t.id === id ? { ...t, completed: !t.completed } : t
-      );
-      return updated;
-    });
-  };
 
   const dateKey = selectedDate ? formatDate(selectedDate) : null;
   const selectedTasks = dateKey ? tasks[dateKey] || [] : [];
@@ -141,7 +131,7 @@ const InvitationCalendar = () => {
               >
                 <Checkbox
                   checked={task.completed}
-                  onChange={() => handleToggleComplete(dateKey, task.id)}
+                  onChange={() => handleShow(`view-resume/${task.id}`)}
                 >
                   <span
                     className={`ml-2 ${
