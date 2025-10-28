@@ -112,10 +112,11 @@ export default function Invitation() {
 
   // ------------------ MENU CLICK HANDLER ------------------
   const handleMenuClick = (key, id) => {
-
+    
     switch (key) {
+      
       case 'startInterview':
-        handleShowInterview(null, id);
+        handleShowInterview(null, data.find((item) => Number(item.id) === Number(id))?.resume_id);
         break;
       case 'edit':
         setEditId(id);
@@ -322,7 +323,7 @@ export default function Invitation() {
                           key={item?.id}
                           menuItems={menuItems.map((menuItem) => ({
                             ...menuItem,
-                            id: item?.id,
+                            id: item.id,
                           }))}
                           onItemClick={handleMenuClick}
                         >

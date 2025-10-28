@@ -250,7 +250,7 @@ const ViewNeed = () => {
       ),
     },
     {
-      title: 'Sexe',
+      title: 'Genre',
       key: 'gender',
       dataIndex: 'gender',
       filters: [
@@ -417,7 +417,7 @@ const ViewNeed = () => {
               {need.min_age} - {need.max_age} ans
             </Descriptions.Item>
             {need.gender ?
-              <Descriptions.Item label='Exigence de sexe'>
+              <Descriptions.Item label='Exigence de Genre'>
                 {getGenderText(need.gender)}
               </Descriptions.Item> : null}
 
