@@ -7,16 +7,14 @@ import {
   Descriptions,
   Tag,
   Table,
-  Avatar,
   Spin,
   Typography,
   Badge,
   Tooltip,
   Button,
-  Popconfirm,
   Modal,
 } from 'antd'
-import { UserOutlined, FileTextOutlined, MenuOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import {FileTextOutlined, MenuOutlined } from '@ant-design/icons'
 
 import {
   DndContext,
@@ -32,11 +30,11 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { Plus, Trash, Edit, Eye, MessageSquare, CircleAlert, MessageCircleCode, CircleCheck, Activity, Printer } from 'lucide-react'
+import { Plus, Trash, Edit, Eye, MessageSquare, CircleAlert, MessageCircleCode, CircleCheck, Printer } from 'lucide-react'
 import RightClickMenu from '../components/ui/RightClickMenu'
 import { handlePrint, handleShow } from '../utils/config'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 const { confirm } = Modal
 
 // Ligne draggable avec right-click

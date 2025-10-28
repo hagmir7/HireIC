@@ -87,7 +87,8 @@ const sideMenu = () => {
         {
           key: 'submenu-13',
           icon: <Component size={19} />,
-          label: <Link to='/departements'> Départements </Link>,
+          onClick: ()=> handleShow('departements'),
+          label: "Départements",
         },
         {
 

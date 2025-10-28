@@ -77,18 +77,6 @@ export default function Template() {
                                 )}
                                 Rafraîchir
                             </Button>
-
-                            <Select
-                                style={{ width: 200 }}
-                                placeholder="Filtre d'état"
-                                options={[
-                                    { label: 'Toute', value: null },
-                                    { label: 'En attente', value: 1 },
-                                    { label: 'En cours', value: 2 },
-                                    { label: 'Annulé', value: 3 },
-                                    { label: 'Exécuté', value: 4 },
-                                ]}
-                            />
                             
                             <Button type='primary' onClick={() => handleShow()}>
                                 <PlusCircle className='h-4 w-4' />

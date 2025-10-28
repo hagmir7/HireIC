@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Mail, Phone, Save, Loader2, Info, Ruler, Package, Building, Shield, Lock } from 'lucide-react'
+import { Mail, Phone, Save, Loader2, Info, Building, Shield, Lock } from 'lucide-react'
 import { data, useParams } from 'react-router-dom'
 import { api } from '../utils/api'
 import { useAuth } from '../contexts/AuthContext'
 import { message, Form, Input, Button, Checkbox, Card, Tabs, Select, } from 'antd'
-import Spinner from '../components/ui/Spinner'
 import AvatarUpdate from '../components/AvatarUpdate'
 import PasswordUpdate from '../components/PasswordUpdate'
 import ProfileSkeleton from '../components/ui/ProfileSkeleton'
@@ -66,7 +65,6 @@ export default function Profile() {
 
     fetchUserData()
     getCompanies()
-    console.log(userData);
 
   }, [id, form])
 
@@ -80,7 +78,6 @@ export default function Profile() {
 
 
   const handleSubmit = async (values) => {
-    console.log(userData);
 
     try {
       setSaving(true)

@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react'
-import { ArrowRight, PlusCircle, Undo2 } from 'lucide-react'
-import { Button, Checkbox, message } from 'antd'
+import { CircleAlert, ClipboardList, Edit, MessageSquare, PlusCircle, Settings2, Trash } from 'lucide-react'
+import { Button, Checkbox, message, Modal } from 'antd'
 import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
+import DepartementForm from '../components/departement/DepartementForm'
+import RightClickMenu from '../components/ui/RightClickMenu'
+
 
 const Departements = () => {
-  const [selected, setSelected] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [transferSpin, setTransferSpin] = useState(false)
-  const [data, setData] = useState([])
+  const [selected, setSelected] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [departement, setDepartement] = useState();
+  const { confirm } = Modal;
+
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
@@ -35,29 +41,104 @@ const Departements = () => {
     setLoading(false)
   }
 
+  const handleDelete = async (departement_id) => {
+    try {
+      await api.delete(`departements/${departement_id}`)
+      message.success("Département supprimé avec succès")
+      fetchData();
+    } catch (error) {
+      console.error(error);
+      message.error(error?.response?.data?.message || "Erreur de supprimer la département");
+
+    }
+  }
+
+   const showDeleteConfirm = (id) => {
+    confirm({
+      title: '  Etes-vous sûr de vouloir supprimer cet élément ?',
+      icon: <CircleAlert size={25} className='text-red-600 mt-1 mr-2' color='red' />,
+      content: 'Cette action ne peut pas être annulée.',
+      okText: 'Oui, supprimez-le',
+      okType: 'danger',
+      cancelText: 'Annuler',
+      onOk() {
+        handleDelete(id);
+      },
+    });
+  };
+
+
   useEffect(() => {
     fetchData()
   }, [])
 
-  const transfer = () => {
-    setTransferSpin(true)
-    setTimeout(() => setTransferSpin(false), 1500)
-  }
+    const handleMenuClick = (key, id) => {
+      switch (key) {
+        case "startInterview":
+          handleShowInterview(null, id);
+          break;
+        case "edit":
+          setDepartement(data.find((item) => Number(item.id) === Number(id)))
+          setIsModalOpen(true)
+          break;
+        case 'delete':
+          showDeleteConfirm(id);
+          break;
+        case 'NewInvetation':
+          newInterviewConfirm(id)
+          break;
+        case 'view':
+          handleShow(`view-resume/${id}`)
+        default:
 
-  // Calculate indeterminate state for select all checkbox
+      }
+    };
+
+    const items = [
+      { label: "Lancer l'entretien", key: "startInterview", icon: <ClipboardList size={15} /> },
+      { label: "Changer l'état", key: "changeStatus", icon: <Settings2 size={15} /> },
+      { label: "Nouvelle invitation", key: "NewInvetation", icon: <MessageSquare size={15} /> },
+      { type: "divider" },
+      { label: "Modifier", key: "edit", icon: <Edit size={15} /> },
+      { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true, },
+    ];
+
+
   const isIndeterminate = selected.length > 0 && selected.length < data.length
   const isAllSelected = selected.length > 0 && selected.length === data.length
 
   return (
     <div className='h-full flex flex-col'>
-      <div className='shadow-sm p-4 flex items-center justify-between from-gray-50 to-gray-100 border-b'>
-        <h2 className='text-lg font-semibold text-gray-800'>
+      <div className='shadow-sm p-2 flex items-center justify-between from-gray-50 to-gray-100 border-b'>
+        <h2 className='text-md font-semibold text-gray-800'>
           Départements & Services
         </h2>
         <div className='flex gap-3'>
-          <Button type='primary'>
-            Create <PlusCircle size={18} />
-          </Button>
+          
+
+          <Modal
+            title="Basic Modal"
+            closable={{ 'aria-label': 'Custom Close Button' }}
+            open={isModalOpen}
+            onOk={() => setIsModalOpen(false)}
+            footer={false}
+            onCancel={()=> setIsModalOpen(false)}
+          >
+           <DepartementForm
+                initialValues={departement}
+                onSubmit={async (data) => {
+                  if (departement) {
+                    await api.put(`departements/${departement.id}`, data);
+                  } else {
+                    await api.post("departements", data);
+                  }
+                  setIsModalOpen(false);
+                  fetchData();
+                  setDepartement('')
+                }}
+              />
+
+          </Modal>
         </div>
       </div>
 
@@ -65,7 +146,7 @@ const Departements = () => {
         <table className='w-full border-collapse'>
           <thead className='sticky top-0 bg-gradient-to-b from-gray-50 to-gray-100 border-b border-gray-300 shadow-sm z-10'>
             <tr>
-              <th className='px-2 py-2 text-left border-r border-gray-300'>
+              <th className='px-2 py-1 text-left border-r border-gray-300'>
                 <Checkbox
                   checked={isAllSelected}
                   indeterminate={isIndeterminate}
@@ -78,22 +159,24 @@ const Departements = () => {
               <th className='px-2 py-2 text-left border-r border-gray-300 text-sm font-semibold text-gray-600'>
                 Services
               </th>
-              <th className='px-2 py-2 text-left text-sm font-semibold text-gray-600'>
-                Actions
-              </th>
+
             </tr>
           </thead>
           <tbody className='bg-white'>
             {loading ? (
-              <Skeleton />
+              <Skeleton rows={3} columns={3} />
             ) : data.length > 0 ? (
               data.map((item, index) => (
+                 <RightClickMenu
+                      key={item.id}
+                    menuItems={items.map(menu => ({ ...menu, id: item.id }))}
+                    onItemClick={handleMenuClick}
+                  >
                 <tr
                   key={item.id}
-                  className={`border-b border-gray-200 hover:bg-blue-50 transition ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                    }`}
+                  className={`border-b border-gray-200 hover:bg-blue-50 transition ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                 >
-                  <td className='px-2 py-2 border-r border-gray-300'>
+                  <td className='px-2 py-1 border-r border-gray-300'>
                     <Checkbox
                       checked={selected.includes(item.id)}
                       onChange={() => handleSelect(item.id)}
@@ -106,6 +189,7 @@ const Departements = () => {
                     {item.services_count}
                   </td>
                 </tr>
+                </RightClickMenu>
               ))
             ) : (
               <tr>
@@ -116,6 +200,12 @@ const Departements = () => {
             )}
           </tbody>
         </table>
+      </div>
+
+      <div className='fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-4 flex justify-end'>
+            <Button type='primary' onClick={() => setIsModalOpen(true)}>
+            Create <PlusCircle size={18} />
+          </Button>
       </div>
     </div>
   )

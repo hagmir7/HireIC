@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Search, Plus, Edit, Loader2, Info, Ruler, Package } from 'lucide-react'
+import { Search, Plus, Edit, Loader2 } from 'lucide-react'
 import CModal from '../components/ui/CModal'
 // import RegisterForm from './Register'
 import Spinner from '../components/ui/Spinner'
@@ -12,7 +12,7 @@ import { Button } from 'antd'
 export default function Users() {
   const [users, setUsers] = useState([])
   const [isLoading, setIsLoading] = useState(true);
-  const { roles, permissions } = useAuth();
+  const { permissions } = useAuth();
 
   const navigate = useNavigate();
 

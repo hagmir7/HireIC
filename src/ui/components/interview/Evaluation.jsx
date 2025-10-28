@@ -46,8 +46,6 @@ export default function Evaluation() {
 
       setSelected(criteria);
 
-      console.log(data);
-
       setLoading(false);
       setType(data?.type);
       setDecision(data?.decision);

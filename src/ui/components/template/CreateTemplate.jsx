@@ -37,7 +37,7 @@ export default function TemplateForm({ onSuccess }) {
         value: item.id
       })))
     } catch (error) {
-      console.log(error?.response?.data?.message);
+      console.error(error?.response?.data?.message);
     }
   }
 
@@ -49,7 +49,7 @@ export default function TemplateForm({ onSuccess }) {
         value: item.id
       })))
     } catch (error) {
-      console.log(error?.response?.data?.message);
+      console.error(error?.response?.data?.message);
     }
   }
 
@@ -64,7 +64,7 @@ export default function TemplateForm({ onSuccess }) {
       const selectedType = criteriaTypes.find(type => type.value === value);
       setSelectedCriteriaType(selectedType?.label || '');
     } catch (error) {
-      console.log(error?.response?.data?.message);
+      console.error(error?.response?.data?.message);
     }
   }
 
@@ -89,7 +89,7 @@ export default function TemplateForm({ onSuccess }) {
         })));
       }
     } catch (error) {
-      console.log(error?.response?.data?.message);
+      console.error(error?.response?.data?.message);
     }
   }
 
@@ -127,7 +127,7 @@ export default function TemplateForm({ onSuccess }) {
         response = await api.post('templates', payload);
         message.success("Modèle créé avec succès");
         navigate(`/template/create/${response.data.id}`)
-        console.log(response.data);
+        console.error(response.data);
       }
 
       if (onSuccess) onSuccess(response.data);

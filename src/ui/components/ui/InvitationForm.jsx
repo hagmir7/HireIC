@@ -98,13 +98,6 @@ const InvitationForm = ({ id = null, fetchItems }) => {
   }
 
 
-  const invitationStatus = [
-    { value: 1, label: "En attente" },
-    { value: 2, label: "Entretien planifié" },
-    { value: 3, label: "Appel manqué" },
-    { value: 4, label: "Refusé" }
-  ]
-
   return (
     <Card>
       <Form

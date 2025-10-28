@@ -83,7 +83,7 @@ const InvitationCalendar = () => {
   const selectedTasks = dateKey ? tasks[dateKey] || [] : [];
 
   return (
-    <div className="max-w-[1200px] mx-auto bg-white rounded-lg p-6 shadow-sm">
+    <div className="mx-auto bg-white rounded-lg p-6 shadow-sm">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <Title level={4} className="!m-0 text-gray-800">

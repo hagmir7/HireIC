@@ -56,9 +56,9 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const register = () => {
-    console.log("Register");
-  }
+    const register = () => {
+      console.log("Register");
+    }
 
   const getUser = () =>{
     if(localStorage.getItem("user") && localStorage.getItem("user") !== "undefined" ){

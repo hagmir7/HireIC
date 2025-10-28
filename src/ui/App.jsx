@@ -49,6 +49,7 @@ function App() {
         <Route path='template/create/:id' element={<CreateTemplate />} />
         <Route path='interview/evaluation/:id' element={<Evaluation />} />
         <Route path='needs/view/:id' element={<ViewNeed />} />
+        <Route path='/departements' element={<Departements />} />
         <Route path='city' element={<City />} />
         <Route path='view-resume/:id' element={<ViewResume />} />
 
@@ -66,7 +67,7 @@ function App() {
           />
 
           <Route path='/roles' element={<Roles />} />
-          <Route path='/departements' element={<Departements />} />
+         
           <Route path='/roles/:id' element={<ViewRole />} />
           <Route path='/resume' element={<Resume />} />
           <Route path='/needs' element={<Needs />} />

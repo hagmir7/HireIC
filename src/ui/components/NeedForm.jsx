@@ -70,15 +70,12 @@ const NeedForm = ({fetchData}) => {
 
   const onFinish = async (values) => {
     setLoading(true)
-    console.log(values)
     try {
       await api.post('needs', values)
       message.success('Besoin créé avec succès !')
       form.resetFields()
       fetchData()
     } catch (error) {
-      console.error('Erreur de soumission du formulaire :', error)
-
       if (error.response?.data?.errors) {
         const errors = error.response.data.errors
         const firstErrorKey = Object.keys(errors)[0]
@@ -95,7 +92,7 @@ const NeedForm = ({fetchData}) => {
   }
 
   const onFinishFailed = (errorInfo) => {
-    console.log('Échec :', errorInfo)
+    console.error('Échec :', errorInfo)
     message.error('Veuillez vérifier tous les champs obligatoires')
   }
 

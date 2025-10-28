@@ -1,5 +1,5 @@
-import { Button, Modal, Checkbox, Col, Form, Input, DatePicker, Row, Select, message, Space, Empty, Typography } from 'antd';
-import { CircleAlert, ClipboardList, Edit, Eye, Filter, ListPlus, MessageSquare, PlusCircle, Settings2, Trash, User } from 'lucide-react';
+import { Button, Modal, Checkbox, Col, Form, Input, Row, Select, message, Space, Empty, Typography } from 'antd';
+import { CircleAlert, ClipboardList, Edit, Eye, Filter, MessageSquare, PlusCircle, Settings2, Trash, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
@@ -139,7 +139,6 @@ export const Resume = () => {
   };
 
   const handleFilter = () => {
-    console.log(filters);
     getResumes();
     setFilterModalOpen(false)
 
@@ -179,10 +178,7 @@ export const Resume = () => {
       cancelText: 'Annuler',
       onOk() {
         handleDelete(id);
-      },
-      onCancel() {
-        console.log('Cancelled');
-      },
+      }
     });
   };
 

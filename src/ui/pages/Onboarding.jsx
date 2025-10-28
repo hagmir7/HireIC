@@ -116,10 +116,7 @@ export default function Onboarding() {
       cancelText: "Annuler",
       onOk() {
         handleDelete(id);
-      },
-      onCancel() {
-        console.log("Cancelled");
-      },
+      }
     });
   };
 

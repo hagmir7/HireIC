@@ -61,7 +61,7 @@ export default function ResumeLanguage({ next, prev }) {
             setLoading(false)
         } catch (error) {
             setLoading(false)
-            console.log(error);
+            console.error(error);
             message.error(error.response?.data?.message || "Erreur lors du chargement des langues.");
         }
     };

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { api } from '../utils/api'
-import { Button, Checkbox, message, Modal, Popconfirm, Select, Tag } from 'antd'
-import { ArrowRight, PlusCircle, RefreshCcw, Undo2 } from 'lucide-react' // Added missing Undo2 import
+import { Button, Checkbox, message, Modal, Popconfirm, Select } from 'antd'
+import {PlusCircle, RefreshCcw, Undo2 } from 'lucide-react'
 import Skeleton from '../components/ui/Sketelon'
 import NeedForm from '../components/NeedForm'
 import { formatDate } from '../utils/config'
@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom'
 const Needs = () => {
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [transferSpin, setTransferSpin] = useState(false);
   const [data, setData] = useState([]);
   const [statusFilter, setStatusFilter] = useState(0);
   const navigate = useNavigate();
@@ -24,21 +23,14 @@ const Needs = () => {
     }
   }
 
-  const handleSelect = (id) => {
-    setSelected((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    )
-  }
-
   const fetchData = async () => {
     setLoading(true)
     try {
       const res = await api.get(`needs?status=${statusFilter}` )
       setData(res.data)
-      console.log(res.data);
-      
     } catch (error) {
-      message.error(error.response?.data?.message || 'Erreur serveur')
+      console.error(error);
+      message.error(error.response?.data?.message || 'Erreur serveur');
     }
     setLoading(false)
   }
@@ -46,28 +38,6 @@ const Needs = () => {
   useEffect(() => {
     fetchData()
   }, [statusFilter])
-
-    const NeedsStatus = {
-        0: { label: 'En attente', color: 'text-gray-600', bg: 'bg-gray-100' },
-        1: { label: 'En cours', color: 'text-blue-600', bg: 'bg-blue-100' },
-        2: { label: 'Annulé', color: 'text-red-600', bg: 'bg-red-100' },
-        3: { label: 'Exécuté', color: 'text-green-600', bg: 'bg-green-100' },
-    }
-
-
-    function renderStatus(statusCode) {
-    const status = NeedsStatus[statusCode]
-    if (!status) return null
-
-    return (
-        <span
-        className={`inline-block px-2 py-1 text-sm font-semibold rounded-full ${status.bg} ${status.color}`}
-        >
-        {status.label}
-        </span>
-    )
-    }
-
 
    const handleShow = async (need_id) => {
      try {

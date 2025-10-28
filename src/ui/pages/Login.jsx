@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Card, Alert, Typography, Spin } from 'antd';
+import { Form, Input, Button, Alert, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
 import { useAuth } from '../contexts/AuthContext';
 import { api } from '../utils/api';
@@ -11,8 +11,7 @@ const Login = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { login, loading, message } = useAuth();
-
-  // Initialize form with default values
+  
   useEffect(() => {
     form.setFieldsValue({
       login: 'admin',
@@ -41,8 +40,7 @@ const Login = () => {
           return navigate('/');
         }
       } catch (error) {
-        console.log(error);
-        
+        console.error(error);
         message.error(error.response.data.message);
       }
     }
