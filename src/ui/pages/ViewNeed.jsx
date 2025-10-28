@@ -376,7 +376,7 @@ const ViewNeed = () => {
                 > Invitation pour tous</Button>
                 <Button
                   // type="primary"
-                  onClick={()=> handlePrint(`http://localhost:8000/api/needs/${id}/download`)}
+                  onClick={()=> handlePrint(`needs/${id}/download`)}
                   info
                   icon={<Printer size={15} />}
                 > Imprimer</Button>

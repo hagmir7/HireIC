@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Avatar, Button, Card, Flex, Modal, Space } from 'antd';
+import { Avatar, Card, Flex, Modal, Space } from 'antd';
 import { Copy, PlusCircle } from 'lucide-react';
 import { handlePrint } from '../utils/config';
 
@@ -29,7 +29,7 @@ const DocumentTemplates = () => {
                 {/* <div className='mt-4'></div> */}
                 <Card
                     size="small" className='cursor-pointer hover:shadow-sm mt-5'
-                    onClick={()=> handlePrint("http://localhost:8000/pdf")}
+                    onClick={()=> handlePrint("pdf")}
                     >
                         <div className='flex gap-3 items-center'>
                             <Copy size={20}/>

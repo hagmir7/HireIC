@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { Button, message, Modal, Select } from "antd";
-import { RefreshCcw, PlusCircle } from "lucide-react";
+import {
+  RefreshCcw,
+  PlusCircle,
+  Eye,
+  Edit,
+  Trash,
+  CircleAlert,
+  Printer,
+} from "lucide-react";
 
-import Skeleton from "../components/ui/Sketelon";
 import { api } from "../utils/api";
-import { formatDate } from "../utils/config";
+import { formatDate, handlePrint } from "../utils/config";
 import OnboardingForm from "../components/onboarding/OnboardingFrom";
+import RightClickMenu from "../components/ui/RightClickMenu";
+import Skeleton from "../components/ui/Sketelon";
 
 export default function Onboarding() {
   const [onboardings, setOnboardings] = useState([]);
@@ -15,6 +24,7 @@ export default function Onboarding() {
   const [filter, setFilter] = useState(null);
   const [open, setOpen] = useState(false);
   const [selectedOnboarding, setSelectedOnboarding] = useState(null);
+  const { confirm } = Modal;
 
   useEffect(() => {
     fetchOnboardings(true);
@@ -32,7 +42,7 @@ export default function Onboarding() {
         : `integrations`;
 
       const response = await api.get(endpoint);
-      const resData = response.data?.data;
+      const resData = response.data;
 
       const items = resData?.data || [];
       const paginationInfo = {
@@ -46,7 +56,9 @@ export default function Onboarding() {
 
       setPagination(paginationInfo);
     } catch (error) {
-      message.warning(error?.response?.data?.message || "Erreur lors du chargement.");
+      message.warning(
+        error?.response?.data?.message || "Erreur lors du chargement."
+      );
     } finally {
       setLoading(false);
       setLoadingMore(false);
@@ -55,24 +67,101 @@ export default function Onboarding() {
 
   function getStatusLabel(status) {
     const statuses = {
-      0: { label: "En attente", color: "bg-gray-100 text-gray-800 border-gray-300" },
-      1: { label: "En cours", color: "bg-blue-100 text-blue-800 border-blue-300" },
-      2: { label: "Terminé", color: "bg-green-100 text-green-800 border-green-300" },
-      3: { label: "Expiré", color: "bg-red-100 text-red-800 border-red-300" },
-      4: { label: "Annulé", color: "bg-yellow-100 text-yellow-800 border-yellow-300" },
+      0: {
+        label: "En attente",
+        color: "bg-gray-100 text-gray-800 border-gray-300",
+      },
+      1: {
+        label: "En cours",
+        color: "bg-blue-100 text-blue-800 border-blue-300",
+      },
+      2: {
+        label: "Terminé",
+        color: "bg-green-100 text-green-800 border-green-300",
+      },
+      3: {
+        label: "Expiré",
+        color: "bg-red-100 text-red-800 border-red-300",
+      },
+      4: {
+        label: "Annulé",
+        color: "bg-yellow-100 text-yellow-800 border-yellow-300",
+      },
     };
     const s = statuses[status];
-    if (!s) return <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded">__</span>;
+    if (!s)
+      return (
+        <span className="bg-gray-100 text-gray-800 px-2 py-1 rounded">__</span>
+      );
     return <span className={`${s.color} border px-2 py-1 rounded`}>{s.label}</span>;
   }
+
+  const handleDelete = async (id) => {
+    try {
+      await api.delete(`integrations/${id}`);
+      message.success("Embarquement supprimé avec succès.");
+      fetchOnboardings(true);
+    } catch (error) {
+      message.error("Erreur lors de la suppression.");
+    }
+  };
+
+  const showDeleteConfirm = (id) => {
+    confirm({
+      title: "Êtes-vous sûr de vouloir supprimer cet élément ?",
+      icon: <CircleAlert size={25} className="text-red-600 mt-1 mr-2" />,
+      content: "Cette action ne peut pas être annulée.",
+      okText: "Oui, supprimez-le",
+      okType: "danger",
+      cancelText: "Annuler",
+      onOk() {
+        handleDelete(id);
+      },
+      onCancel() {
+        console.log("Cancelled");
+      },
+    });
+  };
+
+  const handleMenuClick = (key, id) => {
+    switch (key) {
+      case 'print':
+        handlePrint(`integrations/${id}/download`)
+        break;
+      case "edit": 
+        setSelectedOnboarding(onboardings.find((item) => Number(item.id) === Number(id)));
+        setOpen(true);
+        break;
+      case "delete":
+        showDeleteConfirm(id);
+        break;
+      default:
+        message.info(`Action "${key}" non implémentée.`);
+    }
+  };
+
+  const items = [
+    { label: "Voir", key: "view", icon: <Eye size={15} /> },
+    { label: "Imprimer", key: "print", icon: <Printer size={15} /> },
+    { type: "divider" },
+    { label: "Modifier", key: "edit", icon: <Edit size={15} /> },
+    { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true },
+  ];
 
   return (
     <div>
       <div className="flex justify-between items-center pt-2 px-2">
         <h2 className="text-lg font-semibold text-gray-800">Embarquements</h2>
         <div className="flex gap-3">
-          <Button onClick={() => fetchOnboardings(true)} className="flex items-center gap-2">
-            {loading ? <RefreshCcw className="animate-spin h-4 w-4" /> : <RefreshCcw className="h-4 w-4" />}
+          <Button
+            onClick={() => fetchOnboardings(true)}
+            className="flex items-center gap-2"
+          >
+            {loading ? (
+              <RefreshCcw className="animate-spin h-4 w-4" />
+            ) : (
+              <RefreshCcw className="h-4 w-4" />
+            )}
             Rafraîchir
           </Button>
 
@@ -82,6 +171,7 @@ export default function Onboarding() {
             onChange={(value) => setFilter(value)}
             allowClear
             options={[
+              { label: "Tout", value: null },
               { label: "En attente", value: 0 },
               { label: "En cours", value: 1 },
               { label: "Terminé", value: 2 },
@@ -102,7 +192,11 @@ export default function Onboarding() {
           </Button>
 
           <Modal
-            title={selectedOnboarding ? "Modifier un embarquement" : "Créer un embarquement"}
+            title={
+              selectedOnboarding
+                ? "Modifier un embarquement"
+                : "Créer un embarquement"
+            }
             centered
             open={open}
             onCancel={() => setOpen(false)}
@@ -122,7 +216,7 @@ export default function Onboarding() {
 
       <div className="mt-4 overflow-auto bg-white rounded shadow-sm">
         <table className="min-w-full text-sm border-t border-gray-300">
-          <thead className="bg-gray-100 ">
+          <thead className="bg-gray-100">
             <tr>
               <th className="px-3 py-2 text-left">Candidat</th>
               <th className="px-3 py-2 text-left">Code</th>
@@ -130,34 +224,48 @@ export default function Onboarding() {
               <th className="px-3 py-2 text-left">Date d’évaluation</th>
               <th className="px-3 py-2 text-left">Date d’embauche</th>
               <th className="px-3 py-2 text-left">Statut</th>
-              <th className="px-3 py-2 text-left">Actions</th>
             </tr>
           </thead>
 
           <tbody>
             {loading ? (
-              <Skeleton rows={3} columns={7} />
+              <Skeleton rows={3} columns={6} />
             ) : onboardings.length > 0 ? (
               onboardings.map((item, index) => (
-                <tr key={index} className="border-t border-gray-300 hover:bg-gray-50 whitespace-normal">
-                  <td className="px-3 py-2 whitespace-nowrap">{item?.resume?.full_name}</td>
-                  <td className="px-3 py-2 whitespace-nowrap">{item?.code}</td>
-                  <td className="px-3 py-2 whitespace-nowrap">{item?.responsible?.full_name || "__"}</td>
-                  <td className="px-3 py-2 whitespace-nowrap">{item?.evaluation_date ? formatDate(item.evaluation_date) : "__"}</td>
-                  <td className="px-3 py-2 whitespace-nowrap">{item?.hire_date ? formatDate(item.hire_date) : "__"}</td>
-                  <td className="px-3 py-2 whitespace-nowrap">{getStatusLabel(item?.status)}</td>
-                  <td className="px-3 py-2 whitespace-nowrap">
-                    <Button
-                      size="small"
-                      onClick={() => {
-                        setSelectedOnboarding(item);
-                        setOpen(true);
-                      }}
+                <RightClickMenu
+                      key={item.id}
+                      menuItems={items.map((menuItem) => ({
+                        ...menuItem,
+                        id: item.id, // ✅ here we attach the onboarding id
+                      }))}
+                      onItemClick={handleMenuClick}
                     >
-                      Modifier
-                    </Button>
-                  </td>
-                </tr>
+                  <tr
+                    key={index}
+                    className="border-t border-gray-300 hover:bg-gray-50 whitespace-normal"
+                  >
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {item?.resume?.full_name}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">{item?.code}</td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {item?.responsible?.full_name || "__"}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {item?.evaluation_date
+                        ? formatDate(item.evaluation_date)
+                        : "__"}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {item?.hire_date
+                        ? formatDate(item.hire_date)
+                        : "__"}
+                    </td>
+                    <td className="px-3 py-2 whitespace-nowrap">
+                      {getStatusLabel(item?.status)}
+                    </td>
+                  </tr>
+                </RightClickMenu>
               ))
             ) : (
               <tr>
@@ -171,7 +279,12 @@ export default function Onboarding() {
 
         {pagination?.next_page_url && (
           <div className="flex justify-center p-4">
-            <Button onClick={() => fetchOnboardings(false, pagination.next_page_url)} loading={loadingMore}>
+            <Button
+              onClick={() =>
+                fetchOnboardings(false, pagination.next_page_url)
+              }
+              loading={loadingMore}
+            >
               Charger plus
             </Button>
           </div>

@@ -174,6 +174,6 @@ export async function downloadFiles(url) {
 
 
 export async function handlePrint(url) {
-   window.open(url, '_blank');
+   window.open('http://localhost:8000/api/' + url, '_blank');
 }
 

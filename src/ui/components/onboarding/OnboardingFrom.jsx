@@ -13,6 +13,8 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { api } from "../../utils/api";
+import { CircleAlert, Printer, Save } from "lucide-react";
+import { handlePrint } from "../../utils/config";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -27,6 +29,8 @@ export default function OnboardingForm({ record = null, onClose }) {
     const [loading, setLoading] = useState(false);
     const [activities, setActivities] = useState([]);
     const [activityDates, setActivityDates] = useState({}); 
+
+    
 
     
     const IntegrationStatusArray = [
@@ -121,14 +125,20 @@ export default function OnboardingForm({ record = null, onClose }) {
     };
 
     useEffect(() => {
-        if (!record && activities.length > 0) {
-            const defaults = {};
-            activities.forEach(a => {
-                defaults[a.id] = dayjs().format('YYYY-MM-DD');
+        if (record && record.activities?.length > 0) {
+            // When editing an existing record, set dates from pivot
+            const existingDates = {};
+            record.activities.forEach((a) => {
+                if (a.pivot?.date) {
+                    existingDates[a.id] = dayjs(a.pivot.date).format("YYYY-MM-DD");
+                }
             });
-            setActivityDates(defaults);
+            setActivityDates(existingDates);
+        } else if (!record) {
+            // When creating a new record, no default activity dates
+            setActivityDates({});
         }
-    }, [activities, record]);
+    }, [record, activities]);
 
     // --- Submit ---
     const onFinish = async (values) => {
@@ -144,7 +154,6 @@ export default function OnboardingForm({ record = null, onClose }) {
                 })),
             };
 
-            console.log(payload);
             
 
             if (record) {
@@ -166,6 +175,7 @@ export default function OnboardingForm({ record = null, onClose }) {
             setLoading(false);
         }
     };
+
 
     // --- Render ---
     return (
@@ -268,7 +278,7 @@ export default function OnboardingForm({ record = null, onClose }) {
                         <div
                             className="p-4 text-gray-600"
                             style={{
-                                height: "60vh",
+                                height: "50vh",
                                 overflowY: "auto",
                                 overflowX: "hidden",
                                 borderRadius: "8px",
@@ -314,9 +324,15 @@ export default function OnboardingForm({ record = null, onClose }) {
                 </Tabs>
 
                 {/* ONE SINGLE SUBMIT BUTTON */}
-                <Button type="primary" htmlType="submit" loading={loading} block className="mt-4">
-                    {record ? "Mettre à jour l’onboarding" : "Enregistrer l’onboarding"}
+                <div className="flex gap-3">
+                    <Button type="primary" style={{width: 200}} icon={<Save size={18} className="mt-1" />} htmlType="submit" loading={loading} className="mt-4">
+                    {record ? "Modifier l’onboarding" : "Enregistrer l’onboarding"}
                 </Button>
+                    {record ?
+                        <Button classNames="flex items-center" style={{width: 200}} onClick={()=> handlePrint(`integrations/${record.id}/download`)}  className="mt-4" icon={<Printer size={18} className="mt-1"  />}>
+                            Imprimer
+                        </Button> : ""}
+                </div>
             </Form>
         </Card>
     );

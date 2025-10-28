@@ -295,7 +295,7 @@ export default function Evaluation() {
       {/* Interview Details */}
       <Card title={
         <div className="flex justify-between"><span>Détails de l'Entretien</span>
-          <span className="cursor-pointer text-green-600" onClick={() => handlePrint(`http://localhost:8000/api/interviews/${id}/download`)}><Printer /></span>
+          <span className="cursor-pointer text-green-600" onClick={() => handlePrint(`interviews/${id}/download`)}><Printer /></span>
         </div>
       } className="mb-6 shadow-sm" size="small">
         <div className="flex flex-wrap items-center justify-between gap-4">
