@@ -3,16 +3,16 @@ import { CircleAlert, ClipboardList, Edit, MessageSquare, PlusCircle, Settings2,
 import { Button, Checkbox, message, Modal } from 'antd'
 import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
-import DepartementForm from '../components/departement/DepartementForm'
 import RightClickMenu from '../components/ui/RightClickMenu'
+import LevelForm from '../components/levels/LevelForm'
 
 
-const Departements = () => {
+const Diplome = () => {
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [departement, setDepartement] = useState();
+  const [level, setLevel] = useState();
   const { confirm } = Modal;
 
 
@@ -33,7 +33,7 @@ const Departements = () => {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const res = await api.get('departements')
+      const res = await api.get('levels')
       setData(res.data)
     } catch (error) {
       message.error(error.response?.data?.message || 'Erreur serveur')
@@ -41,15 +41,14 @@ const Departements = () => {
     setLoading(false)
   }
 
-  const handleDelete = async (departement_id) => {
+  const handleDelete = async (diplome_id) => {
     try {
-      await api.delete(`departements/${departement_id}`)
-      message.success("Département supprimé avec succès")
+      await api.delete(`levels/${diplome_id}`)
+      message.success("Diplôme supprimé avec succès")
       fetchData();
     } catch (error) {
       console.error(error);
-      message.error(error?.response?.data?.message || "Erreur de supprimer la département");
-
+      message.error(error?.response?.data?.message || "Erreur de supprimer la diplôme");
     }
   }
 
@@ -75,7 +74,7 @@ const Departements = () => {
   const handleMenuClick = (key, id) => {
     switch (key) {
       case "edit":
-        setDepartement(data.find((item) => Number(item.id) === Number(id)))
+        setLevel(data.find((item) => Number(item.id) === Number(id)))
         setIsModalOpen(true)
         break;
       case 'delete':
@@ -103,26 +102,34 @@ const Departements = () => {
 
 
           <Modal
-            title="Département"
+            title="Diplôme"
             closable={{ 'aria-label': 'Custom Close Button' }}
             open={isModalOpen}
             onOk={() => setIsModalOpen(false)}
             footer={false}
             onCancel={() => setIsModalOpen(false)}
           >
-            <DepartementForm
-              initialValues={departement}
-              onSubmit={async (data) => {
-                if (departement) {
-                  await api.put(`departements/${departement.id}`, data);
-                } else {
-                  await api.post("departements", data);
-                }
-                setIsModalOpen(false);
-                fetchData();
-                setDepartement('')
-              }}
-            />
+           <LevelForm
+                initialValues={level}
+                onSubmit={async (data) => {
+                    try {
+                    if (level) {
+                        await api.put(`levels/${level.id}`, data);
+                        message.success("Niveau mis à jour avec succès !");
+                    } else {
+                        await api.post("levels", data);
+                        message.success("Niveau ajouté avec succès !");
+                    }
+                    setIsModalOpen(false);
+                    fetchData();
+                    setLevel('');
+                    } catch (error) {
+                      console.error("Erreur lors de l’enregistrement du niveau :", error);
+                      message.error("Une erreur s’est produite. Veuillez réessayer.");
+                      return false;
+                    }
+                }}
+                />
 
           </Modal>
         </div>
@@ -143,7 +150,10 @@ const Departements = () => {
                 Département
               </th>
               <th className='px-2 py-2 text-left border-r border-gray-300 text-sm font-semibold text-gray-600'>
-                Services
+                Années (Bac+)
+              </th>
+               <th className='px-2 py-2 text-left border-r border-gray-300 text-sm font-semibold text-gray-600'>
+                Coefficient
               </th>
 
             </tr>
@@ -171,8 +181,12 @@ const Departements = () => {
                     <td className='px-2 py-1 border-r border-gray-300 text-sm font-medium text-gray-800'>
                       {item.name || '__'}
                     </td>
+           
                     <td className='px-2 py-1 border-r border-gray-300 text-sm text-gray-700'>
-                      {item.services_count}
+                      {item.years}
+                    </td>
+                    <td className='px-2 py-1 border-r border-gray-300 text-sm text-gray-700'>
+                      {item.coefficient}
                     </td>
                   </tr>
                 </RightClickMenu>
@@ -197,4 +211,4 @@ const Departements = () => {
   )
 }
 
-export default Departements
+export default Diplome

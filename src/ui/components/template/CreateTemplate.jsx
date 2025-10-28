@@ -193,7 +193,7 @@ export default function TemplateForm({ onSuccess }) {
             name='departement_id'
             label='Département'
             style={{marginBottom: 0}}
-            rules={[{ required: true, message: 'Département est requis' }]}
+            rules={[{ required: true, message: 'est requis' }]}
           >
             <Select
               placeholder="Sélectionnez le département"

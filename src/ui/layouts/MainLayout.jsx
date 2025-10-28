@@ -99,7 +99,8 @@ const sideMenu = () => {
         {
           key: 'submenu-121',
           icon: <GraduationCap size={19} />,
-          label: <Link to='/diplome'>Diplômes</Link>,
+          onClick: () => handleShow('diplome'),
+          label: 'Diplômes',
         },
         {
           key: 'submenu-131',
