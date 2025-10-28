@@ -1,88 +1,63 @@
-import React, { useState } from 'react';
-import { 
-  Calendar, 
-  Badge, 
-  Modal, 
-  Form, 
-  Input, 
-  Select, 
-  Button, 
-  List, 
-  Checkbox, 
-  Tag, 
-  Typography,
-  TimePicker,
-  Divider,
-  Popconfirm
-} from 'antd';
-import { 
-  PlusOutlined, 
-  ClockCircleOutlined, 
-  DeleteOutlined,
-  CheckCircleOutlined 
-} from '@ant-design/icons';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Calendar, Badge, Typography, Modal, List, Checkbox, Tag } from 'antd';
 import dayjs from 'dayjs';
 import { locale } from '../utils/config';
+import { api } from '../utils/api'
 
 const { Title, Text } = Typography;
-const { TextArea } = Input;
 
 const InvitationCalendar = () => {
   const [tasks, setTasks] = useState({});
   const [selectedDate, setSelectedDate] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [form] = Form.useForm();
 
-  const formatDate = (date) => {
-    return dayjs(date).format('YYYY-MM-DD');
-  };
+  const formatDate = (date) => dayjs(date).format('YYYY-MM-DD');
 
-  const onSelect = (date) => {
-    setSelectedDate(date);
-    setModalVisible(true);
-  };
+  // Fetch calendar data from API
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const month = dayjs().month() + 1; // 1-12
+        const year = dayjs().year();
+        const response = await api.get(`calendar?month=${month}&year=${year}`);
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Erreur lors du chargement des tâches:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const getPriorityColor = (priority) => {
     const colors = {
+      invitation: '#1890ff',
+      evaluation: '#faad14',
+      integration: '#52c41a',
       high: '#ff4d4f',
       medium: '#faad14',
-      low: '#52c41a'
+      low: '#52c41a',
     };
     return colors[priority] || '#d9d9d9';
-  };
-
-  const getPriorityTag = (priority) => {
-    const config = {
-      high: { color: 'red', text: 'HAUTE' },
-      medium: { color: 'orange', text: 'MOYENNE' },
-      low: { color: 'green', text: 'FAIBLE' }
-    };
-    return config[priority] || { color: 'default', text: 'NORMALE' };
   };
 
   const dateCellRender = (date) => {
     const dateKey = formatDate(date);
     const dayTasks = tasks[dateKey] || [];
-    
+
     return (
-      <div style={{ minHeight: '60px', padding: '2px' }}>
-        {dayTasks.slice(0, 3).map(task => (
-          <div key={task.id} style={{ marginBottom: '2px' }}>
+      <div className="min-h-[60px] p-1">
+        {dayTasks.slice(0, 3).map((task) => (
+          <div key={task.id} className="mb-0.5">
             <Badge
               status={task.completed ? 'success' : 'processing'}
               color={task.completed ? '#52c41a' : getPriorityColor(task.priority)}
               text={
-                <span 
-                  style={{ 
-                    fontSize: '11px',
-                    textDecoration: task.completed ? 'line-through' : 'none',
-                    opacity: task.completed ? 0.6 : 1,
-                    maxWidth: '80px',
-                    display: 'inline-block',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap'
-                  }}
+                <span
+                  className={`text-[11px] inline-block max-w-[80px] overflow-hidden text-ellipsis whitespace-nowrap ${
+                    task.completed ? 'line-through opacity-60' : ''
+                  }`}
                 >
                   {task.title}
                 </span>
@@ -91,7 +66,7 @@ const InvitationCalendar = () => {
           </div>
         ))}
         {dayTasks.length > 3 && (
-          <Text type="secondary" style={{ fontSize: '10px' }}>
+          <Text type="secondary" className="text-[10px]">
             +{dayTasks.length - 3} de plus
           </Text>
         )}
@@ -99,258 +74,90 @@ const InvitationCalendar = () => {
     );
   };
 
-  const addTask = (values) => {
-    if (!selectedDate) return;
-
-    const dateKey = formatDate(selectedDate);
-    const task = {
-      id: Date.now(),
-      title: values.title,
-      time: values.time ? dayjs(values.time).format('HH:mm') : null,
-      priority: values.priority || 'medium',
-      description: values.description || '',
-      completed: false,
-      createdAt: new Date()
-    };
-
-    setTasks(prev => ({
-      ...prev,
-      [dateKey]: [...(prev[dateKey] || []), task]
-    }));
-
-    form.resetFields();
+  const onSelect = (date) => {
+    setSelectedDate(date);
+    setModalVisible(true);
   };
 
-  const toggleTask = (dateKey, taskId) => {
-    setTasks(prev => ({
-      ...prev,
-      [dateKey]: prev[dateKey].map(task =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    }));
+  const handleToggleComplete = (dateKey, id) => {
+    setTasks((prev) => {
+      const updated = { ...prev };
+      updated[dateKey] = updated[dateKey].map((t) =>
+        t.id === id ? { ...t, completed: !t.completed } : t
+      );
+      return updated;
+    });
   };
 
-  const deleteTask = (dateKey, taskId) => {
-    setTasks(prev => ({
-      ...prev,
-      [dateKey]: prev[dateKey].filter(task => task.id !== taskId)
-    }));
-  };
-
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setSelectedDate(null);
-    form.resetFields();
-  };
-
-  const currentDateTasks = selectedDate ? tasks[formatDate(selectedDate)] || [] : [];
+  const dateKey = selectedDate ? formatDate(selectedDate) : null;
+  const selectedTasks = dateKey ? tasks[dateKey] || [] : [];
 
   return (
-    <div>
-      <div style={{ 
-        maxWidth: '1200px', 
-        margin: '0 auto',
-        background: 'white',
-        borderRadius: '8px',
-        padding: '24px',
-      }}>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'space-between', 
-          alignItems: 'center', 
-          marginBottom: '24px' 
-        }}>
-          <Title level={4} style={{ margin: 0, color: '#262626' }}>
-            Calendrier
-          </Title>
-          <Text type="secondary">
-            Cliquez sur une date pour gérer les tâches
-          </Text>
-        </div>
-
-        <Calendar
-        // showWeek={true}
-        // mode={'year'}
-          locale={locale}
-          onSelect={onSelect}
-          dateCellRender={dateCellRender}
-          style={{ 
-            background: 'white',
-            borderRadius: '8px',
-            border: '1px solid #f0f0f0'
-          }}
-        />
-
-        <Modal
-          title={
-            <Title level={5} style={{ margin: 0 }}>
-              Tâches du {selectedDate ? selectedDate.format('D MMMM YYYY') : ''}
-            </Title>
-          }
-          open={modalVisible}
-          onCancel={handleModalClose}
-          footer={null}
-          width={600}
-          bodyStyle={{ maxHeight: '70vh', overflowY: 'auto' }}
-        >
-          {currentDateTasks.length > 0 && (
-            <>
-              <Title level={5}>Tâches existantes</Title>
-              <List
-                dataSource={currentDateTasks}
-                renderItem={task => (
-                  <List.Item
-                    style={{ 
-                      borderLeft: `4px solid ${getPriorityColor(task.priority)}`,
-                      paddingLeft: '16px',
-                      marginBottom: '8px',
-                      background: task.completed ? '#f6ffed' : '#fafafa',
-                      borderRadius: '6px'
-                    }}
-                    actions={[
-                      <Popconfirm
-                        title="Supprimer cette tâche ?"
-                        onConfirm={() => deleteTask(formatDate(selectedDate), task.id)}
-                        okText="Oui"
-                        cancelText="Non"
-                      >
-                        <Button 
-                          type="text" 
-                          danger 
-                          icon={<DeleteOutlined />}
-                          size="small"
-                        />
-                      </Popconfirm>
-                    ]}
-                  >
-                    <List.Item.Meta
-                      avatar={
-                        <Checkbox
-                          checked={task.completed}
-                          onChange={() => toggleTask(formatDate(selectedDate), task.id)}
-                        />
-                      }
-                      title={
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <span 
-                            style={{ 
-                              textDecoration: task.completed ? 'line-through' : 'none',
-                              opacity: task.completed ? 0.6 : 1 
-                            }}
-                          >
-                            {task.title}
-                          </span>
-                          <Tag {...getPriorityTag(task.priority)} size="small">
-                            {getPriorityTag(task.priority).text}
-                          </Tag>
-                        </div>
-                      }
-                      description={
-                        <div>
-                          {task.time && (
-                            <div style={{ marginBottom: '4px' }}>
-                              <ClockCircleOutlined style={{ marginRight: '4px' }} />
-                              <Text type="secondary">{task.time}</Text>
-                            </div>
-                          )}
-                          {task.description && (
-                            <Text type="secondary" style={{ fontSize: '12px' }}>
-                              {task.description}
-                            </Text>
-                          )}
-                        </div>
-                      }
-                    />
-                  </List.Item>
-                )}
-                style={{ marginBottom: '24px' }}
-              />
-              <Divider />
-            </>
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>
-                Titre de la tâche *
-              </label>
-              <Input 
-                placeholder="Saisir le titre"
-                prefix={<CheckCircleOutlined />}
-                value={form.getFieldValue('title') || ''}
-                onChange={(e) => form.setFieldsValue({ title: e.target.value })}
-              />
-            </div>
-
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>
-                  Heure
-                </label>
-                <TimePicker 
-                  format="HH:mm"
-                  placeholder="Choisir l'heure"
-                  style={{ width: '100%' }}
-                  value={form.getFieldValue('time')}
-                  onChange={(time) => form.setFieldsValue({ time })}
-                />
-              </div>
-
-              <div style={{ flex: 1 }}>
-                <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>
-                  Priorité
-                </label>
-                <Select 
-                  placeholder="Choisir la priorité"
-                  style={{ width: '100%' }}
-                  value={form.getFieldValue('priority') || 'medium'}
-                  onChange={(priority) => form.setFieldsValue({ priority })}
-                >
-                  <Select.Option value="low">
-                    <Tag color="green">Faible</Tag>
-                  </Select.Option>
-                  <Select.Option value="medium">
-                    <Tag color="orange">Moyenne</Tag>
-                  </Select.Option>
-                  <Select.Option value="high">
-                    <Tag color="red">Haute</Tag>
-                  </Select.Option>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <label style={{ display: 'block', marginBottom: '4px', fontWeight: '500' }}>
-                Description (optionnelle)
-              </label>
-              <TextArea 
-                rows={2}
-                placeholder="Saisir une description"
-                maxLength={200}
-                showCount
-                value={form.getFieldValue('description') || ''}
-                onChange={(e) => form.setFieldsValue({ description: e.target.value })}
-              />
-            </div>
-
-            <Button 
-              type="primary" 
-              icon={<PlusOutlined />}
-              block
-              size="large"
-              onClick={() => {
-                const values = form.getFieldsValue();
-                if (values.title?.trim()) {
-                  addTask(values);
-                }
-              }}
-              disabled={!form.getFieldValue('title')?.trim()}
-            >
-              Ajouter une invitation
-            </Button>
-          </div>
-        </Modal>
+    <div className="max-w-[1200px] mx-auto bg-white rounded-lg p-6 shadow-sm">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-6">
+        <Title level={4} className="!m-0 text-gray-800">
+          Calendrier
+        </Title>
+        <Text type="secondary" className="text-gray-500">
+          Cliquez sur une date pour gérer les tâches
+        </Text>
       </div>
+
+      {/* Calendar */}
+      <Calendar
+        locale={locale}
+        onSelect={onSelect}
+        dateCellRender={dateCellRender}
+        className="bg-white rounded-lg border border-gray-200"
+      />
+
+      {/* Modal */}
+      <Modal
+        title={
+          <div className="flex items-center justify-between">
+            <span>
+              Tâches du {selectedDate ? dayjs(selectedDate).format('DD MMMM YYYY') : ''}
+            </span>
+            <Tag color="blue">{selectedTasks.length} tâche(s)</Tag>
+          </div>
+        }
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        footer={null}
+      >
+        {selectedTasks.length > 0 ? (
+          <List
+            itemLayout="horizontal"
+            dataSource={selectedTasks}
+            renderItem={(task) => (
+              <List.Item
+                className="border-b border-gray-100 py-2"
+                actions={[
+                  <Tag color={getPriorityColor(task.priority)} key="priority">
+                    {task.priority}
+                  </Tag>,
+                ]}
+              >
+                <Checkbox
+                  checked={task.completed}
+                  onChange={() => handleToggleComplete(dateKey, task.id)}
+                >
+                  <span
+                    className={`ml-2 ${
+                      task.completed ? 'line-through text-gray-400' : 'text-gray-800'
+                    }`}
+                  >
+                    {task.title}
+                  </span>
+                </Checkbox>
+              </List.Item>
+            )}
+          />
+        ) : (
+          <div className="text-center py-6 text-gray-400">Aucune tâche ce jour-là.</div>
+        )}
+      </Modal>
     </div>
   );
 };
