@@ -96,7 +96,7 @@ const Diplome = () => {
     <div className='h-full flex flex-col'>
       <div className='shadow-sm p-2 flex items-center justify-between from-gray-50 to-gray-100 border-b'>
         <h2 className='text-md font-semibold text-gray-800'>
-          Départements & Services
+          Diplômes
         </h2>
         <div className='flex gap-3'>
 
@@ -160,7 +160,7 @@ const Diplome = () => {
           </thead>
           <tbody className='bg-white'>
             {loading ? (
-              <Skeleton rows={3} columns={3} />
+              <Skeleton rows={3} columns={4} />
             ) : data.length > 0 ? (
               data.map((item, index) => (
                 <RightClickMenu

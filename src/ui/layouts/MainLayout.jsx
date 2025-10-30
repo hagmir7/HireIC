@@ -94,6 +94,7 @@ const sideMenu = () => {
 
           key: 'submenu-2',
           icon: <Building size={19} />,
+          disabled: true,
           label: <Link to='/company'>Sociétés</Link>,
         },
         {
