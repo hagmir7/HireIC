@@ -1,6 +1,9 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'path';
 import { getPreloadPath, isDev } from '../util.js';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default function createLoginWindow() {
     let loginWindow = new BrowserWindow({
@@ -8,6 +11,7 @@ export default function createLoginWindow() {
         height: 600,
         // frame: false,
         // resizable: false,
+        icon: path.join(__dirname, '..', 'inter.ico'),
         webPreferences: {
             preload: getPreloadPath(),
         }

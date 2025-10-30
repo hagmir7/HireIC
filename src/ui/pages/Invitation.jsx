@@ -54,11 +54,11 @@ export default function Invitation() {
   };
 
   // ------------------ FETCH DATA ------------------
-  const fetchData = async () => {
+  const fetchData = async (params ={}) => {
     setLoading(true);
     setOpen(false);
     try {
-      const res = await api.get('invitations');
+      const res = await api.get('invitations', { params });
       setData(res.data);
     } catch (error) {
       message.error(error.response?.data?.message || 'Erreur serveur');

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CircleAlert, ClipboardList, Edit, MessageSquare, PlusCircle, Settings2, Trash } from 'lucide-react'
+import { CircleAlert, ClipboardList, Edit, Eye, MessageSquare, PlusCircle, Settings2, Trash } from 'lucide-react'
 import { Button, Checkbox, message, Modal } from 'antd'
 import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
@@ -74,6 +74,9 @@ const Departements = () => {
 
   const handleMenuClick = (key, id) => {
     switch (key) {
+      case 'view':
+         window.open(`/#/view-departement/${id}`, '_blank', 'width=800,height=600')
+        break;
       case "edit":
         setDepartement(data.find((item) => Number(item.id) === Number(id)))
         setIsModalOpen(true)
@@ -81,10 +84,13 @@ const Departements = () => {
       case 'delete':
         showDeleteConfirm(id);
         break;
+       
     }
   };
 
   const items = [
+    { label: "Voir Departemnt", key: "view", icon: <Eye size={15} />},
+    { type: "divider" },
     { label: "Modifier", key: "edit", icon: <Edit size={15} /> },
     { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true, },
   ];

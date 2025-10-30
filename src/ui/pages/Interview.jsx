@@ -158,15 +158,6 @@ const Interview = () => {
                   <table className='min-w-[800px] w-full'>
                     <thead className='sticky top-0 bg-gradient-to-b from-gray-50 to-gray-100 border-b border-gray-300 shadow-sm z-10'>
                       <tr>
-                        <th className='px-2 py-1 text-left'>
-                          <Checkbox
-                            onChange={handleSelectAll}
-                            checked={
-                              selected.length === data?.doclignes?.length &&
-                              data?.doclignes?.length > 0
-                            }
-                          />
-                        </th>
                         <th className='px-2 py-1 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider whitespace-nowrap'>
                           Candidat
                         </th>
@@ -203,10 +194,6 @@ const Interview = () => {
                               ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                             `}
                           >
-                            <td className='px-2 py-2 whitespace-nowrap border-r border-gray-100'>
-                              <Checkbox />
-                            </td>
-
                             <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
                               <div className='text-sm font-medium text-gray-900'>
                                 {item.resume ? item?.resume?.full_name : item?.user?.full_name}
@@ -214,7 +201,7 @@ const Interview = () => {
                               <span className='mt-2 text-gray-600 text-xs'>{item?.resume?.phone || item?.resume?.email}</span>
                             </td>
                             
-                            <td className='px-2 py-2 whitespace-nowrap border-r border-gray-100'>
+                            <td className='px-2 py-1 whitespace-nowrap border-r border-gray-100'>
                               <span className='text-sm font-semibold text-gray-900'>
                                 {item?.code}
                               </span>

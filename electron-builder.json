@@ -8,8 +8,12 @@
   },
   "buildDependenciesFromSource": false,
   "npmRebuild": false,
+  "asarUnpack": [
+    "react-dist"
+  ],
   "files": [
     "dist/**/*",
+    "react-dist/**/*",
     "src/electron/**/*",
     "node_modules/**/*",
     "!**/@tailwindcss/oxide-wasm32-wasi/**",

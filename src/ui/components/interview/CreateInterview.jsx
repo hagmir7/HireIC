@@ -114,7 +114,7 @@ export default function CreateInterview({ onSuccess }) {
         message.success("Interview updated successfully");
       } else {
         response = await api.post("interviews", payload);
-        message.success("Interview created successfully");
+        message.success("Interview créée avec succès");
         navigate(`/interview/create/${response.data.id}`);
 
       }

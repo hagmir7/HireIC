@@ -1,46 +1,22 @@
 import React, { useEffect } from "react";
-import { Form, Input, Button, Upload, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import { Form, Input, Button, message } from "antd";
 import { Save } from "lucide-react";
 
-const DepartementForm = ({ initialValues = null, onSubmit }) => {
+const ServiceForm = ({ initialValues = null, onSubmit }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
     if (initialValues) {
-      // Si mise à jour, remplir le formulaire
-      const logoFileList = initialValues.logo
-        ? [
-          {
-            uid: "-1",
-            name: "Logo",
-            status: "done",
-            url: initialValues.logo,
-          },
-        ]
-        : [];
-
       form.setFieldsValue({
         ...initialValues,
-        logo: logoFileList,
       });
     }
   }, [initialValues, form]);
 
   const handleFinish = (values) => {
-    // Convertir le fichier Upload en objet unique ou conserver l'URL pour l'existant
-    const logoFile = values.logo?.[0]?.originFileObj || values.logo?.[0]?.url || null;
-    const payload = {
-      ...values,
-      logo: logoFile,
-    };
-
-
-    // Appeler le handler parent pour création ou mise à jour
-    onSubmit(payload);
-
+    onSubmit(values);
     message.success(`Département ${initialValues ? "mis à jour" : "créé"} avec succès !`);
-    form.resetFields()
+    form.resetFields();
   };
 
   return (
@@ -50,7 +26,6 @@ const DepartementForm = ({ initialValues = null, onSubmit }) => {
       onFinish={handleFinish}
       style={{ maxWidth: 600, margin: "0 auto" }}
     >
-
       <Form.Item
         label="Département"
         name="name"
@@ -58,8 +33,6 @@ const DepartementForm = ({ initialValues = null, onSubmit }) => {
       >
         <Input placeholder="Entrez le nom" />
       </Form.Item>
-
-
 
       <Form.Item label="Description" name="description">
         <Input.TextArea rows={4} placeholder="Entrez la description" />
@@ -74,4 +47,4 @@ const DepartementForm = ({ initialValues = null, onSubmit }) => {
   );
 };
 
-export default DepartementForm;
+export default ServiceForm;

@@ -5,7 +5,7 @@ import { pathToFileURL } from 'url';
 
 // Path Resolver
 export function getUIPath() {
-    return path.join(app.getAppPath(), '/dist-react/index.html');
+    return path.join(app.getAppPath(), '/react-dist/index.html');
 }
 
 export function getPreloadPath() {
@@ -21,7 +21,6 @@ export function getAssetsPath(){
 export function isDev() {
     return process.env.NODE_ENV === "development";
 }
-
 
 export function validateEventFrame(frame) {
     if (isDev() && new URL(frame.url).host === 'localhost:5123') {

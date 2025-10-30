@@ -1,30 +1,23 @@
-// export function formatDate(date) {
-//   const year = date.getFullYear()
-//   const month = date.getMonth() + 1 // months are 0-based
-//   const day = date.getDate()
-//   return `${year}/${month}/${day}`
-// }
+
 
 import { useNavigate } from "react-router-dom";
 
 export function formatDate(isoDate) {
-  if (!isoDate) return ''
+  if (!isoDate) return '';
 
-  const date = new Date(isoDate)
-  if (isNaN(date.getTime())) return ''
+  const date = new Date(isoDate);
+  if (isNaN(date.getTime())) return '';
 
-  const options = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    timeZone: 'Europe/Paris',
-    hour12: false,
-  }
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
 
-  return new Intl.DateTimeFormat('fr-FR', options).format(date)
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+
+  return `${day}/${month}/${year} ${hours}:${minutes}`;
 }
+
 
 
 

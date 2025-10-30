@@ -23,6 +23,7 @@ import City from './pages/City'
 import ViewResume from './pages/ViewResume'
 import Onboarding from './pages/Onboarding'
 import Diplome from './pages/Diplome'
+import ViewDepartement from './pages/ViewDepartement'
 
 
 
@@ -54,6 +55,7 @@ function App() {
         <Route path='/diplome' element={<Diplome />} />
         <Route path='city' element={<City />} />
         <Route path='view-resume/:id' element={<ViewResume />} />
+        <Route path='view-departement/:id' element={<ViewDepartement />} />
 
         <Route path='interview/create' element={<CreateInterview />} />
         <Route path='interview/create/:id' element={<CreateInterview />} />
