@@ -4,6 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "main": "src/electron/main.js",
+  "description": "HireIC desktop app",
+  "author": "Hassan Agmir",
   "scripts": {
     "dev": "npm-run-all --parallel dev:react dev:electron",
     "dev:react": "vite",

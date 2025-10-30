@@ -111,11 +111,6 @@ ipcMain.on('openShow', async (event, preload) => {
 
 app.on('ready', () => {
     loginWindow = createLoginWindow();
-
-    if (!isDev()) {
-        autoUpdater.checkForUpdatesAndNotify();
-    }
-
 });
 
 app.on('window-all-closed', () => {

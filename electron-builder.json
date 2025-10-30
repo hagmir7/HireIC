@@ -1,21 +1,29 @@
 {
-    "appId" : "com.intercocina.hireic",
-    "files" : ["react-dist", "src/electron"],
-    "productName": "HireIC",
-    "publish": {
-      "provider": "github",
-      "repo": "hireic",
-      "owner": "hagmir7"
-    },
-    "icon": "./intercocina-logo.png",
-    "win":{
-        "target": ["portable", "msi"]
-    },
-    "mac":{
-        "target": "dmg"
-    },
-    "linux": {
-        "target": "AppImage",
-        "category": "Uitilty"
-    }
+  "appId": "com.intercocina.hierIC",
+  "productName": "HireIC",
+  "publish": {
+    "provider": "github",
+    "repo": "HireIC",
+    "owner": "hagmir7"
+  },
+  "buildDependenciesFromSource": false,
+  "npmRebuild": false,
+  "files": [
+    "dist/**/*",
+    "src/electron/**/*",
+    "node_modules/**/*",
+    "!**/@tailwindcss/oxide-wasm32-wasi/**",
+    "!**/@emnapi/**"
+  ],
+  "icon": "intercocina-logo.png",
+  "win": {
+    "target": ["portable", "msi"]
+  },
+  "mac": {
+    "target": "dmg"
+  },
+  "linux": {
+    "target": "AppImage",
+    "category": "Utility"
+  }
 }
