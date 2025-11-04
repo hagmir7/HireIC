@@ -13,6 +13,7 @@ import {
   Tooltip,
   Button,
   Modal,
+  Checkbox,
 } from 'antd'
 import {FileTextOutlined, MenuOutlined } from '@ant-design/icons'
 
@@ -37,16 +38,26 @@ import { handlePrint, handleShow } from '../utils/config'
 const { Text } = Typography
 const { confirm } = Modal
 
+// KEY FIX: Store listeners in a Map to access them from column render
+const dragListenersMap = new Map()
+
 // Ligne draggable avec right-click
 const DraggableRow = ({ onMenuClick, menuItems, ...props }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props['data-row-key'] })
 
+  // Store listeners for this row
+  React.useEffect(() => {
+    dragListenersMap.set(props['data-row-key'], listeners)
+    return () => {
+      dragListenersMap.delete(props['data-row-key'])
+    }
+  }, [props['data-row-key'], listeners])
+
   const style = {
     ...props.style,
     transform: CSS.Transform.toString(transform),
     transition,
-    cursor: 'grab',
   }
 
   return (
@@ -59,7 +70,7 @@ const DraggableRow = ({ onMenuClick, menuItems, ...props }) => {
         ref={setNodeRef}
         style={style}
         {...attributes}
-        {...listeners}
+        // REMOVED: {...listeners} - this was blocking checkbox clicks
       />
     </RightClickMenu>
   )
@@ -69,12 +80,15 @@ const ViewNeed = () => {
   const [need, setNeed] = useState({})
   const { id } = useParams()
   const [loading, setLoading] = useState(false)
+  const [selectedResumes, setSelectedResumes] = useState([])
+  const [sendingInvitations, setSendingInvitations] = useState(false)
 
   const fetchData = async () => {
     setLoading(true)
     try {
       const response = await api.get(`needs/${id}/resumes`)
       setNeed(response.data)
+      setSelectedResumes([])
       setLoading(false)
     } catch (error) {
       console.error(error)
@@ -85,9 +99,48 @@ const ViewNeed = () => {
     }
   }
 
+  const sendBulkInvitations = async () => {
+    if (selectedResumes.length === 0) {
+      message.warning('Veuillez sélectionner au moins un CV')
+      return
+    }
+
+    setSendingInvitations(true)
+    try {
+      const response = await api.post('needs/invitations/bulk', {
+        need_id: id,
+        resume_ids: selectedResumes
+      })
+      message.success(`${selectedResumes.length} invitation(s) créée(s) avec succès`)
+      setSelectedResumes([])
+      fetchData()
+    } catch (error) {
+      message.error(error?.response?.data?.message || "Erreur lors de l'envoi des invitations")
+      console.error(error)
+    } finally {
+      setSendingInvitations(false)
+    }
+  }
+
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedResumes(need.resumes?.map(r => r.id) || [])
+    } else {
+      setSelectedResumes([])
+    }
+  }
+
+  const handleSelectResume = (resumeId, checked) => {
+    if (checked) {
+      setSelectedResumes([...selectedResumes, resumeId])
+    } else {
+      setSelectedResumes(selectedResumes.filter(id => id !== resumeId))
+    }
+  }
+
   useEffect(() => {
     fetchData()
-  }, []);
+  }, [])
 
   const getGenderText = (gender) => {
     switch (gender) {
@@ -118,7 +171,6 @@ const ViewNeed = () => {
       message.error(error?.response?.data?.message || "Erreur de supprimer le cv")
     }
   }
-
 
   const createInvitation = async (resumeId) => {
     try {
@@ -180,24 +232,22 @@ const ViewNeed = () => {
 
   const handleViewResume = async (id) => {
     try {
-      const isValidId = typeof id === 'string' || typeof id === 'number';
-      const url = `/resume/create${isValidId ? `/${id}` : ''}`;
+      const isValidId = typeof id === 'string' || typeof id === 'number'
+      const url = `/resume/create${isValidId ? `/${id}` : ''}`
       if (window.electron && typeof window.electron.openShow === 'function') {
-        await window.electron.openShow({ path: url, width: 1000, height: 800 });
+        await window.electron.openShow({ path: url, width: 1000, height: 800 })
       } else {
-        navigate(`/layout${url}`);
+        navigate(`/layout${url}`)
       }
     } catch (error) {
-      console.error('Error navigating to resume:', error);
+      console.error('Error navigating to resume:', error)
     }
-  };
+  }
 
   // Menu items for right-click
   const menuItems = (record) => [
     { label: 'Voir le CV', key: 'view', icon: <Eye size={15} />, id: record.id },
     { label: 'Modifier', key: 'edit', icon: <Edit size={15} />, id: record.id },
-     
-    // { label: 'Traçabilité', key: 'traceability', icon: <Activity size={15} />, id: record.id },
     { label: 'Nouvelle invitation', key: 'newInvitation', icon: <MessageSquare size={15} />, id: record.id },
     { type: 'divider' },
     { label: 'Retirer du besoin', key: 'delete', icon: <Trash size={15} />, danger: true, id: record.pivot?.id || record.id },
@@ -209,7 +259,34 @@ const ViewNeed = () => {
       title: '',
       key: 'sort',
       width: 40,
-      render: () => <MenuOutlined style={{ cursor: 'grab', color: '#999' }} />,
+      // KEY FIX: Apply drag listeners only to this cell
+      render: (_, record) => {
+        const listeners = dragListenersMap.get(record.id) || {}
+        return (
+          <div {...listeners} style={{ cursor: 'grab' }}>
+            <MenuOutlined style={{ color: '#999' }} />
+          </div>
+        )
+      },
+    },
+    {
+      title: (
+        <Checkbox
+          checked={selectedResumes.length === need.resumes?.length && need.resumes?.length > 0}
+          indeterminate={selectedResumes.length > 0 && selectedResumes.length < need.resumes?.length}
+          onChange={handleSelectAll}
+          onClick={(e) => e.stopPropagation()}
+        />
+      ),
+      key: 'select',
+      width: 50,
+      render: (_, record) => (
+        <Checkbox
+          checked={selectedResumes.includes(record.id)}
+          onChange={(e) => handleSelectResume(record.id, e.target.checked)}
+          onClick={(e) => e.stopPropagation()}
+        />
+      ),
     },
     {
       title: 'Ordre',
@@ -319,10 +396,8 @@ const ViewNeed = () => {
       const newIndex = need.resumes.findIndex((item) => item.id === over?.id)
       const newResumes = arrayMove(need.resumes, oldIndex, newIndex)
 
-      // Met à jour le state local
       setNeed((prev) => ({ ...prev, resumes: newResumes }))
 
-      // Envoie le nouvel ordre à l'API
       try {
         await api.post(`needs/${id}/resumes/order`, {
           order: newResumes.map((r, index) => ({
@@ -369,13 +444,15 @@ const ViewNeed = () => {
               <div className='flex gap-2'>
                 <Button
                   type="primary"
-                  warning
+                  onClick={sendBulkInvitations}
+                  loading={sendingInvitations}
+                  disabled={selectedResumes.length === 0}
                   icon={<MessageCircleCode size={20} className='mt-1' />}
-                > Invitation pour tous</Button>
+                >
+                  Invitation pour {selectedResumes.length > 0 ? `(${selectedResumes.length})` : 'sélectionnés'}
+                </Button>
                 <Button
-                  // type="primary"
                   onClick={()=> handlePrint(`needs/${id}/download`)}
-                  info
                   icon={<Printer size={15} />}
                 > Imprimer</Button>
               </div>
@@ -418,8 +495,6 @@ const ViewNeed = () => {
               <Descriptions.Item label='Exigence de Genre'>
                 {getGenderText(need.gender)}
               </Descriptions.Item> : null}
-
-            
 
             <Descriptions.Item label='État'>
               {getStatusBadge(need.status)}
