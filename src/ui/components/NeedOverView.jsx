@@ -1,17 +1,15 @@
 import { CheckCircle, Clock, PlayCircle, XCircle } from 'lucide-react';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { api } from '../utils/api';
 import { message } from 'antd';
 
 export default function NeedOverView() {
     const [overview, setOverview] = useState({
-        pending: "",
-        in_progress: "",
-        cancelled: "",
-        executed: ""
-    })
-
-
+        pending: 0,
+        in_progress: 0,
+        cancelled: 0,
+        executed: 0
+    });
 
     const stats = [
         {
@@ -40,18 +38,20 @@ export default function NeedOverView() {
         },
     ];
 
+    useEffect(() => {
+        const fetchOverview = async () => {
+            try {
+                const response = await api.get('needs/overview');
+                setOverview(response.data);
+            } catch (error) {
+                message.error(error.response?.data?.message || "Erreur de chargement de la data");
+            }
+        };
 
-    useEffect(async () => {
-        try {
-            const response = await api.get('needs/overview');
-            setOverview(response.data)
-        } catch (error) {
-            message.error(error.response.data.message || "Errur de chargement la data")
-        }
-    }, [])
+        fetchOverview();
+    }, []);
 
     return (
-
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             {stats.map(({ label, value, icon, color }, idx) => (
                 <div
@@ -59,7 +59,7 @@ export default function NeedOverView() {
                     className="bg-white border border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 p-3 flex items-center justify-between"
                 >
                     <div className="flex flex-col">
-                        <span className={`text-2xl font-bold ${color}`}>{value}</span>
+                        <span className={`text-2xl font-bold ${color}`}>{value ?? 0}</span>
                         <span className="text-sm text-gray-500 font-medium uppercase tracking-wide">
                             {label}
                         </span>
@@ -68,6 +68,5 @@ export default function NeedOverView() {
                 </div>
             ))}
         </div>
-
-    )
+    );
 }

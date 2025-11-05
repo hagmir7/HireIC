@@ -32,11 +32,33 @@ export default function ResumeInfoForm({ next, prev }) {
 
   const getResume = async () => {
     if (!id) return;
-    setLoading(true)
+    setLoading(true);
     try {
       const { data } = await api.get(`resumes/${id}`);
+
       if (data.birth_date) data.birth_date = dayjs(data.birth_date);
-      form.setFieldsValue(data);
+
+      // Transform existing files to fileList format for Upload
+      const cvFileList = data.cv_file ? [{
+        uid: '-1',
+        name: data.cv_file.split('/').pop(), // file name
+        status: 'done',
+        url: data.cv_file, // file URL
+      }] : [];
+
+      const coverLetterFileList = data.cover_letter_file ? [{
+        uid: '-2',
+        name: data.cover_letter_file.split('/').pop(),
+        status: 'done',
+        url: data.cover_letter_file,
+      }] : [];
+
+      form.setFieldsValue({
+        ...data,
+        cv_file: cvFileList,
+        cover_letter_file: coverLetterFileList,
+      });
+
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -44,6 +66,7 @@ export default function ResumeInfoForm({ next, prev }) {
       message.error(error?.response?.data?.message || 'Erreur chargement CV');
     }
   };
+
 
   useEffect(() => {
     getCities();
@@ -83,6 +106,13 @@ export default function ResumeInfoForm({ next, prev }) {
       console.error(err);
       message.error(err?.response?.data?.message || 'Une erreur est survenue');
     }
+  };
+
+  const handleFilePreview = async (file) => {
+    message.info("Please configer the open file")
+    return;
+    const url = file.url || URL.createObjectURL(file.originFileObj);
+    window.open(url, "_blank"); 
   };
 
   return (
@@ -208,11 +238,16 @@ export default function ResumeInfoForm({ next, prev }) {
           <Form.Item
             name="cv_file"
             label="CV"
-            valuePropName="file"
-            getValueFromEvent={e => e?.fileList?.[0]?.originFileObj}
+            valuePropName="fileList"
+            getValueFromEvent={e => e?.fileList}
             style={{ marginBottom: 0, width: '100%' }}
           >
-            <Upload beforeUpload={() => false} maxCount={1} style={{ width: '100%' }}>
+            <Upload
+              beforeUpload={() => false}
+              maxCount={1}
+              style={{ width: '100%' }}
+              onPreview={handleFilePreview} // <-- add this
+            >
               <Button icon={<UploadOutlined />} className="w-full">Choisir le fichier</Button>
             </Upload>
           </Form.Item>
@@ -220,14 +255,21 @@ export default function ResumeInfoForm({ next, prev }) {
           <Form.Item
             name="cover_letter_file"
             label="Lettre de motivation"
-            valuePropName="file"
-            getValueFromEvent={e => e?.fileList?.[0]?.originFileObj}
+            valuePropName="fileList"
+            getValueFromEvent={e => e?.fileList}
             style={{ marginBottom: 0, width: '100%' }}
           >
-            <Upload beforeUpload={() => false} maxCount={1} style={{ width: '100%' }}>
+            <Upload
+              beforeUpload={() => false}
+              maxCount={1}
+              style={{ width: '100%' }}
+              onPreview={handleFilePreview} // <-- add this
+            >
               <Button icon={<UploadOutlined />} className="w-full">Choisir le fichier</Button>
             </Upload>
           </Form.Item>
+
+
 
 
         </div>

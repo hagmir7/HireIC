@@ -114,29 +114,38 @@ const Interview = () => {
 
 
   const handleMenuClick = (key, id) => {
+    const selected = data.find(r => Number(r.id) === Number(id));
+
     switch (key) {
       case "view":
-        handleShowEvaluation(id)
+        handleShowEvaluation(id);
         break;
+
       case "startInterview":
-        handleShowInterview(null, data.find(r => Number(r.id) === Number(id)).resume.id);
+        handleShowInterview(null, selected?.resume?.id);
         break;
-      case 'delete':
+
+      case "delete":
         showDeleteConfirm(id);
         break;
-      case 'onboarding':
-        setOnboardingData({
-          resume_id: data.find(r => Number(r.id) === Number(id)).resume.id,
-          interview_id: data.find(r => Number(r.id) === Number(id)).id
-        })
 
-        setOpen(true)
+      case "onboarding":
+        setOnboardingData({
+          resume_id: selected?.resume?.id,
+          interview_id: selected?.id
+        });
+        setOpen(true);
         break;
-      case 'view':
-        handleShow(`view-resume/${id}`)
+
+      case "viewResume":
+        handleShow(`view-resume/${id}`);
+        break;
+
       default:
+        console.warn(`Unhandled menu action: ${key}`);
     }
   };
+
 
   const items = [
     { label: "Voir", key: 'view', icon: <Eye size={15} /> },

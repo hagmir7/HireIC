@@ -20,6 +20,8 @@ export const Resume = () => {
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(false);
   const { confirm } = Modal;
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   const [filterDataLoaded, setFilterDataLoaded] = useState(false)
 
@@ -35,8 +37,8 @@ export const Resume = () => {
     category_id: null,
   })
 
-  const getResumes = async () => {
-    setLoading(true)
+  const getResumes = async (pageNumber = 1) => {
+    setLoading(true);
     const params = new URLSearchParams();
 
     for (const key in filters) {
@@ -47,18 +49,25 @@ export const Resume = () => {
         params.append(key, value);
       }
     }
+
     try {
-      const { data } = await api.get(`/resumes?page=1&per_page=10&${params.toString()}`);
-      setResumes(data.data);
-      setLoading(false)
+      const { data } = await api.get(`/resumes?page=${pageNumber}&per_page=10&${params.toString()}`);
+
+      if (pageNumber === 1) {
+        setResumes(data.data);
+      } else {
+        setResumes(prev => [...prev, ...data.data]);
+      }
+
+      setHasMore(data.data.length > 0);
+      setLoading(false);
     } catch (error) {
-      setLoading(false)
+      setLoading(false);
       console.error(error);
-      message.error(error.response.data.message)
-
+      message.error(error.response?.data?.message || "Erreur lors du chargement des CVs");
     }
-
   };
+
 
 
   const getLevels = async () => {
@@ -138,11 +147,11 @@ export const Resume = () => {
     }
   };
 
-  const handleFilter = () => {
-    getResumes();
-    setFilterModalOpen(false)
-
-  }
+ const handleFilter = () => {
+  setPage(1);
+  getResumes(1);
+  setFilterModalOpen(false);
+};
 
   const handleShowInterview = async (id, resume_id) => {
     try {
@@ -280,7 +289,10 @@ export const Resume = () => {
               </th>
               <th className='p-1 text-left'>Candidat</th>
               <th className='p-1 text-left'>Contact</th>
-              <th className='p-1 text-left'>Statut</th>
+              <th className='p-1 text-left'>Entretiens</th>
+              <th className='p-1 text-left'>État</th>
+              <th className='p-1 text-left'>Invitations</th>
+              
             </tr>
           </thead>
           <tbody>
@@ -324,15 +336,29 @@ export const Resume = () => {
                       </div>
                     </div>
                   </td>
-                  <td className='p-3'>
+                  <td className='p-2'>
                     <div className='font-medium text-gray-800'>
                       {resume?.city?.name}
                     </div>
                     <div className='text-sm text-gray-500'>{resume.email}</div>
                   </td>
-                  <td className='p-3'>
+
+                  <td className='p-2 flex gap-1'>
+                    <div className=' items-center border border-gray-300 gap-2 py-1 px-3 rounded bg-gray-100 text-gray-800 text-sm text-center'>
+                      {resume?.interviews_count}
+                    </div>
+                  </td>
+
+                  
+
+                  <td className='p-2'>
                     <div className=' items-center border border-gray-300 gap-2  py-1 rounded bg-gray-100 text-gray-800 text-sm text-center'>
                       {getResumeStatus(resume.status).label}
+                    </div>
+                  </td>
+                  <td className='p-2 flex gap-1'>
+                    <div className=' items-center border border-gray-300 gap-2 py-1 px-3 rounded bg-gray-100 text-gray-800 text-sm text-center'>
+                      {resume?.invitations_count}
                     </div>
                   </td>
                 </tr>
@@ -359,6 +385,21 @@ export const Resume = () => {
               </Empty>
             </div> : ""
         }
+
+        {hasMore && !loading && (
+          <div className="text-center my-4">
+            <Button
+              type="default"
+              onClick={() => {
+                const nextPage = page + 1;
+                setPage(nextPage);
+                getResumes(nextPage);
+              }}
+            >
+              Charger plus
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Filter Modal */}
