@@ -1,15 +1,20 @@
-import { Button, Checkbox, message, Select } from 'antd'
+import { Button, Checkbox, message, Modal, Select } from 'antd'
 import React, { useEffect, useState } from 'react'
 import Skeleton from '../components/ui/Sketelon';
 import { api } from '../utils/api';
-import { PlusCircle, RefreshCcw } from 'lucide-react';
+import { CircleAlert, ClipboardList, Edit, Eye, MessageSquare, PlusCircle, RefreshCcw, Settings2, Trash, UserPlus } from 'lucide-react';
 import { formatDate } from '../utils/config';
+import RightClickMenu from '../components/ui/RightClickMenu';
+import OnboardingForm from '../components/onboarding/OnboardingFrom';
 
 const Interview = () => {
   const [selected, setSelected] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState(0);
+  const [open, setOpen] = useState(false)
+  const [onboardingData, setOnboardingData] = useState(null);
+  const { confirm } = Modal;
 
 
   useEffect(() => {
@@ -42,7 +47,7 @@ const Interview = () => {
     };
     return modes[key] || "__";
   }
-  
+
 
   function getDecision(key) {
     const decisions = {
@@ -64,6 +69,85 @@ const Interview = () => {
       </span>
     );
   }
+
+  const handleDelete = async (id) => {
+    try {
+      const response = await api.delete(`interview/${id}`)
+      message.success(response.data.message);
+    } catch (error) {
+      message.error(error?.response?.data?.message || "Errur de supprimer l'entretien")
+      console.error(error);
+    }
+  }
+
+  const showDeleteConfirm = (id) => {
+    confirm({
+      title: '  Etes-vous sûr de vouloir supprimer cet élément ?',
+      icon: <CircleAlert size={25} className='text-red-600 mt-1 mr-2' color='red' />,
+      content: 'Cette action ne peut pas être annulée.',
+      okText: 'Oui, supprimez-le',
+      okType: 'danger',
+      cancelText: 'Annuler',
+      onOk() {
+        handleDelete(id);
+      }
+    });
+  };
+
+
+
+  const handleShowInterview = async (id, resume_id) => {
+    try {
+      const isValidId = typeof id === 'string' || typeof id === 'number';
+
+      const url = `interview/create${isValidId ? `/${id}` : ''}?resume_id=${resume_id}`;
+      if (window.electron && typeof window.electron.openShow === 'function') {
+        await window.electron.openShow({ path: url, width: 1000, height: 550 });
+      } else {
+        navigate(`/layout/${url}`);
+      }
+    } catch (error) {
+      console.error('Error navigating to resume:', error);
+    }
+  };
+
+
+
+  const handleMenuClick = (key, id) => {
+    switch (key) {
+      case "view":
+        handleShowEvaluation(id)
+        break;
+      case "startInterview":
+        handleShowInterview(null, data.find(r => Number(r.id) === Number(id)).resume.id);
+        break;
+      case 'delete':
+        showDeleteConfirm(id);
+        break;
+      case 'onboarding':
+        setOnboardingData({
+          resume_id: data.find(r => Number(r.id) === Number(id)).resume.id,
+          interview_id: data.find(r => Number(r.id) === Number(id)).id
+        })
+
+        setOpen(true)
+        break;
+      case 'view':
+        handleShow(`view-resume/${id}`)
+      default:
+    }
+  };
+
+  const items = [
+    { label: "Voir", key: 'view', icon: <Eye size={15} /> },
+    { label: "Nouvelle entretien", key: "startInterview", icon: <ClipboardList size={15} /> },
+    // { label: "Changer l'état", key: "changeStatus", icon: <Settings2 size={15} /> },
+    { label: "Nouvelle intégration", key: "onboarding", icon: <UserPlus size={15} /> },
+    { type: "divider" },
+    // { label: "Modifier", key: "edit", icon: <Edit size={15} /> },
+    { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true, },
+  ];
+
 
 
   const handleShow = async (id) => {
@@ -115,7 +199,7 @@ const Interview = () => {
           <Select
             style={{ width: 200 }}
             placeholder="Filtre d'état"
-            onChange={(value)=>  setFilter(value)}
+            onChange={(value) => setFilter(value)}
             options={[
               { label: 'Toute', value: null },
               { label: 'En attente', value: 1 },
@@ -129,23 +213,23 @@ const Interview = () => {
             <PlusCircle className='h-4 w-4' />
             Créer
           </Button>
-          {/* <Modal
-                title='Créer un nouveau besoin'
-                centered
-                open={openResponsive}
-                onOk={() => setOpenResponsive(false)}
-                onCancel={() => setOpenResponsive(false)}
-                width={{
-                  xs: '90%',
-                  sm: '80%',
-                  md: '70%',
-                  lg: '60%',
-                  xl: '70%',
-                  xxl: '60%',
-                }}
-              >
-                <NeedForm />
-              </Modal> */}
+
+
+          <Modal
+            title="Créer un embarquement"
+            centered
+            open={open}
+            onCancel={() => setOpen(false)}
+            width="70%"
+            footer={null}
+          >
+            <OnboardingForm
+              onboardingData={onboardingData}
+              onClose={() => {
+                setOpen(false);
+              }}
+            />
+          </Modal>
         </div>
       </div>
       <div className='flex-1 overflow-hidden'>
@@ -180,55 +264,61 @@ const Interview = () => {
                     </thead>
                     <tbody className='bg-white'>
                       {loading ? (
-                        <Skeleton rows={3} columns={7} />
+                        <Skeleton rows={3} columns={6} />
                       ) : data?.length > 0 ? (
-                        data.map((item, index) => (
-                          <tr
-                           onClick={()=> handleShowEvaluation(item.id)}
-                            key={index}
-                            className={`
+                        data.map((interview, index) => (
+                          <RightClickMenu
+                            key={interview.id}
+                            menuItems={items.map(item => ({ ...item, id: interview.id }))}
+                            onItemClick={handleMenuClick}
+                          >
+                            <tr
+                              onClick={() => handleShowEvaluation(interview.id)}
+                              key={index}
+                              className={`
                               border-b border-gray-200 
                               hover:bg-blue-50 
                               transition-colors 
                               duration-150 
                               ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}
                             `}
-                          >
-                            <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
-                              <div className='text-sm font-medium text-gray-900'>
-                                {item.resume ? item?.resume?.full_name : item?.user?.full_name}
-                              </div>
-                              <span className='mt-2 text-gray-600 text-xs'>{item?.resume?.phone || item?.resume?.email}</span>
-                            </td>
-                            
-                            <td className='px-2 py-1 whitespace-nowrap border-r border-gray-100'>
-                              <span className='text-sm font-semibold text-gray-900'>
-                                {item?.code}
-                              </span>
-                              <br />
-                              <span className='mt-2 text-gray-600 text-xs'>{item?.template?.name} - {item?.template?.code}</span>
-                            </td>
+                            >
+                              <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
+                                <div className='text-sm font-medium text-gray-900'>
+                                  {interview.resume ? interview?.resume?.full_name : interview?.user?.full_name}
+                                </div>
+                                <span className='mt-2 text-gray-600 text-xs'>{interview?.resume?.phone || interview?.resume?.email}</span>
+                              </td>
 
-                            <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
-                              <div className='text-sm font-medium text-gray-900'>
-                                {item?.responsible?.full_name}
-                              </div>
-                              <span className='mt-2 text-gray-600 text-xs'>{item?.responsible?.post?.name}</span>
-                            </td>
+                              <td className='px-2 py-1 whitespace-nowrap border-r border-gray-100'>
+                                <span className='text-sm font-semibold text-gray-900'>
+                                  {interview?.code}
+                                </span>
+                                <br />
+                                <span className='mt-2 text-gray-600 text-xs'>{interview?.template?.name} - {interview?.template?.code}</span>
+                              </td>
 
-                          
-                            <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
-                              {getMode(item?.type)}
-                            </td>
+                              <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
+                                <div className='text-sm font-medium text-gray-900'>
+                                  {interview?.responsible?.full_name}
+                                </div>
+                                <span className='mt-2 text-gray-600 text-xs'>{interview?.responsible?.post?.name}</span>
+                              </td>
 
-                            <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
-                              {getDecision(item?.decision)}
-                            </td>
 
-                            <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
-                              {formatDate(item.date)}
-                            </td>
-                          </tr>
+                              <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
+                                {getMode(interview?.type)}
+                              </td>
+
+                              <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
+                                {getDecision(interview?.decision)}
+                              </td>
+
+                              <td className='px-2 tex2-sm border-r border-gray-100 whitespace-nowrap'>
+                                {formatDate(interview.date)}
+                              </td>
+                            </tr>
+                          </RightClickMenu>
                         ))
                       ) : (
                         <tr>

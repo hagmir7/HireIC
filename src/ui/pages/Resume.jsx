@@ -168,6 +168,8 @@ export const Resume = () => {
     }
   }
 
+
+
   const showDeleteConfirm = (id) => {
     confirm({
       title: '  Etes-vous sûr de vouloir supprimer cet élément ?',
@@ -183,7 +185,7 @@ export const Resume = () => {
   };
 
 
-  const CreateInterview = async (resume_id)=>{
+  const CreateInvetation = async (resume_id)=>{
     try {
       const response = await api.post('invitations', {resume_id})
       message.success("Invitation créée avec succès")
@@ -193,7 +195,7 @@ export const Resume = () => {
     }
   }
 
-    const newInterviewConfirm = (id) => {
+    const newInvetationConfirm = (id) => {
       confirm({
         title: 'Voulez-vous créer un nouvel entretien ?',
         icon: <CircleAlert size={25} className='text-green-600 mt-1 mr-2' color='green' />,
@@ -202,7 +204,7 @@ export const Resume = () => {
         okType: 'primary',
         cancelText: 'Annuler',
         onOk() {
-          CreateInterview(id);
+          CreateInvetation(id);
         }
       });
     };
@@ -221,13 +223,11 @@ export const Resume = () => {
         showDeleteConfirm(id);
         break;
       case 'NewInvetation':
-        newInterviewConfirm(id)
+        newInvetationConfirm(id)
         break;
       case 'view':
          handleShow(`view-resume/${id}`)
-      // ... more cases
       default:
-      // Code to execute if no case matches
     }
   };
 
@@ -259,6 +259,8 @@ export const Resume = () => {
           </Button>
         </div>
       </div>
+
+    
 
       {/* Table */}
       <div className='overflow-x-auto'>

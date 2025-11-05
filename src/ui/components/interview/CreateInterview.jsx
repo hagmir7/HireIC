@@ -1,13 +1,12 @@
-import { Form, Input, Select, DatePicker, Button, Typography, Space, message } from "antd";
+import { Form, Select, DatePicker, Button, Space, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { api } from "../../utils/api";
-import { ArrowRight, CircleCheckBig, ListCheck } from "lucide-react";
+import { ArrowRight, CircleCheckBig } from "lucide-react";
 import dayjs from "dayjs";
 import { useAuth } from "../../contexts/AuthContext";
 import { handleShow } from "../../utils/config";
 
-const { Title } = Typography;
 
 export default function CreateInterview({ onSuccess }) {
   const { id } = useParams();

@@ -313,7 +313,7 @@ export default function Invitation() {
 
                   <tbody className="bg-white">
                     {loading ? (
-                      <Skeleton rows={3} columns={7} />
+                      <Skeleton rows={3} columns={6} />
                     ) : data.length > 0 ? (
                       data.map((item, index) => (
                         <RightClickMenu

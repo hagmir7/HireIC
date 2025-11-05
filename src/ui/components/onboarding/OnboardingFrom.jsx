@@ -19,7 +19,7 @@ import { handlePrint } from "../../utils/config";
 const { Option } = Select;
 const { TabPane } = Tabs;
 
-export default function OnboardingForm({ record = null, onClose }) {
+export default function OnboardingForm({ record = null, onClose, onboardingData = null }) {
     const [form] = Form.useForm();
     const [posts, setPosts] = useState([]);
     const [users, setUsers] = useState([]);
@@ -28,11 +28,12 @@ export default function OnboardingForm({ record = null, onClose }) {
     const [resumeId, setResumeId] = useState(null);
     const [loading, setLoading] = useState(false);
     const [activities, setActivities] = useState([]);
-    const [activityDates, setActivityDates] = useState({}); 
+    const [activityDetails, setActivityDetails] = useState({});
+    const [pendingInterviewId, setPendingInterviewId] = useState(null);
 
-    
 
-    
+
+
     const IntegrationStatusArray = [
         { value: 0, label: "En attente" },
         { value: 1, label: "En cours" },
@@ -74,8 +75,10 @@ export default function OnboardingForm({ record = null, onClose }) {
         try {
             const response = await api.get(`resumes/${id}/interviews`);
             setInterviews(response.data.interviews);
+            return response.data.interviews;
         } catch {
             message.error("Erreur lors du chargement des entretiens");
+            return [];
         }
     };
 
@@ -86,6 +89,13 @@ export default function OnboardingForm({ record = null, onClose }) {
         } catch {
             message.error("Erreur lors du chargement des activités");
         }
+    };
+
+    const handleActivityDateChange = (id, date) => {
+        setActivityDetails((prev) => ({
+            ...prev,
+            [id]: { ...prev[id], date: date ? date.format("YYYY-MM-DD") : null },
+        }));
     };
 
     // --- Hooks ---
@@ -100,6 +110,14 @@ export default function OnboardingForm({ record = null, onClose }) {
         if (resumeId) getInterviews(resumeId);
     }, [resumeId]);
 
+    // Set interview_id after interviews are loaded
+    useEffect(() => {
+        if (interviews.length > 0 && pendingInterviewId) {
+            form.setFieldsValue({ interview_id: pendingInterviewId });
+            setPendingInterviewId(null);
+        }
+    }, [interviews, pendingInterviewId]);
+
     useEffect(() => {
         if (record) {
             form.setFieldsValue({
@@ -111,34 +129,42 @@ export default function OnboardingForm({ record = null, onClose }) {
                 setResumeId(record.resume_id);
                 getInterviews(record.resume_id);
             }
+        } else if (onboardingData) {
+            const defaultValues = {};
+            if (onboardingData.resume_id) {
+                defaultValues.resume_id = onboardingData.resume_id;
+                setResumeId(onboardingData.resume_id);
+                if (onboardingData.interview_id) {
+                    setPendingInterviewId(onboardingData.interview_id);
+                }
+            }
+            form.setFieldsValue(defaultValues);
         } else {
             form.resetFields();
         }
-    }, [record]);
+    }, [record, onboardingData]);
 
     // --- Handle Activity Date Change ---
-    const handleActivityDateChange = (id, date) => {
-        setActivityDates((prev) => ({
+    const handleActivityUserChange = (id, userId) => {
+        setActivityDetails((prev) => ({
             ...prev,
-            [id]: date ? date.format("YYYY-MM-DD") : null,
+            [id]: { ...prev[id], user_id: userId },
         }));
     };
 
     useEffect(() => {
         if (record && record.activities?.length > 0) {
-            // When editing an existing record, set dates from pivot
-            const existingDates = {};
+            const existing = {};
             record.activities.forEach((a) => {
-                if (a.pivot?.date) {
-                    existingDates[a.id] = dayjs(a.pivot.date).format("YYYY-MM-DD");
-                }
+                existing[a.id] = {
+                    date: a.pivot?.date ? dayjs(a.pivot.date).format("YYYY-MM-DD") : null,
+                    user_id: a.pivot?.user_id || null,
+                };
             });
-            setActivityDates(existingDates);
-        } else if (!record) {
-            // When creating a new record, no default activity dates
-            setActivityDates({});
+            setActivityDetails(existing);
         }
-    }, [record, activities]);
+    }, [record]);
+
 
     // --- Submit ---
     const onFinish = async (values) => {
@@ -148,13 +174,13 @@ export default function OnboardingForm({ record = null, onClose }) {
                 ...values,
                 hire_date: values.hire_date ? values.hire_date.format("YYYY-MM-DD") : null,
                 evaluation_date: values.evaluation_date ? values.evaluation_date.format("YYYY-MM-DD") : null,
-                activities: Object.entries(activityDates).map(([id, date]) => ({
+                activities: Object.entries(activityDetails).map(([id, { date, user_id }]) => ({
                     activity_id: parseInt(id),
                     date,
+                    user_id,
                 })),
             };
 
-            
 
             if (record) {
                 await api.put(`integrations/${record.id}`, payload);
@@ -163,13 +189,13 @@ export default function OnboardingForm({ record = null, onClose }) {
                 await api.post("integrations", payload);
                 message.success("Embarquement créé avec succès");
                 form.resetFields();
-                setActivityDates({});
+                activityDetails({});
             }
 
             if (onClose) onClose();
         } catch (error) {
-            
-            
+
+
             message.error(error?.response?.data?.message || "Erreur lors de l'enregistrement");
         } finally {
             setLoading(false);
@@ -201,6 +227,10 @@ export default function OnboardingForm({ record = null, onClose }) {
                                         onChange={(value) => setResumeId(value)}
                                         showSearch
                                         allowClear
+                                        optionFilterProp="children"
+                                        filterOption={(input, option) =>
+                                            option?.children?.toLowerCase().includes(input.toLowerCase())
+                                        }
                                     >
                                         {resumes.map((r) => (
                                             <Option key={r.id} value={r.id}>
@@ -237,7 +267,15 @@ export default function OnboardingForm({ record = null, onClose }) {
 
                             <Col xs={24} md={12}>
                                 <Form.Item label="Responsable" name="responsible_id">
-                                    <Select placeholder="Sélectionnez un responsable" allowClear>
+                                    <Select
+                                        showSearch
+                                        placeholder="Sélectionnez un responsable"
+                                        allowClear
+                                        optionFilterProp="children"
+                                        filterOption={(input, option) =>
+                                            option?.children?.toLowerCase().includes(input.toLowerCase())
+                                        }
+                                    >
                                         {users.map((u) => (
                                             <Option key={u.id} value={u.id}>
                                                 {u.full_name}
@@ -247,14 +285,15 @@ export default function OnboardingForm({ record = null, onClose }) {
                                 </Form.Item>
                             </Col>
 
+
                             <Col xs={24} md={12}>
-                                <Form.Item label="Date d’embauche" name="hire_date">
+                                <Form.Item label="Date d'embauche" name="hire_date">
                                     <DatePicker format="YYYY-MM-DD" className="w-full" />
                                 </Form.Item>
                             </Col>
 
                             <Col xs={24} md={12}>
-                                <Form.Item label="Date d’évaluation" name="evaluation_date">
+                                <Form.Item label="Date d'évaluation" name="evaluation_date">
                                     <DatePicker format="YYYY-MM-DD" className="w-full" />
                                 </Form.Item>
                             </Col>
@@ -274,7 +313,7 @@ export default function OnboardingForm({ record = null, onClose }) {
                     </TabPane>
 
                     {/* TAB 2: ONBOARDING ACTIVITIES */}
-                    <TabPane tab="Activités d’onboarding" key="2">
+                    <TabPane tab="Activités d'onboarding" key="2">
                         <div
                             className="p-4 text-gray-600"
                             style={{
@@ -285,7 +324,7 @@ export default function OnboardingForm({ record = null, onClose }) {
                                 background: "#fafafa",
                             }}
                         >
-                            <p className="font-semibold mb-2">Liste des activités d’onboarding :</p>
+                            <p className="font-semibold mb-2">Liste des activités d'onboarding :</p>
                             {activities.length === 0 ? (
                                 <p className="text-gray-400 italic">Aucune activité trouvée.</p>
                             ) : (
@@ -307,14 +346,37 @@ export default function OnboardingForm({ record = null, onClose }) {
                                             )}
                                         </Col>
 
-                                        <Col xs={24} md={12}>
-                                            <DatePicker
-                                                className="w-full"
-                                                format="YYYY-MM-DD"
-                                                placeholder="Sélectionnez une date"
-                                                value={activityDates[activity.id] ? dayjs(activityDates[activity.id]) : null}
-                                                onChange={(date) => handleActivityDateChange(activity.id, date)}
-                                            />
+                                        <Col xs={24} md={12} >
+                                            <div className="flex gap-3">
+                                                <DatePicker
+                                                    className="w-1/2"
+                                                    format="YYYY-MM-DD"
+                                                    placeholder="Date"
+                                                    value={
+                                                        activityDetails[activity.id]?.date
+                                                            ? dayjs(activityDetails[activity.id].date)
+                                                            : null
+                                                    }
+                                                    onChange={(date) => handleActivityDateChange(activity.id, date)}
+                                                />
+
+                                                <Select
+                                                    showSearch
+                                                    allowClear
+                                                    placeholder="Responsable"
+                                                    optionFilterProp="label"
+                                                    className="w-1/2"
+                                                    options={users.map(i => ({
+                                                        label: i.full_name,
+                                                        value: i.id
+                                                    }))}
+                                                    value={activityDetails[activity.id]?.user_id || null}
+                                                    onChange={(val) => handleActivityUserChange(activity.id, val)}
+                                                />
+
+                                            </div>
+
+
                                         </Col>
                                     </Row>
                                 ))
@@ -325,11 +387,11 @@ export default function OnboardingForm({ record = null, onClose }) {
 
                 {/* ONE SINGLE SUBMIT BUTTON */}
                 <div className="flex gap-3">
-                    <Button type="primary" style={{width: 200}} icon={<Save size={18} className="mt-1" />} htmlType="submit" loading={loading} className="mt-4">
-                    {record ? "Modifier l’onboarding" : "Enregistrer l’onboarding"}
-                </Button>
+                    <Button type="primary" style={{ width: 200 }} icon={<Save size={18} className="mt-1" />} htmlType="submit" loading={loading} className="mt-4">
+                        {record ? "Modifier l'onboarding" : "Enregistrer l'onboarding"}
+                    </Button>
                     {record ?
-                        <Button classNames="flex items-center" style={{width: 200}} onClick={()=> handlePrint(`integrations/${record.id}/download`)}  className="mt-4" icon={<Printer size={18} className="mt-1"  />}>
+                        <Button classNames="flex items-center" style={{ width: 200 }} onClick={() => handlePrint(`integrations/${record.id}/download`)} className="mt-4" icon={<Printer size={18} className="mt-1" />}>
                             Imprimer
                         </Button> : ""}
                 </div>

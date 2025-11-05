@@ -38,7 +38,6 @@ import { handlePrint, handleShow } from '../utils/config'
 const { Text } = Typography
 const { confirm } = Modal
 
-// KEY FIX: Store listeners in a Map to access them from column render
 const dragListenersMap = new Map()
 
 // Ligne draggable avec right-click
@@ -46,13 +45,8 @@ const DraggableRow = ({ onMenuClick, menuItems, ...props }) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props['data-row-key'] })
 
-  // Store listeners for this row
-  React.useEffect(() => {
-    dragListenersMap.set(props['data-row-key'], listeners)
-    return () => {
-      dragListenersMap.delete(props['data-row-key'])
-    }
-  }, [props['data-row-key'], listeners])
+  // Store listeners for this row immediately (not in useEffect)
+  dragListenersMap.set(props['data-row-key'], listeners)
 
   const style = {
     ...props.style,
@@ -70,7 +64,6 @@ const DraggableRow = ({ onMenuClick, menuItems, ...props }) => {
         ref={setNodeRef}
         style={style}
         {...attributes}
-        // REMOVED: {...listeners} - this was blocking checkbox clicks
       />
     </RightClickMenu>
   )
@@ -259,7 +252,6 @@ const ViewNeed = () => {
       title: '',
       key: 'sort',
       width: 40,
-      // KEY FIX: Apply drag listeners only to this cell
       render: (_, record) => {
         const listeners = dragListenersMap.get(record.id) || {}
         return (
