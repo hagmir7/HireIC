@@ -1,4 +1,4 @@
-import { Button, Modal, Checkbox, Col, Form, Input, Row, Select, message, Space, Empty, Typography } from 'antd';
+import { Button, Modal, Checkbox, message } from 'antd';
 import { CircleAlert, ClipboardList, Edit, Eye, Filter, MessageSquare, PlusCircle, Settings2, Trash, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,6 +6,9 @@ import { api } from '../utils/api';
 import { getResumeStatus, handleShow } from '../utils/config';
 import Skeleton from '../components/ui/Sketelon';
 import RightClickMenu from '../components/ui/RightClickMenu';
+import TableEmpty from '../components/TableEmpty';
+import FilterModal from '../components/FilterModal';
+import ResumeSearch from '../components/ResumeSearch';
 
 
 export const Resume = () => {
@@ -22,8 +25,9 @@ export const Resume = () => {
   const { confirm } = Modal;
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
+  const [search, setSearch] = useState('');
 
-  const [filterDataLoaded, setFilterDataLoaded] = useState(false)
+  const [filterDataLoaded, setFilterDataLoaded] = useState(false);
 
   const [filters, setFilters] = useState({
     status: null,
@@ -35,9 +39,9 @@ export const Resume = () => {
     gender: null,
     skills: [],
     category_id: null,
-  })
+  });
 
-  const getResumes = async (pageNumber = 1) => {
+  const getResumes = async (pageNumber = 1, searchValue = search) => {
     setLoading(true);
     const params = new URLSearchParams();
 
@@ -50,8 +54,12 @@ export const Resume = () => {
       }
     }
 
+    if (searchValue && searchValue.trim() !== '') {
+      params.append('q', searchValue);
+    }
+
     try {
-      const { data } = await api.get(`/resumes?page=${pageNumber}&per_page=10&${params.toString()}`);
+      const { data } = await api.get(`/resumes?page=${pageNumber}&per_page=20&${params.toString()}`);
 
       if (pageNumber === 1) {
         setResumes(data.data);
@@ -68,7 +76,11 @@ export const Resume = () => {
     }
   };
 
-
+  const handleSearch = async (data) => {
+    setSearch(data);
+    setPage(1);
+    getResumes(1, data);
+  };
 
   const getLevels = async () => {
     try {
@@ -78,7 +90,7 @@ export const Resume = () => {
       console.error(error);
       message.error(error.response.data.message || "Can't load diplomes");
     }
-  }
+  };
 
   const getSkills = async () => {
     try {
@@ -88,7 +100,7 @@ export const Resume = () => {
       console.error(error);
       message.error(error.response.data.message || "Can't load Skills");
     }
-  }
+  };
 
   const getLanguages = async () => {
     try {
@@ -98,7 +110,7 @@ export const Resume = () => {
       console.error(error);
       message.error(error.response.data.message || "Can't load Languages");
     }
-  }
+  };
 
   const getCategories = async () => {
     try {
@@ -108,7 +120,7 @@ export const Resume = () => {
       console.error(error);
       message.error(error.response.data.message || "Can't load categories");
     }
-  }
+  };
 
   const getCities = async () => {
     try {
@@ -118,10 +130,13 @@ export const Resume = () => {
       console.error(error);
       message.error(error.response.data.message || "Can't load cities");
     }
-  }
+  };
 
   useEffect(() => {
-    getResumes()
+    getResumes();
+  }, []);
+
+  useEffect(() => {
     if (filterModalOpen && !filterDataLoaded) {
       Promise.all([
         getCategories(),
@@ -129,9 +144,9 @@ export const Resume = () => {
         getCities(),
         getLanguages(),
         getSkills(),
-      ]).then(() => setFilterDataLoaded(true))
+      ]).then(() => setFilterDataLoaded(true));
     }
-  }, [filterModalOpen])
+  }, [filterModalOpen]);
 
   const toggleCheckbox = (id) => {
     setSelectedIds((prev) =>
@@ -147,11 +162,11 @@ export const Resume = () => {
     }
   };
 
- const handleFilter = () => {
-  setPage(1);
-  getResumes(1);
-  setFilterModalOpen(false);
-};
+  const handleFilter = () => {
+    setPage(1);
+    getResumes(1);
+    setFilterModalOpen(false);
+  };
 
   const handleShowInterview = async (id, resume_id) => {
     try {
@@ -170,14 +185,13 @@ export const Resume = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await api.delete(`resumes/${id}`)
+      const response = await api.delete(`resumes/${id}`);
       message.success(response.data.message);
+      getResumes(1);
     } catch (error) {
       console.error(error?.response?.data?.message || "Errur de supprimer le cv");
     }
-  }
-
-
+  };
 
   const showDeleteConfirm = (id) => {
     confirm({
@@ -193,32 +207,29 @@ export const Resume = () => {
     });
   };
 
-
-  const CreateInvetation = async (resume_id)=>{
+  const CreateInvetation = async (resume_id) => {
     try {
-      const response = await api.post('invitations', {resume_id})
-      message.success("Invitation créée avec succès")
+      const response = await api.post('invitations', { resume_id });
+      message.success("Invitation créée avec succès");
     } catch (error) {
-      message.error(error?.response?.data?.message || 'Erreur de création d’invitation')
+      message.error(error?.response?.data?.message || "Erreur de création d'invitation");
       console.error(error);
     }
-  }
+  };
 
-    const newInvetationConfirm = (id) => {
-      confirm({
-        title: 'Voulez-vous créer un nouvel entretien ?',
-        icon: <CircleAlert size={25} className='text-green-600 mt-1 mr-2' color='green' />,
-        content: 'Confirmez la création de l’entretien pour ce candidat.',
-        okText: 'Oui, créer',
-        okType: 'primary',
-        cancelText: 'Annuler',
-        onOk() {
-          CreateInvetation(id);
-        }
-      });
-    };
-
-
+  const newInvetationConfirm = (id) => {
+    confirm({
+      title: 'Voulez-vous créer un nouvel entretien ?',
+      icon: <CircleAlert size={25} className='text-green-600 mt-1 mr-2' color='green' />,
+      content: "Confirmez la création de l'entretien pour ce candidat.",
+      okText: "Oui, créer",
+      okType: 'primary',
+      cancelText: 'Annuler',
+      onOk() {
+        CreateInvetation(id);
+      }
+    });
+  };
 
   const handleMenuClick = (key, id) => {
     switch (key) {
@@ -232,10 +243,11 @@ export const Resume = () => {
         showDeleteConfirm(id);
         break;
       case 'NewInvetation':
-        newInvetationConfirm(id)
+        newInvetationConfirm(id);
         break;
       case 'view':
-         handleShow(`view-resume/${id}`)
+        handleShow(`view-resume/${id}`);
+        break;
       default:
     }
   };
@@ -247,9 +259,8 @@ export const Resume = () => {
     { label: "Nouvelle invitation", key: "NewInvetation", icon: <MessageSquare size={15} /> },
     { type: "divider" },
     { label: "Modifier", key: "edit", icon: <Edit size={15} /> },
-    { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true, },
+    { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true },
   ];
-
 
   return (
     <div className='space-y-4'>
@@ -257,6 +268,7 @@ export const Resume = () => {
       <div className='flex justify-between items-center px-2 mt-2'>
         <h1 className='text-xl font-semibold'>Liste des CVs</h1>
         <div className='flex gap-3'>
+          <ResumeSearch onSearch={handleSearch} />
           <Button type='primary' onClick={() => handleShow('/resume/create')}>
             <PlusCircle size={16} className='me-1' /> Créer
           </Button>
@@ -268,8 +280,6 @@ export const Resume = () => {
           </Button>
         </div>
       </div>
-
-    
 
       {/* Table */}
       <div className='overflow-x-auto'>
@@ -292,7 +302,6 @@ export const Resume = () => {
               <th className='p-1 text-left'>Entretiens</th>
               <th className='p-1 text-left'>État</th>
               <th className='p-1 text-left'>Invitations</th>
-              
             </tr>
           </thead>
           <tbody>
@@ -306,14 +315,13 @@ export const Resume = () => {
                   key={resume.id}
                   className='border-b border-gray-300 hover:bg-gray-50 transition'
                 >
-
                   <td className='p-2 align-middle'>
                     <div className='flex items-center justify-center'>
                       <Checkbox
                         checked={selectedIds.includes(resume.id)}
                         onChange={(e) => {
-                          e.stopPropagation()
-                          toggleCheckbox(resume.id)
+                          e.stopPropagation();
+                          toggleCheckbox(resume.id);
                         }}
                       />
                     </div>
@@ -349,8 +357,6 @@ export const Resume = () => {
                     </div>
                   </td>
 
-                  
-
                   <td className='p-2'>
                     <div className=' items-center border border-gray-300 gap-2 py-1  px-2 rounded bg-gray-100 text-gray-800 text-sm text-center'>
                       {getResumeStatus(resume.status).label}
@@ -365,26 +371,13 @@ export const Resume = () => {
               </RightClickMenu>
             ))}
 
-            {loading ? <Skeleton rows={5} columns={5} /> : ''}
+            {loading && <Skeleton rows={7} columns={6} />}
+
+            {!loading && resumes.length === 0 && (
+              <TableEmpty colSpan={6} description="Aucun CV trouvé" />
+            )}
           </tbody>
         </table>
-        {
-          !loading && resumes.length == 0 ?
-            <div className='text-center flex items-center justify-center py-9'>
-              <Empty
-                image='https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg'
-                styles={{ image: { height: 100 } }}
-                description={
-                  <Typography.Text>Aucun CV trouvé.</Typography.Text>
-                }
-              >
-                <Button type='primary' onClick={handleShow}>
-                  <PlusCircle className='h-4 w-4' />
-                  Créer
-                </Button>
-              </Empty>
-            </div> : ""
-        }
 
         {hasMore && !loading && (
           <div className="text-center my-4">
@@ -403,198 +396,18 @@ export const Resume = () => {
       </div>
 
       {/* Filter Modal */}
-      <Modal
-        title='Filtrer les CVs'
+      <FilterModal
         open={filterModalOpen}
         onCancel={() => setFilterModalOpen(false)}
-        onOk={() => handleFilter()}
-      >
-        <Row gutter={16}>
-          <Col xs={24} md={8}>
-            <Form.Item label='Diplôme'>
-              <Select
-                placeholder='Diplôme'
-                mode='multiple'
-                value={filters.levels || undefined}
-                onChange={(value) =>
-                  setFilters({ ...filters, levels: value })
-                }
-                // onChange={(value) => setFilters({ ...filters, levels: value })}
-                className='w-full'
-                options={levels}
-                showSearch
-                optionRender={(option) => (
-                  <Space>
-                    <span role='img' aria-label={option.data.label}>
-                      {option.data.label}
-                    </span>
-                  </Space>
-                )}
-                filterOption={(input, option) =>
-                  option?.label?.toLowerCase().includes(input.toLowerCase())
-                }
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Form.Item label='Ville'>
-              <Select
-                placeholder='Ville'
-                value={filters.city_id || undefined}
-                onChange={(value) =>
-                  setFilters({ ...filters, city_id: value })
-                }
-                className='w-full'
-                options={cities}
-                showSearch
-                filterOption={(input, option) =>
-                  option?.label?.toLowerCase().includes(input.toLowerCase())
-                }
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Form.Item label='État'>
-              <Select
-                placeholder='État'
-                value={filters.status || undefined}
-                onChange={(value) =>
-                  setFilters({ ...filters, status: value })
-                }
-                className='w-full'
-                options={[
-                  {
-                    value: 1,
-                    label: 'Nouveau',
-                  },
-                  { value: 2, label: 'Invitation' },
-                  { value: 3, label: 'Évaluation' },
-                  { value: 4, label: 'Accepté' },
-                  { value: 5, label: 'Engagé' },
-                ]}
-                showSearch
-                filterOption={(input, option) =>
-                  option?.label?.toLowerCase().includes(input.toLowerCase())
-                }
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Form.Item label='État civil'>
-              <Select
-                placeholder='État civil'
-                value={filters.marital_status || undefined}
-                onChange={(value) =>
-                  setFilters({ ...filters, marital_status: value })
-                }
-                className='w-full'
-                options={[
-                  { value: 1, label: 'Célibataire' },
-                  { value: 2, label: 'Marié(e)' },
-                  { value: 3, label: 'Veuf/Veuve' },
-                ]}
-                showSearch
-                filterOption={(input, option) =>
-                  option?.label?.toLowerCase().includes(input.toLowerCase())
-                }
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Form.Item label='Langues'>
-              <Select
-                placeholder='Langues'
-                value={filters.language_id || undefined}
-                onChange={(value) =>
-                  setFilters({ ...filters, language_id: value })
-                }
-                className='w-full'
-                options={languages}
-                showSearch
-                filterOption={(input, option) =>
-                  option?.label?.toLowerCase().includes(input.toLowerCase())
-                }
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Form.Item label='Genre'>
-              <Select
-                placeholder='Genre'
-                value={filters.gender || undefined}
-                onChange={(value) =>
-                  setFilters({ ...filters, gender: value })
-                }
-                className='w-full'
-                options={[
-                  { value: 1, label: 'Femelle' },
-                  { value: 2, label: 'Mâle' },
-                ]}
-                showSearch
-                filterOption={(input, option) =>
-                  option?.label?.toLowerCase().includes(input.toLowerCase())
-                }
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Form.Item label='Catégorie'>
-              <Select
-                placeholder='Catégorie'
-                value={filters.category_id || undefined}
-                onChange={(value) =>
-                  setFilters({ ...filters, category_id: value })
-                }
-                className='w-full'
-                options={categories}
-                showSearch
-                filterOption={(input, option) =>
-                  option?.label?.toLowerCase().includes(input.toLowerCase())
-                }
-              />
-            </Form.Item>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Form.Item label='Expérience (Mois)'>
-              <Input
-                placeholder='Expérience'
-                type='number'
-                max={1000}
-                min={0}
-                value={filters.min_experience || ''}
-                onChange={(e) =>
-                  setFilters({ ...filters, min_experience: e.target.value })
-                }
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Form.Item label='Compétences'>
-          <Select
-            mode='multiple'
-            style={{ width: '100%' }}
-            placeholder='Compétences'
-            onChange={(value) => setFilters({ ...filters, skills: value })}
-            options={skills}
-            optionRender={(option) => (
-              <Space>
-                <span role='img' aria-label={option.data.label}>
-                  {option.data.emoji}
-                </span>
-                {option.data.desc}
-              </Space>
-            )}
-          />
-        </Form.Item>
-      </Modal>
+        onOk={handleFilter}
+        filters={filters}
+        setFilters={setFilters}
+        levels={levels}
+        cities={cities}
+        languages={languages}
+        categories={categories}
+        skills={skills}
+      />
     </div>
-  )
+  );
 };

@@ -390,11 +390,11 @@ export default function Invitation() {
                       ))
                     ) : (
 
-    <TableEmpty 
-      colSpan={7} 
-      description="Aucun Invitations trouvé." 
-      Create={setOpen} 
-    />
+                    <TableEmpty 
+                      colSpan={7} 
+                      description="Aucun Invitations trouvé." 
+                      Create={setOpen} 
+                    />
                     )}
                   </tbody>
                 </table>

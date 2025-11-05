@@ -5,6 +5,7 @@ import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
 import RightClickMenu from '../components/ui/RightClickMenu'
 import LevelForm from '../components/levels/LevelForm'
+import TableEmpty from '../components/TableEmpty'
 
 
 const Diplome = () => {
@@ -191,13 +192,7 @@ const Diplome = () => {
                   </tr>
                 </RightClickMenu>
               ))
-            ) : (
-              <tr>
-                <td colSpan={4} className='p-8 text-center text-gray-500'>
-                  Aucun département trouvé.
-                </td>
-              </tr>
-            )}
+            ) : ( <TableEmpty colSpan={4} description="Aucun diplome trouvé." Create={setIsModalOpen}  />)}
           </tbody>
         </table>
       </div>

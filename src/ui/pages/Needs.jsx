@@ -8,6 +8,7 @@ import { formatDate } from '../utils/config'
 import { useNavigate } from 'react-router-dom'
 import NeedOverView from '../components/NeedOverView'
 import RightClickMenu from '../components/ui/RightClickMenu'
+import TableEmpty from '../components/TableEmpty'
 
 
 const Needs = () => {
@@ -279,25 +280,7 @@ const Needs = () => {
                             </tr>
                           </RightClickMenu>
                         ))
-                      ) : (
-                        <tr>
-                          <td colSpan="7" className="p-8 text-center">
-                          <div className="flex flex-col items-center justify-center w-full">
-                            <Empty
-                              image="https://gw.alipayobjects.com/zos/antfincdn/ZHrcdLPrvN/empty.svg"
-                              style={{ image: { height: 100 } }} // AntD uses "style" not "styles" for Empty
-                              description={<Typography.Text>Aucun besoin trouvé.</Typography.Text>}
-                            >
-                              <Button type="primary" onClick={()=> setOpenResponsive(true)} className="flex items-center gap-1">
-                                <PlusCircle className="h-4 w-4" />
-                                Créer
-                              </Button>
-                            </Empty>
-                          </div>
-                        </td>
-
-                        </tr>
-                      )}
+                      ) : (<TableEmpty colSpan={7} description="Aucun besoin trouvé." Create={setOpenResponsive} />)}
                     </tbody>
                   </table>
 

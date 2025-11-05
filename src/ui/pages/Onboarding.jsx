@@ -15,6 +15,7 @@ import { formatDate, handlePrint } from "../utils/config";
 import OnboardingForm from "../components/onboarding/OnboardingFrom";
 import RightClickMenu from "../components/ui/RightClickMenu";
 import Skeleton from "../components/ui/Sketelon";
+import TableEmpty from "../components/TableEmpty";
 
 export default function Onboarding() {
   const [onboardings, setOnboardings] = useState([]);
@@ -264,13 +265,7 @@ export default function Onboarding() {
                   </tr>
                 </RightClickMenu>
               ))
-            ) : (
-              <tr>
-                <td colSpan={7} className="text-center py-8 text-gray-500">
-                  Aucun embarquement trouvé
-                </td>
-              </tr>
-            )}
+            ) : (<TableEmpty colSpan={7} description="Aucun embarquement trouvé" Create={setOpen} />)}
           </tbody>
         </table>
 

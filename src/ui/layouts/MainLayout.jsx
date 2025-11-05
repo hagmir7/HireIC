@@ -118,7 +118,8 @@ const sideMenu = () => {
         {
           key: 'submenu-151',
           icon: <CheckCircle size={19} />,
-          label: <Link to='/skill'>Compétences</Link>,
+          label: "Compétences",
+          onClick: ()=> handleShow('skills')
         },
       ],
     },
