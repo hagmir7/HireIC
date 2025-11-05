@@ -344,7 +344,7 @@ export const Resume = () => {
                   </td>
 
                   <td className='p-2 flex gap-1'>
-                    <div className=' items-center border border-gray-300 gap-2 py-1 px-3 rounded bg-gray-100 text-gray-800 text-sm text-center'>
+                    <div className='mt-1 items-center border border-gray-300 gap-2 py-1 px-3 rounded bg-gray-100 text-gray-800 text-sm text-center'>
                       {resume?.interviews_count}
                     </div>
                   </td>
@@ -352,12 +352,12 @@ export const Resume = () => {
                   
 
                   <td className='p-2'>
-                    <div className=' items-center border border-gray-300 gap-2  py-1 rounded bg-gray-100 text-gray-800 text-sm text-center'>
+                    <div className=' items-center border border-gray-300 gap-2 py-1  px-2 rounded bg-gray-100 text-gray-800 text-sm text-center'>
                       {getResumeStatus(resume.status).label}
                     </div>
                   </td>
                   <td className='p-2 flex gap-1'>
-                    <div className=' items-center border border-gray-300 gap-2 py-1 px-3 rounded bg-gray-100 text-gray-800 text-sm text-center'>
+                    <div className='mt-1.5 items-center border border-gray-300 gap-2 py-1 px-3 rounded bg-gray-100 text-gray-800 text-sm text-center'>
                       {resume?.invitations_count}
                     </div>
                   </td>
