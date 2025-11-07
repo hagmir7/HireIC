@@ -189,11 +189,12 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
                 await api.post("integrations", payload);
                 message.success("Embarquement créé avec succès");
                 form.resetFields();
-                activityDetails({});
+                setActivityDetails({});
             }
 
             if (onClose) onClose();
         } catch (error) {
+            console.error(error)
 
 
             message.error(error?.response?.data?.message || "Erreur lors de l'enregistrement");

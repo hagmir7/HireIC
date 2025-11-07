@@ -164,7 +164,7 @@ const Skills = () => {
 
       <div className='fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-4 flex justify-end'>
         <Button type='primary' onClick={() => setIsModalOpen(true)}>
-          Create <PlusCircle size={18} />
+          Créer <PlusCircle size={18} />
         </Button>
       </div>
     </div>

@@ -148,7 +148,10 @@ const Diplome = () => {
                 />
               </th>
               <th className='px-2 py-2 text-left border-r border-gray-300 text-sm font-semibold text-gray-600'>
-                Département
+                Diplôme
+              </th>
+               <th className='px-2 py-2 text-left border-r border-gray-300 text-sm font-semibold text-gray-600'>
+                Description
               </th>
               <th className='px-2 py-2 text-left border-r border-gray-300 text-sm font-semibold text-gray-600'>
                 Années (Bac+)
@@ -161,7 +164,7 @@ const Diplome = () => {
           </thead>
           <tbody className='bg-white'>
             {loading ? (
-              <Skeleton rows={3} columns={4} />
+              <Skeleton rows={3} columns={5} />
             ) : data.length > 0 ? (
               data.map((item, index) => (
                 <RightClickMenu
@@ -182,6 +185,9 @@ const Diplome = () => {
                     <td className='px-2 py-1 border-r border-gray-300 text-sm font-medium text-gray-800'>
                       {item.name || '__'}
                     </td>
+                     <td className='px-2 py-1 border-r border-gray-300 text-sm font-medium text-gray-800'>
+                      {item.description || '__'}
+                    </td>
            
                     <td className='px-2 py-1 border-r border-gray-300 text-sm text-gray-700'>
                       {item.years}
@@ -199,7 +205,7 @@ const Diplome = () => {
 
       <div className='fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-4 flex justify-end'>
         <Button type='primary' onClick={() => setIsModalOpen(true)}>
-          Create <PlusCircle size={18} />
+          Créer <PlusCircle size={18} />
         </Button>
       </div>
     </div>

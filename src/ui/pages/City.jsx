@@ -3,6 +3,7 @@ import Skeleton from '../components/ui/Sketelon';
 import { api } from '../utils/api';
 import { PlusCircle } from 'lucide-react';
 import { Button, Form, Input, message, Modal } from 'antd'
+import TableEmpty from '../components/TableEmpty';
 
 export default function City() {
 
@@ -13,12 +14,15 @@ export default function City() {
     const [form] = Form.useForm()
 
     const fetchData = async () => {
-        try {
-            const response = await api.get('cities');
-            setData(response.data)
-        } catch (error) {
-            console.error(error);
-        }
+      setLoading(true)
+      try {
+        const response = await api.get('cities');
+        setLoading(false)
+        setData(response.data)
+      } catch (error) {
+        setLoading(false)
+        console.error(error);
+      }
     }
 
     useEffect(() => {
@@ -58,7 +62,7 @@ export default function City() {
           </thead>
           <tbody className='bg-white'>
             {loading ? (
-              <Skeleton rows={3} columns={8} />
+              <Skeleton rows={5} columns={1} />
             ) : data.length > 0 ? (
               data.map((item, index) => (
                 <tr
@@ -72,30 +76,7 @@ export default function City() {
                   </td>
                 </tr>
               ))
-            ) : (
-              <tr>
-                <td className='p-8 text-center'>
-                  <div className='text-center'>
-                    <svg
-                      className='mx-auto h-12 w-12 text-gray-400'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                      stroke='currentColor'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth={1}
-                        d='M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4'
-                      />
-                    </svg>
-                    <h3 className='mt-2 text-sm font-medium text-gray-900'>
-                      Aucune invitation trouvée
-                    </h3>
-                  </div>
-                </td>
-              </tr>
-            )}
+            ) : (<TableEmpty description='Aucune ville trouvée' colSpan={1} Create={setIsModalOpen} />)}
           </tbody>
         </table>
       </div>

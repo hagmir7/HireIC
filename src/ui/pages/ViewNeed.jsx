@@ -342,9 +342,9 @@ const ViewNeed = () => {
     },
     {
       title: 'Expérience',
-      dataIndex: 'experience_monthe',
-      key: 'experience_monthe',
-      sorter: (a, b) => a.experience_monthe - b.experience_monthe,
+      dataIndex: 'experience_month',
+      key: 'experience_month',
+      sorter: (a, b) => a.experience_month - b.experience_month,
       render: (months) => (
         <Tag color='blue'>
           {Math.floor(months / 12)} ans {months % 12} mois

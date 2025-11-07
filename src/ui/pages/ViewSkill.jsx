@@ -7,6 +7,7 @@ import RightClickMenu from '../components/ui/RightClickMenu'
 import SkillTypeForm from '../components/SkillTypeForm'
 import TableEmpty from '../components/TableEmpty'
 import { useParams } from 'react-router-dom'
+import SkillForm from '../components/SkillForm'
 
 
 const ViewSkills = () => {
@@ -81,7 +82,7 @@ const ViewSkills = () => {
     <div className='h-full flex flex-col'>
       <div className='shadow-sm p-2 flex items-center justify-between from-gray-50 to-gray-100 border-b'>
         <h2 className='text-md font-semibold text-gray-800'>
-          Types de compétences
+          Compétences {data.name}
         </h2>
         <div className='flex gap-3'>
           <Modal
@@ -91,7 +92,7 @@ const ViewSkills = () => {
             footer={false}
             onCancel={() => setIsModalOpen(false)}
           >
-            <SkillTypeForm
+            <SkillForm
               initialValues={level}
               onSubmit={async (data) => {
                 try {
@@ -154,7 +155,7 @@ const ViewSkills = () => {
 
       <div className='fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-md p-4 flex justify-end'>
         <Button type='primary' onClick={() => setIsModalOpen(true)}>
-          Create <PlusCircle size={18} />
+          Créer <PlusCircle size={18} />
         </Button>
       </div>
     </div>

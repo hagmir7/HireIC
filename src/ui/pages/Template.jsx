@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
 import Skeleton from '../components/ui/Sketelon';
+import TableEmpty from '../components/TableEmpty';
 
 export default function Template() {
 
@@ -178,30 +179,7 @@ export default function Template() {
                                                         </td>
                                                     </tr>
                                                 ))
-                                            ) : (
-                                                <tr>
-                                                    <td colSpan='7' className='p-8'>
-                                                        <div className='text-center'>
-                                                            <svg
-                                                                className='mx-auto h-12 w-12 text-gray-400'
-                                                                fill='none'
-                                                                viewBox='0 0 24 24'
-                                                                stroke='currentColor'
-                                                            >
-                                                                <path
-                                                                    strokeLinecap='round'
-                                                                    strokeLinejoin='round'
-                                                                    strokeWidth={1}
-                                                                    d='M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4'
-                                                                />
-                                                            </svg>
-                                                            <h3 className='mt-2 text-sm font-medium text-gray-900'>
-                                                                Aucun modèle trouvé
-                                                            </h3>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                            )}
+                                            ) : (<TableEmpty description="Aucun modèle trouvé" colSpan={7} Create={handleShow} />)}
                                         </tbody>
                                     </table>
                                 </div>
