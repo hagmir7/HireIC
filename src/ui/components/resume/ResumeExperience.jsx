@@ -59,6 +59,7 @@ const ExperienceItem = React.memo(({ item, onUpdate, onRemove, canRemove }) => (
           tooltip="Ce champ est requis"
         >
           <DatePicker
+          
             className="w-full"
             placeholder="Sélectionnez une date début"
             value={item.start_date}

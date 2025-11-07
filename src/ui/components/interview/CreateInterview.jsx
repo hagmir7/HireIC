@@ -5,7 +5,7 @@ import { api } from "../../utils/api";
 import { ArrowRight, CircleCheckBig } from "lucide-react";
 import dayjs from "dayjs";
 import { useAuth } from "../../contexts/AuthContext";
-import { handleShow } from "../../utils/config";
+import { handleShow, locale } from "../../utils/config";
 
 
 export default function CreateInterview({ onSuccess }) {
@@ -127,31 +127,31 @@ export default function CreateInterview({ onSuccess }) {
     }
   };
 
-    const handleSearch = async (value) => {
+  const handleSearch = async (value) => {
 
-      if (!value && !queryParams.get('resume_id')) {
-        setOptions([]);
-        return;
-      }
-      setFetching(true);
+    if (!value && !queryParams.get('resume_id')) {
+      setOptions([]);
+      return;
+    }
+    setFetching(true);
 
-      try {
-        const response = await api.get('resumes/list', {
-          params: { q: value, per_page: 30, resume_id: queryParams.get('resume_id') }
-        });
+    try {
+      const response = await api.get('resumes/list', {
+        params: { q: value, per_page: 30, resume_id: queryParams.get('resume_id') }
+      });
 
-        setOptions(
-          response.data.data.map((resume) => ({
-            label: `${resume.full_name} (${resume.phone})`,
-            value: resume.id,
-          }))
-        );
-      } catch (error) {
-        console.error('Error fetching resumes:', error);
-      }
+      setOptions(
+        response.data.data.map((resume) => ({
+          label: `${resume.full_name} (${resume.phone})`,
+          value: resume.id,
+        }))
+      );
+    } catch (error) {
+      console.error('Error fetching resumes:', error);
+    }
 
-      setFetching(false);
-    };
+    setFetching(false);
+  };
 
 
 
@@ -164,10 +164,7 @@ export default function CreateInterview({ onSuccess }) {
     if (options.length > 0 && !id) {
       form.setFieldValue('resume_id', Number(queryParams.get('resume_id')));
     }
-  }, [users, user, interviewId, form, ]);
-
-  
-
+  }, [users, user, interviewId, form,]);
 
 
   return (
@@ -243,7 +240,7 @@ export default function CreateInterview({ onSuccess }) {
             />
           </Form.Item>
 
- 
+
 
           <Form.Item name="post_id" label="Poste" style={{ marginBottom: 0 }}>
             <Select
@@ -290,11 +287,9 @@ export default function CreateInterview({ onSuccess }) {
               className="w-full"
               showTime
               format="YYYY-MM-DD HH:mm"
+              locale={locale}
             />
           </Form.Item>
-
-
-
         </div>
 
         <div className="flex justify-end">
@@ -313,7 +308,7 @@ export default function CreateInterview({ onSuccess }) {
                 color="cyan" variant="solid"
                 loading={loading}
                 iconPosition="end"
-                onClick={()=> handleShow(`interview/evaluation/${interviewId}`, 1000, 550)}
+                onClick={() => handleShow(`interview/evaluation/${interviewId}`, 1000, 550)}
                 icon={<ArrowRight size={14} />}
               >
                 Lancer l'entretien

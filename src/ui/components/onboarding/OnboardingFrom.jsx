@@ -14,7 +14,7 @@ import {
 import dayjs from "dayjs";
 import { api } from "../../utils/api";
 import { CircleAlert, Printer, Save } from "lucide-react";
-import { handlePrint } from "../../utils/config";
+import { handlePrint, locale } from "../../utils/config";
 
 const { Option } = Select;
 const { TabPane } = Tabs;
@@ -289,13 +289,13 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
 
                             <Col xs={24} md={12}>
                                 <Form.Item label="Date d'embauche" name="hire_date">
-                                    <DatePicker format="YYYY-MM-DD" className="w-full" />
+                                    <DatePicker locale={locale} format="YYYY-MM-DD" className="w-full" />
                                 </Form.Item>
                             </Col>
 
                             <Col xs={24} md={12}>
                                 <Form.Item label="Date d'évaluation" name="evaluation_date">
-                                    <DatePicker format="YYYY-MM-DD" className="w-full" />
+                                    <DatePicker locale={locale} format="YYYY-MM-DD" className="w-full" />
                                 </Form.Item>
                             </Col>
 
@@ -350,6 +350,7 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
                                         <Col xs={24} md={12} >
                                             <div className="flex gap-3">
                                                 <DatePicker
+                                                    locale={locale}
                                                     className="w-1/2"
                                                     format="YYYY-MM-DD"
                                                     placeholder="Date"

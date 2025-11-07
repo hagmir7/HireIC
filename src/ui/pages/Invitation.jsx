@@ -24,7 +24,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
 import Skeleton from '../components/ui/Sketelon';
 import InvitationForm from '../components/ui/InvitationForm';
-import { formatDate, InvitationStatus } from '../utils/config';
+import { formatDate, InvitationStatus, locale } from '../utils/config';
 import RightClickMenu from '../components/ui/RightClickMenu';
 const { Search } = Input;
 import dayjs from 'dayjs'
@@ -268,6 +268,7 @@ export default function Invitation() {
                 allowClear
               />
               <DatePicker
+                locale={locale}
                 onChange={onChangeDate}
                 value={filters.interview_date ? dayjs(filters.interview_date) : null}
                 placeholder="Date d'entretien"

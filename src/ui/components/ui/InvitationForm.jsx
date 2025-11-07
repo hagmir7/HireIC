@@ -11,6 +11,7 @@ import {
 } from 'antd'
 import dayjs from 'dayjs';
 import { api } from '../../utils/api';
+import { locale } from '../../utils/config';
 
 
 const InvitationForm = ({ id = null, fetchItems }) => {
@@ -133,7 +134,7 @@ const InvitationForm = ({ id = null, fetchItems }) => {
             label='Date d’envoi'
             className='flex-1'
           >
-             <DatePicker className='w-full' size='large' showTime format="YYYY-MM-DD HH:mm:ss" />
+             <DatePicker locale={locale} className='w-full' size='large' showTime format="YYYY-MM-DD HH:mm:ss" />
           </Form.Item>
 
     
@@ -141,7 +142,7 @@ const InvitationForm = ({ id = null, fetchItems }) => {
 
         <div className='flex flex-col md:flex-row gap-4 w-full'>
           <Form.Item name='interview_date' className='w-full' label='Date d’entretien'>
-             <DatePicker className='w-full' size='large' showTime format="YYYY-MM-DD HH:mm:ss" />
+             <DatePicker locale={locale} className='w-full' size='large' showTime format="YYYY-MM-DD HH:mm:ss" />
           </Form.Item>
 
           <Form.Item
