@@ -64,39 +64,31 @@ const Needs = () => {
 
    const handleMenuClick = (key, id) => {
       switch (key) {
-        case "startInterview":
-          handleShowInterview(null, id);
-          break;
         case "edit":
           handleShow(`/resume/create/${id}`);
           break;
         case 'delete':
           showDeleteConfirm(id);
           break;
-        case 'NewInvetation':
-          newInvetationConfirm(id)
-          break;
         case 'view':
-           handleShow(`view-resume/${id}`)
+          handleShow(id)
         default:
       }
     };
   
     const items = [
-      { label: 'Voir le CV', key: 'view', icon: <Eye size={15} /> },
-      { label: "Lancer l'entretien", key: "startInterview", icon: <ClipboardList size={15} /> },
-      { label: "Changer l'état", key: "changeStatus", icon: <Settings2 size={15} /> },
-      { label: "Nouvelle invitation", key: "NewInvetation", icon: <MessageSquare size={15} /> },
+      { label: 'Voir le besoin', key: 'view', icon: <Eye size={15} /> },
       { type: "divider" },
-      { label: "Modifier", key: "edit", icon: <Edit size={15} /> },
       { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true, },
     ];
 
-     const handleDelete = async (id) => {
+  const handleDelete = async (id) => {
     try {
       const response = await api.delete(`needs/${id}`)
       message.success(response.data.message);
+      fetchData()
     } catch (error) {
+      message.error(error?.response?.data?.message || "Errur de supprimer le besoin");
       console.error(error?.response?.data?.message || "Errur de supprimer le besoin");
     }
   }
@@ -194,10 +186,12 @@ const Needs = () => {
                 open={openResponsive}
                 onOk={() => setOpenResponsive(false)}
                 onCancel={() => setOpenResponsive(false)}
+                footer={false}
                 width="60%"
                 className="max-sm:w-[90%]"
               >
                 <NeedForm fetchData={fetchData} />
+                
               </Modal>
             </div>
           </div>

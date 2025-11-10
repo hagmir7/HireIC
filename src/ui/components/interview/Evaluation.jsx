@@ -150,7 +150,7 @@ export default function Evaluation() {
           // hide this cell because the group header spanned across
           return { children: null, props: { colSpan: 0 } };
         }
-        return renderCell(record, 1, "1");
+        return renderCell(record, "1", "1");
       },
     },
     {
@@ -159,7 +159,7 @@ export default function Evaluation() {
       width: 120,
       render: (_, record) => {
         if (record.isGroup) return { children: null, props: { colSpan: 0 } };
-        return renderCell(record, 2, "2");
+        return renderCell(record, "2", "2");
       },
     },
     {
@@ -168,7 +168,7 @@ export default function Evaluation() {
       width: 120,
       render: (_, record) => {
         if (record.isGroup) return { children: null, props: { colSpan: 0 } };
-        return renderCell(record, 3, "3");
+        return renderCell(record, "3", "3");
       },
     },
     {
@@ -177,7 +177,7 @@ export default function Evaluation() {
       width: 120,
       render: (_, record) => {
         if (record.isGroup) return { children: null, props: { colSpan: 0 } };
-        return renderCell(record, 4, "4");
+        return renderCell(record, "4", "4");
       },
     },
   ];
@@ -357,33 +357,33 @@ export default function Evaluation() {
 
           <tr className="border-b border-gray-200 transition text-center">
             <td
-              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === 2 ? "bg-green-100 border-green-500" : ""
+              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === "2" ? "bg-green-100 border-green-500" : ""
                 }`}
               onClick={() => handleDecisionChange(2)}
             >
               <CheckCircle
                 size={22}
-                className={`mx-auto ${decision === 2 ? "text-green-600" : "text-gray-400"}`}
+                className={`mx-auto ${decision === "2" ? "text-green-600" : "text-gray-400"}`}
               />
             </td>
 
             <td
-              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === 3 ? "bg-yellow-100 border-yellow-500" : ""}`}
+              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === "3" ? "bg-yellow-100 border-yellow-500" : ""}`}
               onClick={() => handleDecisionChange(3)}
             >
               <Clock
                 size={22}
-                className={`mx-auto ${decision === 3 ? "text-yellow-600" : "text-gray-400"}`}
+                className={`mx-auto ${decision === "3" ? "text-yellow-600" : "text-gray-400"}`}
               />
             </td>
 
             <td
-              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === 4 ? "bg-red-100 border-red-500" : ""}`}
+              className={`p-3 border border-gray-300 h-10 hover:bg-blue-50 cursor-pointer transition ${decision === "4" ? "bg-red-100 border-red-500" : ""}`}
               onClick={() => handleDecisionChange(4)}
             >
               <XCircle
                 size={22}
-                className={`mx-auto ${decision === 4 ? "text-red-600" : "text-gray-400"}`}
+                className={`mx-auto ${decision === "4" ? "text-red-600" : "text-gray-400"}`}
               />
             </td>
           </tr>
