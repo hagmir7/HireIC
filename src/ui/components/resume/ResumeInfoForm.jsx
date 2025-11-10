@@ -18,17 +18,15 @@ export default function ResumeInfoForm({ next, prev }) {
   const [loading, setLoading] = useState();
   const { id } = useParams();
 
-
   const getCities = async () => {
     try {
       const { data } = await api.get('cities');
-      setCities(data.map(city => ({ label: city.name, value: city.id })));
+      setCities(data.map(city => ({ label: city.name, value: String(city.id) })));
     } catch (error) {
       console.error(error);
       message.error(error?.response?.data?.message || 'Erreur chargement villes');
     }
   };
-
 
   const getResume = async () => {
     if (!id) return;
@@ -38,12 +36,11 @@ export default function ResumeInfoForm({ next, prev }) {
 
       if (data.birth_date) data.birth_date = dayjs(data.birth_date);
 
-      // Transform existing files to fileList format for Upload
       const cvFileList = data.cv_file ? [{
         uid: '-1',
-        name: data.cv_file.split('/').pop(), // file name
+        name: data.cv_file.split('/').pop(),
         status: 'done',
-        url: data.cv_file, // file URL
+        url: data.cv_file,
       }] : [];
 
       const coverLetterFileList = data.cover_letter_file ? [{
@@ -67,7 +64,6 @@ export default function ResumeInfoForm({ next, prev }) {
     }
   };
 
-
   useEffect(() => {
     getCities();
     getResume();
@@ -76,48 +72,87 @@ export default function ResumeInfoForm({ next, prev }) {
   const handleSubmit = async (values) => {
     setSaveLoading(true);
     const formData = new FormData();
+    
     Object.entries(values).forEach(([key, value]) => {
-      if (value && value.originFileObj) {
-        formData.append(key, value.originFileObj);
-      } else if (value && typeof value.format === 'function') {
+      // Handle file uploads (they come as arrays from Ant Design Upload)
+      if (Array.isArray(value) && value.length > 0) {
+        const file = value[0];
+        // Only append if it's a new file (has originFileObj)
+        if (file.originFileObj) {
+          formData.append(key, file.originFileObj);
+        }
+        // If it's an existing file (has url but no originFileObj), skip it
+        // The backend will keep the existing file
+      } 
+      // Handle date fields
+      else if (value && typeof value.format === 'function') {
         formData.append(key, value.format('YYYY-MM-DD'));
-      } else if (value !== undefined && value !== null) {
+      } 
+      // Handle other fields
+      else if (value !== undefined && value !== null) {
         formData.append(key, value);
       }
     });
 
     const token = localStorage.getItem('authToken') || '';
-    const url = "http://localhost:8000/api/resumes";
-    const headers = { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' } }
+    let url;
+    if (import.meta.env.MODE === 'development') {
+      url = "http://localhost:8000/api/resumes";
+    } else {
+      url = "http://recruit365.intercocina.space/api/resumes";
+    }
+    
+    const headers = { 
+      headers: { 
+        Authorization: `Bearer ${token}`, 
+        'Content-Type': 'multipart/form-data' 
+      } 
+    };
+
     try {
       if (id) {
         await axios.post(`${url}/${id}?_method=PUT`, formData, headers);
         message.success('CV mis à jour avec succès !');
-        setSaveLoading(false)
+        setSaveLoading(false);
         next();
       } else {
         const { data } = await axios.post(url, formData, headers);
         message.success('CV envoyé avec succès !');
-        navigate(`/resume/create/${data.resume.id}`)
+        navigate(`/resume/create/${data.resume.id}`);
         next();
       }
     } catch (err) {
-      setSaveLoading(false)
+      setSaveLoading(false);
       console.error(err);
       message.error(err?.response?.data?.message || 'Une erreur est survenue');
     }
   };
 
   const handleFilePreview = async (file) => {
-    message.info("Please configer the open file")
-    return;
-    const url = file.url || URL.createObjectURL(file.originFileObj);
-    window.open(url, "_blank"); 
+    let baseUrl;
+    if (import.meta.env.MODE === 'development') {
+      baseUrl = "http://localhost:8000/storage/";
+    } else {
+      baseUrl = "http://recruit365.intercocina.space/storage/";
+    }
+
+    // If file has a URL (existing file), use it directly
+    if (file.url) {
+      // Check if URL is already absolute
+      const fullUrl = file.url.startsWith('http') ? file.url : `${baseUrl}${file.url}`;
+      console.log(fullUrl);
+      
+      window.open(fullUrl, "_blank");
+    } 
+    // If it's a new file being uploaded
+    else if (file.originFileObj) {
+      const blobUrl = URL.createObjectURL(file.originFileObj);
+      window.open(blobUrl, "_blank");
+    }
   };
 
   return (
     <div className="max-w-4xl mx-auto p-4 mt-4 pb-16">
-
       <Form
         form={form}
         layout="vertical"
@@ -169,8 +204,8 @@ export default function ResumeInfoForm({ next, prev }) {
             style={{ marginBottom: 0 }}
           >
             <Select placeholder="Sélectionner le genre">
-              <Option value={1}>Homme</Option>
-              <Option value={2}>Femme</Option>
+              <Option value="1">Homme</Option>
+              <Option value="2">Femme</Option>
             </Select>
           </Form.Item>
 
@@ -239,14 +274,14 @@ export default function ResumeInfoForm({ next, prev }) {
             name="cv_file"
             label="CV"
             valuePropName="fileList"
-            getValueFromEvent={e => e?.fileList}
+            getValueFromEvent={e => Array.isArray(e) ? e : e?.fileList}
             style={{ marginBottom: 0, width: '100%' }}
           >
             <Upload
               beforeUpload={() => false}
               maxCount={1}
               style={{ width: '100%' }}
-              onPreview={handleFilePreview} // <-- add this
+              onPreview={handleFilePreview}
             >
               <Button icon={<UploadOutlined />} className="w-full">Choisir le fichier</Button>
             </Upload>
@@ -256,26 +291,21 @@ export default function ResumeInfoForm({ next, prev }) {
             name="cover_letter_file"
             label="Lettre de motivation"
             valuePropName="fileList"
-            getValueFromEvent={e => e?.fileList}
+            getValueFromEvent={e => Array.isArray(e) ? e : e?.fileList}
             style={{ marginBottom: 0, width: '100%' }}
           >
             <Upload
               beforeUpload={() => false}
               maxCount={1}
               style={{ width: '100%' }}
-              onPreview={handleFilePreview} // <-- add this
+              onPreview={handleFilePreview}
             >
               <Button icon={<UploadOutlined />} className="w-full">Choisir le fichier</Button>
             </Upload>
           </Form.Item>
-
-
-
-
         </div>
 
-
-        <div className="mt-6 fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 px-6 py-4 shadow-lg z-[1000]" >
+        <div className="mt-6 fixed bottom-0 left-0 right-0 bg-white border-t border-gray-300 px-6 py-4 shadow-lg z-[1000]">
           <div className="flex justify-between items-center">
             <Button
               style={{
@@ -302,7 +332,6 @@ export default function ResumeInfoForm({ next, prev }) {
             </Button>
           </div>
         </div>
-
       </Form>
     </div>
   );

@@ -35,11 +35,11 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
 
 
     const IntegrationStatusArray = [
-        { value: 0, label: "En attente" },
-        { value: 1, label: "En cours" },
-        { value: 2, label: "Terminé" },
-        { value: 3, label: "Expiré" },
-        { value: 4, label: "Annulé" },
+        { value: "0", label: "En attente" },
+        { value: "1", label: "En cours" },
+        { value: "2", label: "Terminé" },
+        { value: "3", label: "Expiré" },
+        { value: "4", label: "Annulé" },
     ];
 
     // --- API Fetches ---
@@ -234,7 +234,7 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
                                         }
                                     >
                                         {resumes.map((r) => (
-                                            <Option key={r.id} value={r.id}>
+                                            <Option key={r.id} value={String(r.id)}>
                                                 {r.full_name || `${r.first_name} ${r.last_name}`}
                                             </Option>
                                         ))}
@@ -246,7 +246,7 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
                                 <Form.Item label="Entretien" name="interview_id">
                                     <Select placeholder="Sélectionnez un entretien" allowClear>
                                         {interviews.map((i) => (
-                                            <Option key={i.id} value={i.id}>
+                                            <Option key={i.id} value={String(i.id)}>
                                                 {`Entretien ${i.code || i.id}`}
                                             </Option>
                                         ))}
@@ -258,7 +258,7 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
                                 <Form.Item label="Poste" name="post_id">
                                     <Select placeholder="Choisissez un poste" allowClear>
                                         {posts.map((p) => (
-                                            <Option key={p.id} value={p.id}>
+                                            <Option key={p.id} value={String(p.id)}>
                                                 {p.title}
                                             </Option>
                                         ))}
@@ -278,7 +278,7 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
                                         }
                                     >
                                         {users.map((u) => (
-                                            <Option key={u.id} value={u.id}>
+                                            <Option key={u.id} value={String(u.id)}>
                                                 {u.full_name}
                                             </Option>
                                         ))}
@@ -370,7 +370,7 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
                                                     className="w-1/2"
                                                     options={users.map(i => ({
                                                         label: i.full_name,
-                                                        value: i.id
+                                                        value: String(i.id)
                                                     }))}
                                                     value={activityDetails[activity.id]?.user_id || null}
                                                     onChange={(val) => handleActivityUserChange(activity.id, val)}

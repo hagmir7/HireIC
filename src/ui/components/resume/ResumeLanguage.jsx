@@ -29,7 +29,7 @@ export default function ResumeLanguage({ next, prev }) {
             const { data } = await api.get("languages");
             setLanguages(data.map(item => ({
                 label: item.name,
-                value: item.id
+                value: String(item.id)
             })));
         } catch (error) {
             console.error(error);

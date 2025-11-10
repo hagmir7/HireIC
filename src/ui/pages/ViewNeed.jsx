@@ -137,9 +137,9 @@ const ViewNeed = () => {
 
   const getGenderText = (gender) => {
     switch (gender) {
-      case 1:
+      case "1":
         return 'Homme'
-      case 2:
+      case "2":
         return 'Femme'
       default:
         return 'Non spécifié'
@@ -321,12 +321,13 @@ const ViewNeed = () => {
       key: 'gender',
       dataIndex: 'gender',
       filters: [
-        { text: 'Homme', value: 1 },
-        { text: 'Femme', value: 2 },
+        { text: 'Homme', value: "1" },
+        { text: 'Femme', value: "2" },
       ],
-      onFilter: (value, record) => record.gender === value,
+      onFilter: (value, record) => String(record.gender) === String(value),
       render: (gender) => <Text>{getGenderText(gender)}</Text>,
     },
+
     {
       title: 'Diplôme',
       key: 'top_level',

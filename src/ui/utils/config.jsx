@@ -167,6 +167,13 @@ export async function downloadFiles(url) {
 
 
 export async function handlePrint(url) {
-   window.open('http://localhost:8000/api/' + url, '_blank');
+  let baseUrl;
+  if (import.meta.env.MODE === 'development') {
+    baseUrl = "http://localhost:8000/api/";
+
+  } else {
+    baseUrl = "http://recruit365.intercocina.space/api/";
+  }
+  window.open(baseUrl + url, '_blank');
 }
 

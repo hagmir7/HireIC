@@ -8,10 +8,21 @@ const { Text } = Typography;
 const MAX_FILE_SIZE_MB = 2;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
 
+let url;
+if (import.meta.env.MODE === 'development') {
+  url = "http://localhost:8000";
+
+} else {
+  url = "http://recruit365.intercocina.space";
+}
+
+
 export default function AvatarUpdate({ defaultAvatar, id }) {
   const [avatarLoading, setAvatarLoading] = useState(false);
+
+  
   const [avatar, setAvatar] = useState(
-    defaultAvatar ? `http://localhost:8000/storage/${defaultAvatar}` : null
+    defaultAvatar ? `${url}/storage/${defaultAvatar}` : null
   );
 
   const getAuthToken = () => {
@@ -47,7 +58,7 @@ export default function AvatarUpdate({ defaultAvatar, id }) {
         // Prepend full URL if needed and force reload using timestamp
         const fullUrl = avatarPath.startsWith('http')
           ? avatarPath
-          : `http://localhost:8000/storage/${avatarPath}`;
+          : `${url}/storage/${avatarPath}`;
         setAvatar(`${fullUrl}?t=${Date.now()}`);
         message.success('Avatar mis à jour avec succès.');
       } else {
@@ -72,8 +83,14 @@ export default function AvatarUpdate({ defaultAvatar, id }) {
     formData.append('avatar', file);
 
     try {
+      let url;
+      if (import.meta.env.MODE === 'development') {
+        url = "http://localhost:8000/api/";
+      } else {
+        url = "http://recruit365.intercocina.space/api/";
+      }
       const response = await axios.post(
-        `http://localhost:8000/api/user/avatar/${id}?_method=PUT`,
+        `${url}user/avatar/${id}?_method=PUT`,
         formData,
         {
           headers: {

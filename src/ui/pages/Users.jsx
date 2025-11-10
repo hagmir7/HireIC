@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
 import { Search, Plus, Edit, Loader2 } from 'lucide-react'
 import CModal from '../components/ui/CModal'
-// import RegisterForm from './Register'
-import Spinner from '../components/ui/Spinner'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../utils/api'
 import RegisterForm from '../components/RegisterForm'
 import { useAuth } from '../contexts/AuthContext'
 import { Button } from 'antd'
+import { handleShow } from '../utils/config'
 
 export default function Users() {
   const [users, setUsers] = useState([])
@@ -32,20 +31,7 @@ export default function Users() {
     }
   }
 
-   const handleShow = async (id) => {
-    
-    
-    try {
-      const url = `/user/${id}`
-      if (window.electron && typeof window.electron.openShow === 'function') {
-        await window.electron.openShow(url)
-      } else {
-        navigate(`/layout/user/${id}`)
-      }
-    } catch (error) {
-      console.error('Error navigating to article:', error)
-    }
-  }
+
 
 
 
@@ -117,16 +103,16 @@ export default function Users() {
               >
                 {user.full_name}
               </th>
-              <td className='px-6 py-2'>{user.name}</td>
-              <td className='px-6 py-2'>{user.email}</td>
-              <td className='px-6 py-2'>{user.phone || '__'}</td>
-              <td className='px-6 py-2'>
-                {new Date(user.created_at).toLocaleDateString()}
+                <td className='px-6 py-2'>{user.name}</td>
+                <td className='px-6 py-2'>{user.email}</td>
+                <td className='px-6 py-2'>{user.phone || '__'}</td>
+                <td className='px-6 py-2'>
+                  {new Date(user.created_at).toLocaleDateString()}
               </td>
 
               <td className='px-6 py-2'>
                 {permissions('edit:users') ? (
-                  <Button onClick={()=> handleShow(user.id)} >
+                  <Button onClick={()=> handleShow(`/user/${user.id}` )} >
                     <Edit size={19} />
                   </Button>
                 ) : (

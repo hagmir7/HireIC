@@ -266,10 +266,10 @@ const Needs = () => {
                                   size="small"
                                   onChange={(value) => updateStatus(need.id, value)}
                                   options={[
-                                    { label: "En attente", value: 1 },
-                                    { label: "En cours", value: 2 },
-                                    { label: "Annulé", value: 3 },
-                                    { label: "Exécuté", value: 4 },
+                                    { label: "En attente", value: "1" },
+                                    { label: "En cours", value: "2" },
+                                    { label: "Annulé", value: "3" },
+                                    { label: "Exécuté", value: "4" },
                                   ]}
                                 />
                               </td>

@@ -72,7 +72,7 @@ export default function Profile() {
     const { data } = await api.get('companies');
     setCompanies(data.map(item => ({
       label: item.name,
-      value: item.id
+      value: String(item.id)
     })));
   };
 

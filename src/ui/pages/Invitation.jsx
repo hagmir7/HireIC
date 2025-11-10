@@ -381,7 +381,7 @@ export default function Invitation() {
                                 style={{ width: 150 }}
                                 onChange={(value) => handleStatusChange(item.id, value)}
                                 options={Object.entries(InvitationStatus()).map(([key, { label }]) => ({
-                                  value: Number(key),
+                                  value: String(key),
                                   label,
                                 }))}
                               />

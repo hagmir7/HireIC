@@ -40,7 +40,7 @@ const DiplomaItem = React.memo(
           <Form.Item label='Diplôme' required tooltip='Ce champ est requis'>
             <Select
               placeholder='Sélectionnez un diplôme'
-              value={item.pivot?.level_id || item.level_id || undefined}
+              value={String(item.pivot?.level_id) || String(item.level_id) || undefined}
               onChange={(value) => onUpdate(item.id, 'level_id', value)}
               className='w-full'
               options={levels}
@@ -187,7 +187,7 @@ export default function ResumeDiplome({ next, prev }) {
   const levelOptions = useMemo(() => {
     return levels.map((level) => ({
       label: level.name,
-      value: level.id,
+      value: String(level.id),
     }))
   }, [levels])
 
