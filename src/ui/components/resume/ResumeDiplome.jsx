@@ -20,66 +20,73 @@ import { ArrowLeftCircle, ArrowRightCircle } from 'lucide-react'
 
 // Memoized diploma item component
 const DiplomaItem = React.memo(
-  ({ item, levels, onUpdate, onRemove, canRemove }) => (
-    <Card
-      style={{ marginBottom: '12px' }}
-      className='relative border border-gray-100 shadow-sm hover:shadow-md transition-shadow mb-2'
-    >
-      {canRemove && (
-        <Button
-          type='text'
-          danger
-          icon={<DeleteOutlined />}
-          onClick={() => onRemove(item.id)}
-          className='absolute top-2 right-2 text-gray-400 hover:text-red-500'
-        />
-      )}
+  ({ item, levels, onUpdate, onRemove, canRemove }) => {
+    // Get the current values consistently
+    const currentLevelId = String(item.pivot?.level_id || item.level_id || '')
+    const currentName = item.pivot?.name || item.name || ''
+    const currentEndDate = item.end_date
 
-      <Row gutter={16}>
-        <Col xs={24} md={8}>
-          <Form.Item label='Diplôme' required tooltip='Ce champ est requis'>
-            <Select
-              placeholder='Sélectionnez un diplôme'
-              value={String(item.pivot?.level_id) || String(item.level_id) || undefined}
-              onChange={(value) => onUpdate(item.id, 'level_id', value)}
-              className='w-full'
-              options={levels}
-              showSearch
-              filterOption={(input, option) =>
-                option?.label?.toLowerCase().includes(input.toLowerCase())
-              }
-            />
-          </Form.Item>
-        </Col>
+    return (
+      <Card
+        style={{ marginBottom: '12px' }}
+        className='relative border border-gray-100 shadow-sm hover:shadow-md transition-shadow mb-2'
+      >
+        {canRemove && (
+          <Button
+            type='text'
+            danger
+            icon={<DeleteOutlined />}
+            onClick={() => onRemove(item.id)}
+            className='absolute top-2 right-2 text-gray-400 hover:text-red-500'
+          />
+        )}
 
-        <Col xs={24} md={8}>
-          <Form.Item label='Filière' required tooltip='Ce champ est requis'>
-            <Input
-              placeholder='Entrez votre filière'
-              value={item.pivot?.name || item.name || ''}
-              onChange={(e) => onUpdate(item.id, 'name', e.target.value)}
-            />
-          </Form.Item>
-        </Col>
+        <Row gutter={16}>
+          <Col xs={24} md={8}>
+            <Form.Item label='Diplôme' required tooltip='Ce champ est requis'>
+              <Select
+                placeholder='Sélectionnez un diplôme'
+                value={currentLevelId || undefined}
+                onChange={(value) => onUpdate(item.id, 'level_id', value)}
+                className='w-full'
+                options={levels}
+                showSearch
+                filterOption={(input, option) =>
+                  option?.label?.toLowerCase().includes(input.toLowerCase())
+                }
+              />
+            </Form.Item>
+          </Col>
 
-        <Col xs={24} md={8}>
-          <Form.Item
-            label="Date d'obtention"
-            required
-            tooltip='Ce champ est requis'
-          >
-            <DatePicker
-              className='w-full'
-              placeholder='Sélectionnez une date'
-              value={item.end_date}
-              locale={locale}
-              onChange={(date) => onUpdate(item.id, 'end_date', date)}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
-    </Card>
-  )
+          <Col xs={24} md={8}>
+            <Form.Item label='Filière' required tooltip='Ce champ est requis'>
+              <Input
+                placeholder='Entrez votre filière'
+                value={currentName}
+                onChange={(e) => onUpdate(item.id, 'name', e.target.value)}
+              />
+            </Form.Item>
+          </Col>
+
+          <Col xs={24} md={8}>
+            <Form.Item
+              label="Date d'obtention"
+              required
+              tooltip='Ce champ est requis'
+            >
+              <DatePicker
+                className='w-full'
+                placeholder='Sélectionnez une date'
+                value={currentEndDate}
+                locale={locale}
+                onChange={(date) => onUpdate(item.id, 'end_date', date)}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Card>
+    )
+  }
 )
 
 // Add display name for better debugging
@@ -116,8 +123,7 @@ DiplomaSkeleton.displayName = 'DiplomaSkeleton'
 export default function ResumeDiplome({ next, prev }) {
   const { id } = useParams();
 
-
-   if (!id) {
+  if (!id) {
     return (
       <div className='max-w-4xl mx-auto p-4'>
         <Card>
@@ -137,7 +143,7 @@ export default function ResumeDiplome({ next, prev }) {
     setFormItems((prev) =>
       prev.map((item) => {
         if (item.id === itemId) {
-          // Handle both pivot structure and direct structure
+          // If the item has pivot structure, update within pivot
           if (item.pivot) {
             return {
               ...item,
@@ -147,6 +153,7 @@ export default function ResumeDiplome({ next, prev }) {
               },
             }
           } else {
+            // For new items without pivot, update directly
             return {
               ...item,
               [field]: value,
@@ -169,7 +176,7 @@ export default function ResumeDiplome({ next, prev }) {
 
   const addFormItem = useCallback(() => {
     setFormItems((prev) => {
-      const newId = Math.max(0, ...prev.map((item) => item.id || 0)) + 1
+      const newId = Math.max(0, ...prev.map((item) => item.id || 0)) + 1;
       return [
         ...prev,
         {
@@ -179,9 +186,9 @@ export default function ResumeDiplome({ next, prev }) {
           end_date: null,
           resume_id: id,
         },
-      ]
-    })
-  }, [id])
+      ];
+    });
+  }, [id]);
 
   // Memoized levels options to prevent recreation
   const levelOptions = useMemo(() => {
@@ -221,14 +228,12 @@ export default function ResumeDiplome({ next, prev }) {
         } else {
           const prepared = diplomasRes.data.map((d, index) => ({
             ...d,
-            // Ensure we have a valid ID
             id: d.id || index + 1,
             end_date: d.pivot?.end_date ? dayjs(d.pivot.end_date) : null,
           }))
           setFormItems(prepared)
         }
       } else {
-        // Fallback if no valid data
         setFormItems([
           {
             id: 1,
@@ -320,8 +325,6 @@ export default function ResumeDiplome({ next, prev }) {
       )),
     []
   )
-
- 
 
   return (
     <div className='max-w-4xl mx-auto p-4'>
