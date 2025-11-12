@@ -1,5 +1,5 @@
 import { Button, Modal, Checkbox, message } from 'antd';
-import { CircleAlert, ClipboardList, Edit, Eye, Filter, MessageSquare, PlusCircle, Settings2, Trash, User } from 'lucide-react';
+import { CircleAlert, ClipboardList, Edit, Eye, Filter, Menu, MessageSquare, PlusCircle, Settings2, Trash, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
@@ -115,6 +115,7 @@ export const Resume = () => {
   const getCategories = async () => {
     try {
       const { data } = await api.get('categories');
+      console.log(data)
       setCategories(data.map(item => ({ label: item.name, value: item.id })));
     } catch (error) {
       console.error(error);
@@ -272,6 +273,11 @@ export const Resume = () => {
           <Button type='primary' onClick={() => handleShow('/resume/create')}>
             <PlusCircle size={16} className='me-1' /> Créer
           </Button>
+
+           <Button color="default" variant="dashed" onClick={() => handleShow('categories', 800, 700)}>
+                <Menu className='h-4 w-4' />
+                Catégorie d’emploi
+            </Button>
           <Button
             icon={<Filter size={16} />}
             onClick={() => setFilterModalOpen(true)}

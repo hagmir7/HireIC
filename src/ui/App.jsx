@@ -26,6 +26,9 @@ import Diplome from './pages/Diplome'
 import ViewDepartement from './pages/ViewDepartement'
 import Skills from './pages/Skills'
 import ViewSkills from './pages/ViewSkill'
+import Criteria from './pages/Criteria'
+import ViewCriteriaType from './pages/ViewCriteriaType'
+import Category from './pages/Category'
 
 
 
@@ -58,11 +61,14 @@ function App() {
         <Route path='/skills' element={<Skills />} />
         <Route path='/view-skills/:id' element={<ViewSkills />} />
         <Route path='city' element={<City />} />
+        <Route path='categories' element={<Category />} />
         <Route path='view-resume/:id' element={<ViewResume />} />
         <Route path='view-departement/:id' element={<ViewDepartement />} />
 
         <Route path='interview/create' element={<CreateInterview />} />
         <Route path='interview/create/:id' element={<CreateInterview />} />
+        <Route path='criteria' element={<Criteria />} />
+        <Route path='/view-criteria-type/:id' element={<ViewCriteriaType />} />
         <Route element={<MainLayout />}>
           <Route path='/' element={<Home />} />
           <Route path='/users' element={<Users />} />

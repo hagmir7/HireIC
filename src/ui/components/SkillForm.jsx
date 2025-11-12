@@ -24,7 +24,7 @@ const SkillForm = ({ initialValues = null, onSubmit }) => {
   const getSkillsType = async () => {
     try {
       const response = await api.get("skills/type");
-      setSkillsType(response.data.map(i => ({ label: i.name, value: i.id })));
+      setSkillsType(response.data.map(i => ({ label: i.name, value: String(i.id) })));
     } catch (error) {
       console.error(error);
     }

@@ -1,10 +1,11 @@
 import { Button, Checkbox, message, Select } from 'antd'
-import { PlusCircle, RefreshCcw } from 'lucide-react'
+import { Menu, PlusCircle, RefreshCcw } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { api } from '../utils/api';
 import Skeleton from '../components/ui/Sketelon';
 import TableEmpty from '../components/TableEmpty';
+import { handleShow } from '../utils/config';
 
 export default function Template() {
 
@@ -37,22 +38,6 @@ export default function Template() {
         }
     }
 
-    const handleShow = async (id) => {
-        try {
-            const isValidId = typeof id === 'string' || typeof id === 'number';
-
-            const url = `template/create${isValidId ? `/${id}` : ''}`;
-            if (window.electron && typeof window.electron.openShow === 'function') {
-                await window.electron.openShow({ path: url, width: 1000, height: 800 });
-            } else {
-                navigate(`/layout/${url}`);
-            }
-        } catch (error) {
-            console.error('Error navigating to resume:', error);
-        }
-    };
-
-
 
     const formatDate = (dateString) => {
         if (!dateString) return 'N/A';
@@ -78,11 +63,17 @@ export default function Template() {
                                 )}
                                 Rafraîchir
                             </Button>
+
+                             <Button color="default" variant="dashed" onClick={() => handleShow('criteria', 1000, 800)}>
+                                <Menu className='h-4 w-4' />
+                                Critères
+                            </Button>
                             
-                            <Button type='primary' onClick={() => handleShow()}>
+                            <Button type='primary' onClick={() => handleShow('template/create', 1000, 800)}>
                                 <PlusCircle className='h-4 w-4' />
                                 Créer
                             </Button>
+                           
                         </div>
                     </div>
                 </div>
@@ -153,7 +144,7 @@ export default function Template() {
                                                         </td>
 
                                                         <td className='px-2 py-2 text-sm border-r border-gray-100'>
-                                                            <span onClick={()=> handleShow(item.id)} className='font-semibold text-blue-900 w-full cursor-pointer'>
+                                                            <span onClick={()=> handleShow(`template/create/${item.id}`)} className='font-semibold text-blue-900 w-full cursor-pointer'>
                                                                 {item.code || 'N/A'}
                                                             </span>
                                                         </td>
@@ -179,7 +170,7 @@ export default function Template() {
                                                         </td>
                                                     </tr>
                                                 ))
-                                            ) : (<TableEmpty description="Aucun modèle trouvé" colSpan={7} Create={handleShow} />)}
+                                            ) : (<TableEmpty description="Aucun modèle trouvé" colSpan={7} Create={()=> handleShow('template/create', 1000, 800)} />)}
                                         </tbody>
                                     </table>
                                 </div>

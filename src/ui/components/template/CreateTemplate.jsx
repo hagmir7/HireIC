@@ -1,11 +1,9 @@
-import { Form, Input, Select, Table, Button, Typography, Space, message } from 'antd'
+import { Form, Input, Select, Table, Button, Space, message } from 'antd'
 import { DeleteOutlined } from '@ant-design/icons'
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { api } from '../../utils/api';
 import { CircleCheckBig, Trash } from 'lucide-react';
-
-const { Title } = Typography;
 
 export default function TemplateForm({ onSuccess }) {
   const { id } = useParams(); 
@@ -34,7 +32,7 @@ export default function TemplateForm({ onSuccess }) {
       const response = await api.get('departements');
       setDepartments(response.data.map(item => ({
         label: item.name,
-        value: item.id
+        value: String(item.id)
       })))
     } catch (error) {
       console.error(error?.response?.data?.message);
@@ -120,7 +118,7 @@ export default function TemplateForm({ onSuccess }) {
       let response;
       if (templateId) {
         response = await api.put(`templates/${templateId}`, payload);
-        message.success("Template updated successfully");
+        message.success("Modèle modifié avec succès");
         
         
       } else {

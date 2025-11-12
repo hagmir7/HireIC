@@ -13,6 +13,7 @@ const { Option } = Select;
 export default function ResumeInfoForm({ next, prev }) {
   const [form] = Form.useForm();
   const [cities, setCities] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [saveLoading, setSaveLoading] = useState(false);
   const navigate = useNavigate();
   const [loading, setLoading] = useState();
@@ -22,6 +23,16 @@ export default function ResumeInfoForm({ next, prev }) {
     try {
       const { data } = await api.get('cities');
       setCities(data.map(city => ({ label: city.name, value: String(city.id) })));
+    } catch (error) {
+      console.error(error);
+      message.error(error?.response?.data?.message || 'Erreur chargement villes');
+    }
+  };
+
+  const getCategories = async () => {
+    try {
+      const { data } = await api.get('categories');
+      setCategories(data.map(caty => ({ label: caty.name, value: String(caty.id) })));
     } catch (error) {
       console.error(error);
       message.error(error?.response?.data?.message || 'Erreur chargement villes');
@@ -66,6 +77,7 @@ export default function ResumeInfoForm({ next, prev }) {
 
   useEffect(() => {
     getCities();
+    getCategories()
     getResume();
   }, [id]);
 
@@ -74,21 +86,16 @@ export default function ResumeInfoForm({ next, prev }) {
     const formData = new FormData();
     
     Object.entries(values).forEach(([key, value]) => {
-      // Handle file uploads (they come as arrays from Ant Design Upload)
       if (Array.isArray(value) && value.length > 0) {
         const file = value[0];
-        // Only append if it's a new file (has originFileObj)
         if (file.originFileObj) {
           formData.append(key, file.originFileObj);
         }
-        // If it's an existing file (has url but no originFileObj), skip it
-        // The backend will keep the existing file
       } 
-      // Handle date fields
+
       else if (value && typeof value.format === 'function') {
         formData.append(key, value.format('YYYY-MM-DD'));
       } 
-      // Handle other fields
       else if (value !== undefined && value !== null) {
         formData.append(key, value);
       }
@@ -236,7 +243,7 @@ export default function ResumeInfoForm({ next, prev }) {
               <Option value={3}>Divorcé(e)</Option>
             </Select>
           </Form.Item>
-
+{/* 
           <Form.Item
             name="nationality"
             label="Nationalité"
@@ -244,6 +251,23 @@ export default function ResumeInfoForm({ next, prev }) {
             style={{ marginBottom: 0 }}
           >
             <Input />
+          </Form.Item> */}
+
+           <Form.Item
+            name="category_id"
+            label="Catégorie d’emploi"
+            style={{ marginBottom: 0 }}
+          >
+            <Select 
+              placeholder="Sélectionner"
+              showSearch
+              options={categories}
+              filterOption={(input, option) =>
+                option.label.toLowerCase().includes(input.toLowerCase())
+              }
+            />
+              
+
           </Form.Item>
 
           <Form.Item

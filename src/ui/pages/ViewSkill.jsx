@@ -8,6 +8,7 @@ import SkillTypeForm from '../components/SkillTypeForm'
 import TableEmpty from '../components/TableEmpty'
 import { useParams } from 'react-router-dom'
 import SkillForm from '../components/SkillForm'
+import BackButton from '../components/ui/BackButton'
 
 
 const ViewSkills = () => {
@@ -81,8 +82,9 @@ const ViewSkills = () => {
   return (
     <div className='h-full flex flex-col'>
       <div className='shadow-sm p-2 flex items-center justify-between from-gray-50 to-gray-100 border-b'>
-        <h2 className='text-md font-semibold text-gray-800'>
-          Compétences {data.name}
+        <h2 className='text-md font-semibold text-gray-800 flex items-center gap-3'>
+          <BackButton />
+          <span>Compétences {data.name}</span>
         </h2>
         <div className='flex gap-3'>
           <Modal
@@ -128,7 +130,7 @@ const ViewSkills = () => {
           </thead>
           <tbody className='bg-white'>
             {loading ? (
-              <Skeleton rows={3} columns={2} />
+              <Skeleton rows={3} columns={1} />
             ) : data.skills && data.skills.length > 0 ? (
               data.skills.map((item, index) => (
                 <RightClickMenu

@@ -1,21 +1,23 @@
+
+
 import React, { useEffect, useState } from 'react'
-import { CircleAlert, ClipboardList, Edit, Eye, MessageSquare, PlusCircle, Settings2, Trash } from 'lucide-react'
+import { CircleAlert, Edit, PlusCircle, Trash } from 'lucide-react'
 import { Button, Checkbox, message, Modal } from 'antd'
 import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
-import DepartementForm from '../components/departement/DepartementForm'
 import RightClickMenu from '../components/ui/RightClickMenu'
+import CriteriaTypeForm from '../components/CriteriaTypeForm'
 import { useNavigate } from 'react-router-dom'
 
 
-const Departements = () => {
+const Criteria = () => {
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [departement, setDepartement] = useState();
+  const [criteria, setCriteria] = useState();
   const { confirm } = Modal;
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
 
   const handleSelectAll = (e) => {
@@ -35,7 +37,7 @@ const Departements = () => {
   const fetchData = async () => {
     setLoading(true)
     try {
-      const res = await api.get('departements')
+      const res = await api.get('criteria-types')
       setData(res.data)
     } catch (error) {
       message.error(error.response?.data?.message || 'Erreur serveur')
@@ -43,14 +45,14 @@ const Departements = () => {
     setLoading(false)
   }
 
-  const handleDelete = async (departement_id) => {
+  const handleDelete = async (criteria_type_id) => {
     try {
-      await api.delete(`departements/${departement_id}`)
-      message.success("Département supprimé avec succès")
+      await api.delete(`criteria-types/${criteria_type_id}`)
+      message.success("Type de critère supprimé avec succès")
       fetchData();
     } catch (error) {
       console.error(error);
-      message.error(error?.response?.data?.message || "Erreur de supprimer la département");
+      message.error(error?.response?.data?.message || "Erreur de supprimer le typ de critère");
 
     }
   }
@@ -76,11 +78,8 @@ const Departements = () => {
 
   const handleMenuClick = (key, id) => {
     switch (key) {
-      case 'view':
-        window.open(`/#/view-departement/${id}`, '_blank', 'width=800,height=600')
-        break;
       case "edit":
-        setDepartement(data.find((item) => Number(item.id) === Number(id)))
+        setCriteria(data.find((item) => Number(item.id) === Number(id)))
         setIsModalOpen(true)
         break;
       case 'delete':
@@ -91,8 +90,6 @@ const Departements = () => {
   };
 
   const items = [
-    // { label: "Voir Departemnt", key: "view", icon: <Eye size={15} />},
-    // { type: "divider" },
     { label: "Modifier", key: "edit", icon: <Edit size={15} /> },
     { label: "Supprimer", key: "delete", icon: <Trash size={15} />, danger: true, },
   ];
@@ -105,11 +102,9 @@ const Departements = () => {
     <div className='h-full flex flex-col'>
       <div className='shadow-sm p-2 flex items-center justify-between from-gray-50 to-gray-100 border-b'>
         <h2 className='text-md font-semibold text-gray-800'>
-          Départements & Services
+          Critères d'entretien
         </h2>
         <div className='flex gap-3'>
-
-
           <Modal
             title="Département"
             closable={{ 'aria-label': 'Custom Close Button' }}
@@ -118,17 +113,17 @@ const Departements = () => {
             footer={false}
             onCancel={() => setIsModalOpen(false)}
           >
-            <DepartementForm
-              initialValues={departement}
+            <CriteriaTypeForm
+              initialValues={criteria}
               onSubmit={async (data) => {
-                if (departement) {
-                  await api.put(`departements/${departement.id}`, data);
+                if (criteria) {
+                  await api.put(`criteria-types/${criteria.id}`, data);
                 } else {
-                  await api.post("departements", data);
+                  await api.post("criteria-types", data);
                 }
                 setIsModalOpen(false);
                 fetchData();
-                setDepartement('')
+                setCriteria('')
               }}
             />
 
@@ -148,10 +143,10 @@ const Departements = () => {
                 />
               </th>
               <th className='px-2 py-2 text-left border-r border-gray-300 text-sm font-semibold text-gray-600'>
-                Département
+                Type de critères
               </th>
               <th className='px-2 py-2 text-left border-r border-gray-300 text-sm font-semibold text-gray-600'>
-                Services
+                Nb Critères
               </th>
 
             </tr>
@@ -167,9 +162,9 @@ const Departements = () => {
                   onItemClick={handleMenuClick}
                 >
                   <tr
+                    onClick={()=> navigate(`/view-criteria-type/${item.id}`)}
                     key={item.id}
-                    onClick={()=> navigate(`/view-departement/${item.id}`)}
-                    className={`border-b border-gray-200 hover:bg-blue-50 transition cursor-context-menu ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
+                    className={`border-b border-gray-200 hover:bg-blue-50 transition ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                   >
                     <td className='px-2 py-1 border-r border-gray-300'>
                       <Checkbox
@@ -181,7 +176,7 @@ const Departements = () => {
                       {item.name || '__'}
                     </td>
                     <td className='px-2 py-1 border-r border-gray-300 text-sm text-gray-700'>
-                      {item.services_count}
+                      {item.criteria_count}
                     </td>
                   </tr>
                 </RightClickMenu>
@@ -206,4 +201,4 @@ const Departements = () => {
   )
 }
 
-export default Departements
+export default Criteria

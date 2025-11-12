@@ -6,6 +6,7 @@ import Skeleton from '../components/ui/Sketelon'
 import RightClickMenu from '../components/ui/RightClickMenu'
 import SkillTypeForm from '../components/SkillTypeForm'
 import TableEmpty from '../components/TableEmpty'
+import { useNavigate } from 'react-router-dom'
 
 
 const Skills = () => {
@@ -14,6 +15,7 @@ const Skills = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [level, setLevel] = useState();
   const { confirm } = Modal;
+  const navigate = useNavigate();
 
 
   const fetchData = async () => {
@@ -144,7 +146,7 @@ const Skills = () => {
                 >
                   <tr
                     key={item.id}
-                    onClick={()=> window.open(`/#/view-skills/${item.id}`, '_blank', 'width=800,height=600')}
+                    onClick={()=> navigate(`/view-skills/${item.id}`)}
                     className={`border-b border-gray-200 cursor-pointer hover:bg-blue-50 transition ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}`}
                   >
                     

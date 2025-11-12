@@ -21,14 +21,12 @@ const createMainWindow = () => {
     });
 
 
-    // mainWindow.setMenu(null)
-
     if (isDev()) {
         mainWindow.loadURL('http://localhost:5123');
     } else {
         mainWindow.loadFile(path.join(app.getAppPath(), 'react-dist', 'index.html'));
+        mainWindow.setMenu(null)
     }
-
     return mainWindow;
 };
 
@@ -87,23 +85,23 @@ ipcMain.handle('user', async (event, data) => {
 });
 
 ipcMain.on('openShow', async (event, preload) => {
-  try {
+    try {
 
-    if (showWindow && !showWindow.isDestroyed()) {
-      await new Promise((resolve) => {
-        showWindow.once('closed', resolve);
-        showWindow.close();
-      });
+        if (showWindow && !showWindow.isDestroyed()) {
+            await new Promise((resolve) => {
+                showWindow.once('closed', resolve);
+                showWindow.close();
+            });
+        }
+
+        showWindow = createShowWindow(preload);
+        showWindow.show();
+
+        event.reply('openShow-response', { success: true });
+    } catch (error) {
+        console.error('openShow error:', error);
+        event.reply('openShow-response', { success: false, error: error.message });
     }
-
-    showWindow = createShowWindow(preload);
-    showWindow.show();
-
-    event.reply('openShow-response', { success: true });
-  } catch (error) {
-    console.error('openShow error:', error);
-    event.reply('openShow-response', { success: false, error: error.message });
-  }
 });
 
 
@@ -127,8 +125,8 @@ app.on('activate', () => {
 
 // For Downloading files
 ipcMain.handle('download-file', async (event, url) => {
-  const win = BrowserWindow.getFocusedWindow();
-  if (win) {
-    win.webContents.downloadURL(url);
-  }
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+        win.webContents.downloadURL(url);
+    }
 });

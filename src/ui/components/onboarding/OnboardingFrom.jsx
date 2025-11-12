@@ -211,7 +211,7 @@ export default function OnboardingForm({ record = null, onClose, onboardingData 
                 form={form}
                 layout="vertical"
                 onFinish={onFinish}
-                initialValues={{ period: 0, status: 0 }}
+                initialValues={{ period: 0, status: "0" }}
             >
                 <Tabs defaultActiveKey="1">
                     {/* TAB 1: ONBOARDING FORM */}

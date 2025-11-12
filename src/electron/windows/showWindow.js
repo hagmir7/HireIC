@@ -16,18 +16,11 @@ export const createShowWindow = (data) => {
     childWindow = new BrowserWindow({
         width: data.width ?? 800,
         height: data.height ?? 600,
-        // resizable: false,
-        // parent: mainWindowReference, 
-        // modal: true,
-        // minimizable: false,
-        // alwaysOnTop: true,
         webPreferences: {
             preload: getPreloadPath()
         }
     });
 
-    
-    // childWindow.setMenu(null);
 
     if (isDev()) {
         childWindow.loadURL(`http://localhost:5123/#${data.path}`);

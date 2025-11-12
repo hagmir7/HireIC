@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { api } from '../utils/api'
 import Skeleton from '../components/ui/Sketelon'
 import ServiceForm from '../components/ServiceForm'
+import BackButton from '../components/ui/BackButton'
 
 function ViewDepartement() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -56,8 +57,9 @@ function ViewDepartement() {
   return (
     <div className='h-full flex flex-col'>
       <div className='shadow-sm p-2 flex items-center justify-between from-gray-50 to-gray-100 border-b'>
-        <h2 className='text-md font-semibold text-gray-800'>
-          Département ({data?.name})
+        <h2 className='text-md font-semibold text-gray-800 flex items-center gap-3'>
+          <BackButton />
+          <span>Département ({data?.name})</span>
         </h2>
         <div className='flex gap-3'>
           <Modal
@@ -111,7 +113,7 @@ function ViewDepartement() {
                 <tr
                   onClick={()=> {setIsModalOpen(true); setCurrentService(services.find((service) => Number(service.id) === Number(item.id)))}}
                   key={item.id}
-                  className={`border-b border-gray-200 hover:bg-blue-50 transition ${
+                  className={`border-b border-gray-200 cursor-context-menu hover:bg-blue-50 transition ${
                     index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                   }`}
                 >
