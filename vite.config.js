@@ -4,16 +4,19 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(),],
   base: "./",
-  build:{
+  build: {
     outDir: "react-dist"
   },
-  define: {
-    'process.env.PUBLIC_URL': '"/"',
-  },
-  server:{
+  server: {
+    host: '0.0.0.0',
     port: 5123,
     strictPort: true
-  }
+  },
+  safelist: [
+    {
+      pattern: /ant-select-dropdown.*/,
+    },
+  ],
 })

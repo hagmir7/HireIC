@@ -209,7 +209,7 @@ const Needs = () => {
                   <table className="min-w-full text-sm table-fixed">
                     <thead className="bg-gray-100 whitespace-nowrap">
                       <tr>
-
+                        <th className="w-[160px] px-3 py-2 text-left">Code</th>
                         <th className="w-[160px] px-3 py-2 text-left">Service</th>
                         <th className="w-[160px] px-3 py-2 text-left">Responsable</th>
                         <th className="w-[120px] px-3 py-2 text-left">Diplôme</th>
@@ -234,6 +234,12 @@ const Needs = () => {
                               className={`border-t border-gray-300 hover:bg-gray-50 ${index % 2 === 0 ? "bg-white" : "bg-gray-50"
                                 }`}
                             >
+                              <td
+                                className="px-3 py-2 truncate cursor-pointer"
+                                onClick={() => handleShow(need.id)}
+                              >
+                                {need?.code}
+                              </td>
 
 
                               <td

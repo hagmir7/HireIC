@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Layout, Menu, theme, Drawer } from 'antd'
+import { Layout, Menu, theme, Drawer, Badge } from 'antd'
 import {
   Package,
   Shield,
@@ -22,16 +22,35 @@ import {
   CheckCircle,
   BookOpenText,
   LandPlot,
+  UserPlus,
+  Pin,
 } from 'lucide-react'
 import { Link, Outlet } from 'react-router-dom'
 import DropMenu from '../components/DropMenu'
 import { useAuth } from '../contexts/AuthContext'
 import { handleShow } from '../utils/config'
 import DocumentTemplates from '../components/DocumentTemplates'
+import { api } from '../utils/api'
 const { Header, Content, Sider } = Layout
 
 const sideMenu = () => {
   const { roles, permissions } = useAuth()
+
+  const [needs, setNeeds] = useState(0);
+
+  const getNeeds = async ()=> {
+    try {
+      const response = await api.get("needs/overview");
+      setNeeds(response?.data?.pending)
+    } catch (error) {
+      
+    }
+  }
+
+
+  useEffect(()=>{
+    getNeeds();
+  }, [])
 
   return [
     {
@@ -54,7 +73,14 @@ const sideMenu = () => {
         {
           key: 'submenu-15',
           icon: <MessageCircleWarning size={19} />,
-          label: <Link to='/needs'>Besoins</Link>,
+          label: (
+            <div className="flex items-center justify-between w-full">
+              <Link to="/needs" className="flex-1">
+                Besoins
+              </Link>
+              {needs && roles('admin') ? <Badge count={needs} className="ml-2" /> : ''}
+            </div>
+          ),
         },
         {
           key: 'submenu-21',
@@ -121,6 +147,15 @@ const sideMenu = () => {
           label: "Compétences",
           onClick: ()=> handleShow('skills')
         },
+           
+        {
+          key: 'submenu-160',
+          icon: <Pin size={19} />,
+          label: "Postes de travail",
+          onClick: ()=> handleShow('work-posts')
+        },
+
+        
       ],
     },
 

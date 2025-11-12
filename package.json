@@ -22,7 +22,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@fontsource/inter": "^5.2.6",
-    "@tailwindcss/vite": "^4.1.11",
+    "@tailwindcss/vite": "^4.1.4",
     "antd": "^5.26.5",
     "antd-style": "^3.7.1",
     "axios": "^1.10.0",
@@ -30,14 +30,14 @@
     "lucide-react": "^0.525.0",
     "react": "^18.0.0",
     "react-dom": "^18.1.0",
-    "react-router-dom": "^7.6.3",
-    "tailwindcss": "^4.1.11"
+    "react-router-dom": "^7.6.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
     "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.22",
     "cross-env": "^7.0.3",
     "electron": "^35.1.4",
     "electron-builder": "^26.0.12",
@@ -46,6 +46,8 @@
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^15.15.0",
     "npm-run-all": "^4.1.5",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.11",
     "vite": "^6.2.0"
   }
 }

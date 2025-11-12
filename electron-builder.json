@@ -9,7 +9,8 @@
   "buildDependenciesFromSource": false,
   "npmRebuild": false,
   "asarUnpack": [
-    "react-dist"
+    "react-dist",
+    "node_modules/@tailwindcss/**/*"
   ],
   "files": [
     "dist/**/*",

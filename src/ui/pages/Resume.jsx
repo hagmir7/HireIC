@@ -9,6 +9,7 @@ import RightClickMenu from '../components/ui/RightClickMenu';
 import TableEmpty from '../components/TableEmpty';
 import FilterModal from '../components/FilterModal';
 import ResumeSearch from '../components/ResumeSearch';
+import AddToNeed from '../components/AddToNeed';
 
 
 export const Resume = () => {
@@ -26,6 +27,8 @@ export const Resume = () => {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [search, setSearch] = useState('');
+  const [openNeedModal, setOpenNeedModal] = useState(false);
+  const [currentResume, setCurrentResume] = useState(null)
 
   const [filterDataLoaded, setFilterDataLoaded] = useState(false);
 
@@ -115,7 +118,6 @@ export const Resume = () => {
   const getCategories = async () => {
     try {
       const { data } = await api.get('categories');
-      console.log(data)
       setCategories(data.map(item => ({ label: item.name, value: item.id })));
     } catch (error) {
       console.error(error);
@@ -249,6 +251,10 @@ export const Resume = () => {
       case 'view':
         handleShow(`view-resume/${id}`);
         break;
+       case 'toNeed':
+        setCurrentResume(resumes.find(resume => String(resume.id) === String(id)))
+        setOpenNeedModal(true)
+        break;
       default:
     }
   };
@@ -257,6 +263,7 @@ export const Resume = () => {
     { label: 'Voir le CV', key: 'view', icon: <Eye size={15} /> },
     { label: "Lancer l'entretien", key: "startInterview", icon: <ClipboardList size={15} /> },
     { label: "Changer l'état", key: "changeStatus", icon: <Settings2 size={15} /> },
+    { label: "Ajouter aux besoins", key: "toNeed", icon: <PlusCircle size={15} /> },
     { label: "Nouvelle invitation", key: "NewInvetation", icon: <MessageSquare size={15} /> },
     { type: "divider" },
     { label: "Modifier", key: "edit", icon: <Edit size={15} /> },
@@ -284,6 +291,7 @@ export const Resume = () => {
           >
             Filtre
           </Button>
+          <AddToNeed open={openNeedModal} setOpen={setOpenNeedModal} resume={currentResume} />
         </div>
       </div>
 
