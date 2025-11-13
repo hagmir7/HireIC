@@ -281,7 +281,7 @@ export const Resume = () => {
             <PlusCircle size={16} className='me-1' /> Créer
           </Button>
 
-           <Button color="default" variant="dashed" onClick={() => handleShow('categories', 800, 700)}>
+           <Button color="default" variant="dashed" onClick={() => handleShow('/categories', 800, 700)}>
                 <Menu className='h-4 w-4' />
                 Catégorie d’emploi
             </Button>

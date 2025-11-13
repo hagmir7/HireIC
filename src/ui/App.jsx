@@ -63,6 +63,7 @@ function App() {
         <Route path='/view-skills/:id' element={<ViewSkills />} />
         <Route path='city' element={<City />} />
         <Route path='work-posts' element={<WorkPost />} />
+        <Route path='categories' element={<Category />} />
         <Route path='view-resume/:id' element={<ViewResume />} />
         <Route path='view-departement/:id' element={<ViewDepartement />} />
 
