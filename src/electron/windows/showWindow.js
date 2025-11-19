@@ -16,6 +16,7 @@ export const createShowWindow = (data) => {
     childWindow = new BrowserWindow({
         width: data.width ?? 800,
         height: data.height ?? 600,
+        // icon: path.join(__dirname, '..', 'inter.ico'),
         webPreferences: {
             preload: getPreloadPath()
         }

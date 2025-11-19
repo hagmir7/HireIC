@@ -1,8 +1,13 @@
-import { app, BrowserWindow, ipcMain, dialog } from "electron";
+import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import path from "path";
 import { isDev, getPreloadPath } from "./util.js";
 import createLoginWindow from "./windows/loginWindow.js";
 import { createShowWindow } from "./windows/showWindow.js";
+import pkg from 'electron-updater';
+const { autoUpdater } = pkg;
+
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
 
 
 let showWindow;
@@ -11,9 +16,10 @@ let loginWindow;
 
 const createMainWindow = () => {
     const mainWindow = new BrowserWindow({
-        title: "HireIC - INTERCOCINA",
+        title: "Recruit365 - INTERCOCINA",
         width: 1300,
         height: 800,
+        // icon: path.join(__dirname, '..', 'inter.ico'),
         webPreferences: {
             preload: getPreloadPath(),
             nodeIntegration: true,
@@ -27,6 +33,8 @@ const createMainWindow = () => {
         mainWindow.loadFile(path.join(app.getAppPath(), 'react-dist', 'index.html'));
         mainWindow.setMenu(null)
     }
+
+    autoUpdater.checkForUpdatesAndNotify();
     return mainWindow;
 };
 
@@ -109,6 +117,9 @@ ipcMain.on('openShow', async (event, preload) => {
 
 app.on('ready', () => {
     loginWindow = createLoginWindow();
+     if (!isDev()) {
+        
+    }
 });
 
 app.on('window-all-closed', () => {
@@ -129,4 +140,51 @@ ipcMain.handle('download-file', async (event, url) => {
     if (win) {
         win.webContents.downloadURL(url);
     }
+});
+
+
+ipcMain.handle('get-app-version', () => {
+  return app.getVersion();
+});
+
+
+// Update
+autoUpdater.on("update-available", (info) => {
+  dialog.showMessageBox({
+    type: "info",
+    title: "Mise à jour disponible",
+    message: `Une nouvelle mise à jour est disponible.\nVersion actuelle : ${app.getVersion()}`,
+    detail: `La version ${info.version} est en cours de téléchargement...`
+  });
+
+  autoUpdater.downloadUpdate();
+});
+
+autoUpdater.on("update-not-available", (info) => {
+  dialog.showMessageBox({
+    type: "info",
+    title: "Aucune mise à jour",
+    message: `Aucune mise à jour disponible.\nVersion actuelle : ${app.getVersion()}`
+  });
+});
+
+autoUpdater.on("update-downloaded", (info) => {
+  dialog.showMessageBox({
+    type: "info",
+    buttons: ["Redémarrer maintenant", "Plus tard"],
+    defaultId: 0,
+    cancelId: 1,
+    title: "Mise à jour prête",
+    message: `Mise à jour téléchargée`,
+    detail: `La version ${info.version} a été téléchargée.\nRedémarrez maintenant pour l'appliquer.`
+  }).then(result => {
+    if (result.response === 0) {
+      autoUpdater.quitAndInstall();
+    }
+  });
+});
+
+
+autoUpdater.on("error", (error) => {
+  dialog.showErrorBox("Update Error", error == null ? "unknown" : (error.stack || error.toString()));
 });

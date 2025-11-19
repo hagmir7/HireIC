@@ -22,3 +22,5 @@ react-dist
 *.njsproj
 *.sln
 *.sw?
+
+out/

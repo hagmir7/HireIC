@@ -17,7 +17,7 @@ export default function createLoginWindow() {
         }
     });
 
-    //  loginWindow.setMenu(null);
+   
 
  if (isDev()) {
         loginWindow.loadURL('http://localhost:5123/#login');
@@ -25,6 +25,8 @@ export default function createLoginWindow() {
         loginWindow.loadFile(path.join(app.getAppPath(), 'react-dist', 'index.html'), {
             hash: '/login'
         });
+
+        loginWindow.setMenu(null);
     }
 
     loginWindow.on('maximize', () => {

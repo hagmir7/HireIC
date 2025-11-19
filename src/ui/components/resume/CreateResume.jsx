@@ -13,9 +13,15 @@ const CreateResume = () => {
 
   const next = () => {
     setCurrent(current + 1);
+    
   };
   const prev = () => {
-    setCurrent(current - 1);
+    console.log(current);
+    
+    if(current >= 1){
+       setCurrent(current - 1);
+    }
+   
   };
 
   const steps = [
@@ -64,7 +70,7 @@ const CreateResume = () => {
         items={items}
         onChange={(value) => setCurrent(value)}
       />
-      <div style={contentStyle}>{steps[current].content}</div>
+      <div style={contentStyle}>{steps[current]?.content || 0}</div>
     </div>
   );
 };

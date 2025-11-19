@@ -5,6 +5,7 @@ contextBridge.exposeInMainWorld("electron", {
   logout: () => ipcRenderer.invoke("logout"),
   user: (payload) => ipcRenderer.invoke('user', payload),
   openShow: (payload) => ipcRenderer.send('openShow', payload),
+  version: () => ipcRenderer.invoke('get-app-version'),
 });
 
 

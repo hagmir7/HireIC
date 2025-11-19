@@ -1,34 +1,69 @@
 {
-  "appId": "com.intercocina.hierIC",
-  "productName": "HireIC",
-  "publish": {
-    "provider": "github",
-    "repo": "HireIC",
-    "owner": "hagmir7"
+  "name": "Recruit365",
+  "version": "0.12.0",
+  "private": true,
+  "type": "module",
+  "main": "src/electron/main.js",
+
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:react dev:electron",
+    "dev:react": "vite",
+    "dev:electron": "electron-vite dev",
+    "build": "vite build && electron-vite build && electron-builder",
+    "build:react": "vite build",
+    "build:electron": "electron-vite build",
+    "make": "electron-builder"
   },
-  "buildDependenciesFromSource": false,
-  "npmRebuild": false,
-  "asarUnpack": [
-    "react-dist",
-    "node_modules/@tailwindcss/**/*"
-  ],
-  "files": [
-    "dist/**/*",
-    "react-dist/**/*",
-    "src/electron/**/*",
-    "node_modules/**/*",
-    "!**/@tailwindcss/oxide-wasm32-wasi/**",
-    "!**/@emnapi/**"
-  ],
-  "icon": "intercocina-logo.png",
-  "win": {
-    "target": ["portable", "msi"]
-  },
-  "mac": {
-    "target": "dmg"
-  },
-  "linux": {
-    "target": "AppImage",
-    "category": "Utility"
+
+  "dependencies": {},
+  "devDependencies": {},
+
+  "build": {
+    "appId": "com.intercocina.recruit365",
+    "productName": "Recruit365",
+    "copyright": "Copyright Intercocina",
+
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+
+    "files": [
+      "!**/.vscode/*",
+      "!electron.vite.config.{js,ts,mjs,cjs}",
+      "!{.eslintignore,.eslintrc.cjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}",
+      "!{.env,.env.*,.npmrc,pnpm-lock.yaml}"
+    ],
+
+    "asarUnpack": [
+      "resources/**"
+    ],
+
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico",
+      "executableName": "Recruit365"
+    },
+
+    "nsis": {
+      "artifactName": "${name}-${version}-setup.${ext}",
+      "shortcutName": "${productName}",
+      "uninstallDisplayName": "${productName}",
+      "createDesktopShortcut": "always"
+    },
+
+    "npmRebuild": false,
+
+    "publish": [
+      {
+        "provider": "github",
+        "repo": "HireIC",
+        "owner": "hagmir7"
+      }
+    ],
+
+    "electronDownload": {
+      "mirror": "https://npmmirror.com/mirrors/electron/"
+    }
   }
 }

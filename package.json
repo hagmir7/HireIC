@@ -1,11 +1,15 @@
 {
-  "name": "INTERCOCINA",
+  "name": "Recruit365",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.15.0",
   "type": "module",
   "main": "src/electron/main.js",
-  "description": "HireIC desktop app",
-  "author": "Hassan Agmir",
+  "description": "recruit365 desktop app",
+  "author": "Intercocina",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hagmir7/HireIC.git"
+  },
   "scripts": {
     "dev": "npm-run-all --parallel dev:react dev:electron",
     "dev:react": "vite",
@@ -15,7 +19,12 @@
     "preview": "vite preview",
     "dist:mac": "npm run transpile:electron && npm run build && electron-builder --mac --arm64",
     "dist:win": "npm run build && electron-builder --win --x64",
-    "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64"
+    "dist:linux": "npm run transpile:electron && npm run build && electron-builder --linux --x64",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "npm run build && electron-builder --win --x64 --publish always",
+    "release": "npm run build && electron-builder --win -p onTagOrDraft"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -26,13 +35,25 @@
     "antd": "^5.26.5",
     "antd-style": "^3.7.1",
     "axios": "^1.10.0",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-updater": "^6.6.2",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.525.0",
     "react": "^18.0.0",
     "react-dom": "^18.1.0",
-    "react-router-dom": "^7.6.3"
+    "react-router-dom": "^7.6.3",
+    "update-electron-app": "^3.1.1"
   },
   "devDependencies": {
+    "@electron-forge/cli": "^7.8.3",
+    "@electron-forge/maker-deb": "^7.10.2",
+    "@electron-forge/maker-rpm": "^7.10.2",
+    "@electron-forge/maker-squirrel": "^7.10.2",
+    "@electron-forge/maker-zip": "^7.10.2",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.10.2",
+    "@electron-forge/plugin-fuses": "^7.10.2",
+    "@electron-forge/publisher-github": "^7.10.2",
+    "@electron/fuses": "^1.8.0",
     "@eslint/js": "^9.21.0",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.4",
@@ -40,7 +61,6 @@
     "autoprefixer": "^10.4.22",
     "cross-env": "^7.0.3",
     "electron": "^35.1.4",
-    "electron-builder": "^26.0.12",
     "eslint": "^9.21.0",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
@@ -49,5 +69,53 @@
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.11",
     "vite": "^6.2.0"
+  },
+  "config": {
+    "forge": {
+      "packagerConfig": {
+        "icon": "./inter.ico"
+      },
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "platforms": [
+            "win32"
+          ],
+          "config": {
+            "name": "Recruit365",
+            "setupIcon": "./inter.ico",
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutFolderName": "Recruit365"
+          }
+        }
+      ],
+      "publishers": [
+        {
+          "name": "@electron-forge/publisher-github",
+          "config": {
+            "repository": {
+              "owner": "hagmir7",
+              "name": "HireIC"
+            },
+            "prerelease": true
+          }
+        }
+      ]
+    }
+  },
+  "build": {
+    "appId": "com.intercocina.recruit365",
+    "productName": "Recruit365",
+    "publish": {
+      "provider": "github",
+      "repo": "HireIC",
+      "owner": "hagmir7"
+    },
+    "win": {
+      "target": "nsis",
+      "executableName": "Recruit365",
+      "icon": "./icon.ico"
+    }
   }
 }

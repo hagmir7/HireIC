@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Alert, Typography } from 'antd';
 import { UserOutlined, LockOutlined } from '@ant-design/icons';
@@ -11,6 +11,20 @@ const Login = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { login, loading, message } = useAuth();
+
+    const [appVersion, setAppVersion] = useState('');
+  
+    useEffect(() => {
+      const fetchVersion = async () => {
+        if (window.electron?.version) {
+          const version = await window.electron.version();
+          setAppVersion(version);
+        }
+      };
+      fetchVersion();
+    }, []);
+
+
   
   useEffect(() => {
     form.setFieldsValue({
@@ -114,7 +128,10 @@ const Login = () => {
               {loading ? 'Connexion...' : 'Se connecter'}
             </Button>
           </Form.Item>
+        
         </Form>
+
+        <div className='text-center mt-5 text-gray-700'>v{appVersion}</div>
       </div>
     </div>
   );
